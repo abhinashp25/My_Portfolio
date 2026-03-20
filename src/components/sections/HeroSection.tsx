@@ -103,7 +103,7 @@ export default function HeroSection() {
 
       {/* Main grid */}
       <div className="relative z-10 max-w-7xl mx-auto px-6 pt-20 w-full">
-        <div className="grid lg:grid-cols-[1.1fr_1fr] gap-14 items-center">
+        <div className="grid lg:grid-cols-[1.1fr_0.95fr] gap-10 items-start pt-8">
 
           {/* ─── Left: Text ─── */}
           <motion.div
@@ -225,7 +225,7 @@ export default function HeroSection() {
 
           {/* ─── Right: Profile Photo ─── */}
           <motion.div
-            className="hidden lg:flex items-center justify-center"
+            className="hidden lg:flex items-start justify-center pt-4"
             initial={{ opacity: 0, scale: 0.7, filter: 'blur(20px)' }}
             animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
             transition={{ duration: 1.4, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}

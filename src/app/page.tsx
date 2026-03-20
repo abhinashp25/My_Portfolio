@@ -9,6 +9,7 @@ const ParticleBackground = dynamic(() => import('@/components/ui/ParticleBackgro
 const Navigation       = dynamic(() => import('@/components/ui/Navigation'),                          { ssr: false });
 const HeroSection      = dynamic(() => import('@/components/sections/HeroSection'));
 const AboutSection     = dynamic(() => import('@/components/sections/AboutSection'));
+const EducationSection = dynamic(() => import('@/components/sections/EducationSection'));
 const SkillsSection    = dynamic(() => import('@/components/sections/SkillsSection'));
 const ProjectsSection  = dynamic(() => import('@/components/sections/ProjectsSection'));
 const AILabSection     = dynamic(() => import('@/components/sections/AILabSection'));
@@ -37,6 +38,7 @@ export default function Home() {
       <div className={`transition-opacity duration-1000 ${loaded ? 'opacity-100' : 'opacity-0'}`}>
         <HeroSection />
         <AboutSection />
+        <EducationSection />
         <SkillsSection />
         <ProjectsSection />
         <AILabSection />
