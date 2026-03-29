@@ -18,6 +18,8 @@ export function useChat(provider: string, model: string, streaming: boolean = tr
 
       try {
         if (streaming) {
+          let hasVisibleContent = false;
+
           await getStreamingChatCompletion(
             provider,
             model,
@@ -25,9 +27,20 @@ export function useChat(provider: string, model: string, streaming: boolean = tr
             (chunk) => {
               setFullResponse((prev: any[]) => [...prev, chunk]);
               const content = chunk?.choices?.[0]?.delta?.content;
-              if (content) setResponse((prev) => prev + content);
+              const reasoning = chunk?.choices?.[0]?.delta?.reasoning_content;
+
+              if (content) {
+                hasVisibleContent = true;
+                setResponse((prev) => prev + content);
+              } else if (!hasVisibleContent && reasoning) {
+                // If the model emits only reasoning tokens, show them so the user sees progress.
+                setResponse((prev) => prev + reasoning);
+              }
             },
-            () => setIsLoading(false),
+            () => {
+              setResponse((prev) => (prev.trim() ? prev : 'I could not generate a response this time. Please try again.'));
+              setIsLoading(false);
+            },
             (err) => {
               setError(err);
               setIsLoading(false);

@@ -20,7 +20,7 @@ interface Project {
 const projects: Project[] = [
   {
     title: 'Payment Date Prediction',
-    description: 'ML model predicting invoice payment dates with 87% accuracy.',
+    description: 'Deployed ML pipeline to predict invoice payment dates with 87% accuracy.',
     longDescription: 'Built a machine learning pipeline that analyzes historical invoice data to predict payment dates. Uses feature engineering on customer behavior, invoice amounts, and seasonal patterns. Achieved 87% accuracy using gradient boosting with XGBoost. Deployed as a REST API with Flask for real-time predictions.',
     tech: ['Python', 'scikit-learn', 'Pandas', 'XGBoost', 'Flask'],
     color: '#6366f1',
@@ -42,7 +42,7 @@ const projects: Project[] = [
   },
   {
     title: 'Chatify — Realtime Chat',
-    description: 'Full-stack real-time messaging app with Socket.io and modern UI.',
+    description: 'Production-style real-time messaging platform with low-latency Socket events.',
     longDescription: 'A production-ready real-time chat application built with React and Socket.io. Features instant messaging, user authentication, room management, typing indicators, and a clean modern interface. Built for sub-100ms message delivery latency. Backend uses Node.js with Express and MongoDB for message persistence.',
     tech: ['React', 'Node.js', 'Socket.io', 'Express', 'MongoDB', 'JWT'],
     color: '#818cf8',
@@ -52,7 +52,7 @@ const projects: Project[] = [
   },
   {
     title: 'Vigil — Safety & Alert System',
-    description: 'Full-stack safety monitoring and real-time alert platform built with React and Node.js.',
+    description: 'Operational safety monitoring platform with live dashboards and alert workflows.',
     longDescription: 'Vigil is a full-stack web application for real-time safety monitoring and intelligent alerting. Built collaboratively with AI assistance, it features a React frontend with live dashboards, a Node.js/Express backend, and REST API integration. The platform monitors safety-critical events, processes incoming signals, and dispatches real-time alerts to users. Designed with a clean, responsive UI and robust backend architecture for reliable incident tracking and notification management.',
     tech: ['React', 'Node.js', 'Express', 'MongoDB', 'REST APIs', 'TypeScript'],
     color: '#06b6d4',
@@ -235,13 +235,13 @@ export default function ProjectsSection() {
           viewport={{ once: true }} transition={{ duration: 0.7 }}>
           <div className="flex items-center gap-3 mb-4">
             <div className="h-px flex-1 max-w-12 bg-gradient-to-r from-transparent to-pink-500" />
-            <span className="text-pink-400 font-mono text-sm tracking-widest uppercase">Projects Universe</span>
+            <span className="text-pink-400 font-mono text-sm tracking-widest uppercase">Selected Work</span>
           </div>
           <h2 className="text-4xl md:text-5xl font-bold text-white">
-            What I've <span style={{ color: '#f472b6', textShadow: '0 0 20px rgba(244,114,182,0.5)' }}>Built</span>
+            Impact-Focused <span style={{ color: '#f472b6', textShadow: '0 0 20px rgba(244,114,182,0.5)' }}>Case Studies</span>
           </h2>
           <p className="text-slate-400 mt-4 max-w-xl text-lg">
-            From ML models to full-stack apps — hover to reveal quick links, click for full details.
+            A curated set of engineering and AI projects with measurable outcomes, architecture decisions, and delivery focus.
           </p>
         </motion.div>
 
@@ -278,9 +278,9 @@ export default function ProjectsSection() {
           initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.3 }}>
           {[
-            { label: 'Projects Built', value: '5+', color: '#6366f1' },
-            { label: 'ML Models', value: '5+', color: '#06b6d4' },
-            { label: 'GitHub Repos', value: '10+', color: '#f472b6' },
+            { label: 'Featured Projects', value: '5', color: '#6366f1' },
+            { label: 'Best Model Accuracy', value: '87%', color: '#06b6d4' },
+            { label: 'Tech Stack Breadth', value: '15+', color: '#f472b6' },
           ].map((s) => (
             <div key={s.label} className="rounded-2xl p-4 text-center"
               style={{ background: 'rgba(255,255,255,0.02)', border: `1px solid ${s.color}20` }}>

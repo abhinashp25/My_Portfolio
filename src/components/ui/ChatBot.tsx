@@ -49,7 +49,7 @@ export default function ChatBot() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
-      content: "Hi! I'm Abhinash's AI assistant powered by GPT-4o. Ask me anything about his skills, projects, or experience! 🚀",
+      content: "Hi! I'm Abhinash's AI assistant powered by DeepSeek V3.2. Ask me anything about his skills, projects, or experience! 🚀",
       timestamp: new Date(),
     },
   ]);
@@ -57,7 +57,7 @@ export default function ChatBot() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const { response, isLoading, error, sendMessage } = useChat('OPEN_AI', 'gpt-4o', true);
+  const { response, isLoading, error, sendMessage } = useChat('NVIDIA', 'deepseek-ai/deepseek-v3.2', true);
 
   // Track if we've already added the current streaming response
   const streamingMsgRef = useRef<boolean>(false);
@@ -69,6 +69,23 @@ export default function ChatBot() {
   useEffect(() => {
     if (error) {
       toast.error('AI assistant error. Please try again.');
+
+      setMessages((prev) => {
+        const last = prev[prev.length - 1];
+        if (last?.role === 'assistant' && !last.content) {
+          return [
+            ...prev.slice(0, -1),
+            {
+              role: 'assistant',
+              content: 'The AI request timed out. Please try again in a moment.',
+              timestamp: new Date(),
+            },
+          ];
+        }
+        return prev;
+      });
+
+      streamingMsgRef.current = false;
     }
   }, [error]);
 
@@ -127,7 +144,7 @@ export default function ChatBot() {
       { role: 'user' as const, content: userMessage },
     ];
 
-    sendMessage(apiMessages, { max_completion_tokens: 250 });
+    sendMessage(apiMessages, { max_tokens: 250 });
   };
 
   const handleOpen = () => {
@@ -184,7 +201,7 @@ export default function ChatBot() {
             <p className="text-white text-sm font-semibold">AI Assistant</p>
             <div className="flex items-center gap-1.5">
               <div className={`w-1.5 h-1.5 rounded-full ${isLoading ? 'bg-yellow-400 animate-pulse' : 'bg-green-400'}`} />
-              <p className="text-slate-400 text-xs font-mono">{isLoading ? 'Thinking...' : 'GPT-4o · Online'}</p>
+              <p className="text-slate-400 text-xs font-mono">{isLoading ? 'Thinking...' : 'DeepSeek V3.2 · Online'}</p>
             </div>
           </div>
           <button

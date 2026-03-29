@@ -1,6 +1,7 @@
 import { callAIEndpoint } from './aiClient';
 
 const ENDPOINT = '/api/ai/chat-completion';
+const STREAM_TIMEOUT_MS = 35000;
 
 export async function getChatCompletion(
   provider: string,
@@ -26,12 +27,20 @@ export async function getStreamingChatCompletion(
   onError: (error: Error) => void,
   parameters: object = {}
 ) {
+  let completed = false;
+
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), STREAM_TIMEOUT_MS);
+
     const response = await fetch(ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ provider, model, messages, stream: true, parameters }),
+      signal: controller.signal,
     });
+
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       const data = await response.json();
@@ -58,7 +67,10 @@ export async function getStreamingChatCompletion(
             const data = JSON.parse(line.slice(6));
             if (data.type === 'chunk' && data.chunk) {
               onChunk(data.chunk);
-            } else if (data.type === 'done') onComplete();
+            } else if (data.type === 'done') {
+              completed = true;
+              onComplete();
+            }
             else if (data.type === 'error') {
               console.error('API Route Error:', {
                 error: data.error,
@@ -72,8 +84,32 @@ export async function getStreamingChatCompletion(
         }
       }
     }
+
+    // Handle a final SSE line if it did not end with a trailing newline.
+    if (buffer.startsWith('data: ')) {
+      try {
+        const data = JSON.parse(buffer.slice(6));
+        if (data.type === 'done') {
+          completed = true;
+          onComplete();
+        }
+      } catch {
+        // Ignore trailing invalid JSON.
+      }
+    }
+
+    if (!completed) {
+      completed = true;
+      onComplete();
+    }
   } catch (error) {
     console.error('Streaming error:', error);
+
+    if (error instanceof Error && error.name === 'AbortError') {
+      onError(new Error('Request timed out while waiting for AI response. Please try again.'));
+      return;
+    }
+
     onError(error instanceof Error ? error : new Error('Streaming error'));
   }
 }

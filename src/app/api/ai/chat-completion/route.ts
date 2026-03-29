@@ -1,12 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { completion } from '@rocketnew/llm-sdk';
+import OpenAI from 'openai';
 
 const API_KEYS: Record<string, string | undefined> = {
   OPEN_AI: process.env.OPENAI_API_KEY,
   ANTHROPIC: process.env.ANTHROPIC_API_KEY,
   GEMINI: process.env.GEMINI_API_KEY,
   PERPLEXITY: process.env.PERPLEXITY_API_KEY,
+  NVIDIA: process.env.NVIDIA_API_KEY,
 };
+
+const NVIDIA_BASE_URL = process.env.NVIDIA_BASE_URL || 'https://integrate.api.nvidia.com/v1';
 
 function formatErrorResponse(error: unknown, provider?: string) {
   const statusCode = (error as any)?.statusCode || (error as any)?.status || 500;
@@ -25,6 +29,7 @@ export async function POST(request: NextRequest) {
   try {
     body = await request.json();
     const { provider, model, messages, stream = false, parameters = {} } = body;
+    const normalizedProvider = String(provider || '').toUpperCase();
 
     if (!provider || !model || !messages?.length) {
       return NextResponse.json(
@@ -33,12 +38,68 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const apiKey = API_KEYS[provider];
+    const apiKey = API_KEYS[normalizedProvider];
     if (!apiKey) {
       return NextResponse.json(
-        { error: `${provider.toUpperCase()} API key is not configured`, details: 'The API key for this provider is missing in environment variables' },
+        { error: `${normalizedProvider} API key is not configured`, details: 'The API key for this provider is missing in environment variables' },
         { status: 400 }
       );
+    }
+
+    if (normalizedProvider === 'NVIDIA') {
+      const client = new OpenAI({
+        apiKey,
+        baseURL: NVIDIA_BASE_URL,
+        timeout: 30000,
+        maxRetries: 0,
+      });
+
+      if (stream) {
+        const response = (await client.chat.completions.create({
+          model,
+          messages,
+          stream: true,
+          ...parameters,
+        })) as unknown as AsyncIterable<unknown>;
+
+        const encoder = new TextEncoder();
+        const readable = new ReadableStream({
+          async start(controller) {
+            try {
+              controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'start' })}\n\n`));
+
+              for await (const chunk of response) {
+                controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'chunk', chunk })}\n\n`));
+              }
+
+              controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'done' })}\n\n`));
+              controller.close();
+            } catch (error) {
+              const formatted = formatErrorResponse(error, normalizedProvider);
+              console.error('API Route Error:', { error: formatted.error, details: formatted.details });
+              controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'error', error: formatted.error, details: formatted.details })}\n\n`));
+              controller.close();
+            }
+          },
+        });
+
+        return new NextResponse(readable, {
+          headers: {
+            'Content-Type': 'text/event-stream',
+            'Cache-Control': 'no-cache',
+            Connection: 'keep-alive',
+          },
+        });
+      }
+
+      const response = await client.chat.completions.create({
+        model,
+        messages,
+        stream: false,
+        ...parameters,
+      });
+
+      return NextResponse.json(response);
     }
 
     if (stream) {
@@ -63,7 +124,7 @@ export async function POST(request: NextRequest) {
             controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'done' })}\n\n`));
             controller.close();
           } catch (error) {
-            const formatted = formatErrorResponse(error, provider);
+            const formatted = formatErrorResponse(error, normalizedProvider);
             console.error('API Route Error:', { error: formatted.error, details: formatted.details });
             controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'error', error: formatted.error, details: formatted.details })}\n\n`));
             controller.close();

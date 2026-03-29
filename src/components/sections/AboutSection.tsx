@@ -117,19 +117,18 @@ export default function AboutSection() {
           </div>
           <div className="space-y-4 text-slate-300 leading-relaxed">
             <p>
-              I am a passionate <span className="text-brand-400 font-medium">Full Stack Developer</span> and{' '}
-              <span className="text-cyber-400 font-medium">AI/ML enthusiast</span> who enjoys building modern
-              web applications and intelligent systems.
+              I am a <span className="text-brand-400 font-medium">full stack engineer</span> focused on building
+              reliable products from idea to deployment, with hands-on ownership across frontend, backend, and data workflows.
             </p>
             <p>
-              My interests include <span className="text-neon-400 font-medium">machine learning</span>,{' '}
-              <span className="text-neon-400 font-medium">generative AI</span>, and data‑driven applications.
-              I enjoy learning new technologies and applying them to real‑world problems through practical projects.
+              My core strength is combining <span className="text-neon-400 font-medium">application engineering</span>{' '}
+              with <span className="text-neon-400 font-medium">applied machine learning</span> to solve practical
+              business problems with measurable outcomes.
             </p>
             <p>
-              Currently I focus on building full stack applications using{' '}
-              <span className="text-cyber-400 font-medium">React</span>,{' '}
-              <span className="text-cyber-400 font-medium">Node.js</span>, and modern AI tools.
+              I currently work with <span className="text-cyber-400 font-medium">React/Next.js</span>,{' '}
+              <span className="text-cyber-400 font-medium">Node.js</span>, and Python ML tooling, and I prioritize
+              clean architecture, maintainable code, and fast iteration.
             </p>
           </div>
         </motion.div>

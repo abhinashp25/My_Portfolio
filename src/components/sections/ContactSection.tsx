@@ -91,7 +91,7 @@ export default function ContactSection() {
             Let's <span className="gradient-text">Connect</span>
           </h2>
           <p className="text-slate-400 mt-4 max-w-xl text-lg">
-            Have a project in mind or want to collaborate? I'd love to hear from you.
+            If you are hiring for full stack or AI-enabled engineering roles, I would be glad to discuss how I can contribute.
           </p>
         </div>
 
@@ -226,7 +226,7 @@ export default function ContactSection() {
             <div className="rounded-2xl glass neon-border p-6">
               <h3 className="text-white font-semibold mb-2">Open to Opportunities</h3>
               <p className="text-slate-400 text-sm leading-relaxed">
-                I'm actively looking for full-stack developer and ML engineer roles. Let's build something amazing together.
+                Open to full-time opportunities in full stack engineering, AI product development, and data-driven application teams.
               </p>
               <div className="flex items-center gap-2 mt-4">
                 <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />

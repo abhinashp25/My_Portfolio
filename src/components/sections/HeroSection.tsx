@@ -10,10 +10,10 @@ import dynamic from 'next/dynamic';
 const ProfilePhoto = dynamic(() => import('@/components/ui/ProfilePhoto'), { ssr: false });
 
 const texts = [
-  'Full Stack Developer',
-  'AI / ML Enthusiast',
-  'Building Intelligent Web Apps',
-  'Open to Opportunities',
+  'Full Stack Engineer',
+  'AI-Enabled Product Builder',
+  'From Data to Production Delivery',
+  'Open to Impact-Driven Roles',
 ];
 
 const container = {
@@ -120,7 +120,7 @@ export default function HeroSection() {
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400" />
                 </span>
                 <span className="text-xs font-mono text-green-400 tracking-widest uppercase">
-                  Available for opportunities
+                  Available for full-time roles
                 </span>
               </div>
             </motion.div>
@@ -158,15 +158,15 @@ export default function HeroSection() {
             </motion.div>
 
             {/* Bio */}
-            <motion.p variants={item} className="text-slate-400 text-lg leading-relaxed max-w-[480px]">
-              Crafting intelligent web experiences at the intersection of{' '}
-              <span className="text-brand-400 font-medium">full‑stack development</span> and{' '}
-              <span className="text-cyber-400 font-medium">machine learning</span>.
+            <motion.p variants={item} className="text-slate-400 text-lg leading-relaxed max-w-[560px]">
+              I build production-ready applications that combine{' '}
+              <span className="text-brand-400 font-medium">modern full-stack engineering</span> with{' '}
+              <span className="text-cyber-400 font-medium">practical AI/ML</span> to deliver measurable business value.
             </motion.p>
 
             {/* Tech pills */}
             <motion.div variants={item} className="flex flex-wrap gap-2">
-              {['Python', 'React', 'Node.js', 'ML / AI', 'Next.js'].map((t) => (
+              {['TypeScript', 'Next.js', 'Node.js', 'Python', 'Applied ML'].map((t) => (
                 <motion.span
                   key={t}
                   whileHover={{ scale: 1.08, y: -2 }}
@@ -219,6 +219,10 @@ export default function HeroSection() {
               <span className="text-slate-700">·</span>
               <span className="flex items-center gap-1.5 text-xs font-mono text-slate-500">
                 <span style={{ color: '#06b6d4' }}>▸</span> Bhubaneswar, Odisha
+              </span>
+              <span className="text-slate-700">·</span>
+              <span className="flex items-center gap-1.5 text-xs font-mono text-slate-500">
+                <span style={{ color: '#f472b6' }}>▸</span> Full Stack + AI/ML
               </span>
             </motion.div>
           </motion.div>
