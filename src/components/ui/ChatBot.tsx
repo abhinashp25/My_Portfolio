@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useChat } from '@/lib/hooks/useChat';
 import { XMarkIcon, ChatBubbleLeftRightIcon, PaperAirplaneIcon, SparklesIcon } from '@heroicons/react/24/outline';
-import toast from 'react-hot-toast';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -68,7 +67,8 @@ export default function ChatBot() {
 
   useEffect(() => {
     if (error) {
-      toast.error('AI assistant error. Please try again.');
+      // Instead of an intimidating error, provide a professional portfolio fallback
+      const fallbackMessage = "I'm currently in offline mode due to high traffic, but I'd love to help! Abhinash is a Full Stack Developer & AI/ML Enthusiast. Feel free to explore the projects and experience sections, or reach out via the Contact form!";
 
       setMessages((prev) => {
         const last = prev[prev.length - 1];
@@ -77,7 +77,7 @@ export default function ChatBot() {
             ...prev.slice(0, -1),
             {
               role: 'assistant',
-              content: 'The AI request timed out. Please try again in a moment.',
+              content: fallbackMessage,
               timestamp: new Date(),
             },
           ];

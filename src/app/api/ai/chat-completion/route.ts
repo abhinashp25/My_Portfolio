@@ -12,13 +12,32 @@ const API_KEYS: Record<string, string | undefined> = {
 
 const NVIDIA_BASE_URL = process.env.NVIDIA_BASE_URL || 'https://integrate.api.nvidia.com/v1';
 
+const PORTFOLIO_DATA = `
+Abhinash is a Full Stack Developer & AI/ML Enthusiast from India.
+Skills: Python, TypeScript, React, Next.js, Node.js, ML.
+Contact: Connect via the 'Contact' section below or visit github.com/abhinashp25!
+`;
+
+const TIMEOUT_FALLBACK_MESSAGE = `I am currently experiencing high traffic and operating in offline mode. \n\nHere is a quick overview:\n${PORTFOLIO_DATA}`;
+
+function isTimeoutError(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error);
+  return message.toLowerCase().includes('timeout');
+}
+
 function formatErrorResponse(error: unknown, provider?: string) {
   const statusCode = (error as any)?.statusCode || (error as any)?.status || 500;
   const providerName = (error as any)?.llmProvider || provider || 'Unknown';
+  const message = error instanceof Error ? error.message : String(error);
+
+  let userMessage = `${providerName.toUpperCase()} API error: ${statusCode}`;
+  if (message.toLowerCase().includes('timeout')) {
+    userMessage = 'Request timeout - service is temporarily slow';
+  }
 
   return {
-    error: `${providerName.toUpperCase()} API error: ${statusCode}`,
-    details: error instanceof Error ? error.message : String(error),
+    error: userMessage,
+    details: message,
     statusCode,
   };
 }
@@ -77,7 +96,18 @@ export async function POST(request: NextRequest) {
             } catch (error) {
               const formatted = formatErrorResponse(error, normalizedProvider);
               console.error('API Route Error:', { error: formatted.error, details: formatted.details });
-              controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'error', error: formatted.error, details: formatted.details })}\n\n`));
+
+              controller.enqueue(
+                encoder.encode(
+                  `data: ${JSON.stringify({
+                    type: 'chunk',
+                    chunk: {
+                      choices: [{ delta: { content: TIMEOUT_FALLBACK_MESSAGE } }],
+                    },
+                  })}\n\n`
+                )
+              );
+              controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'done' })}\n\n`));
               controller.close();
             }
           },
@@ -92,14 +122,33 @@ export async function POST(request: NextRequest) {
         });
       }
 
-      const response = await client.chat.completions.create({
-        model,
-        messages,
-        stream: false,
-        ...parameters,
-      });
+      try {
+        const response = await client.chat.completions.create({
+          model,
+          messages,
+          stream: false,
+          ...parameters,
+        });
 
-      return NextResponse.json(response);
+        return NextResponse.json(response);
+      } catch (error) {
+        const formatted = formatErrorResponse(error, normalizedProvider);
+        console.error('API Route Error:', { error: formatted.error, details: formatted.details });
+
+        return NextResponse.json({
+          id: 'fallback-timeout',
+          object: 'chat.completion',
+          created: Math.floor(Date.now() / 1000),
+          model,
+          choices: [
+            {
+              index: 0,
+              message: { role: 'assistant', content: TIMEOUT_FALLBACK_MESSAGE },
+              finish_reason: 'stop',
+            },
+          ],
+        });
+      }
     }
 
     if (stream) {
