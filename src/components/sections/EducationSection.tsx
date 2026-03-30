@@ -10,14 +10,14 @@ const education = [
     institution: 'GIFT Autonomous (Gandhi Institute For Technology)',
     affiliation: 'Affiliated to Biju Patnaik University of Technology (BPUT)',
     location: 'Bhubaneswar, Odisha',
-    period: '2022 – 2026',
+    period: '2023 – 2027',
     status: 'Pursuing',
     cgpa: '7.6',
     cgpaOutOf: '10',
-    color: '#6366f1',
+    color: '#ffffff',
     icon: BuildingLibraryIcon,
     highlights: ['Computer Science Core', 'AI & Machine Learning', 'Data Structures & Algorithms', 'Web Technologies'],
-    statusColor: '#4ade80',
+    statusColor: '#cbd5e1',
   },
   {
     level: 'Intermediate — Class XII',
@@ -29,10 +29,10 @@ const education = [
     status: 'Completed',
     cgpa: null,
     cgpaOutOf: null,
-    color: '#06b6d4',
+    color: '#e2e8f0',
     icon: AcademicCapIcon,
     highlights: ['Physics', 'Chemistry', 'Mathematics'],
-    statusColor: '#06b6d4',
+    statusColor: '#94a3b8',
   },
   {
     level: 'Matriculation — Class X',
@@ -44,10 +44,10 @@ const education = [
     status: 'Completed',
     cgpa: null,
     cgpaOutOf: null,
-    color: '#f472b6',
+    color: '#94a3b8',
     icon: AcademicCapIcon,
     highlights: ['Science', 'Mathematics', 'English'],
-    statusColor: '#f472b6',
+    statusColor: '#64748b',
   },
 ];
 
@@ -56,10 +56,10 @@ export default function EducationSection() {
     <section id="education" className="relative py-24 px-6">
       {/* Background */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-0 w-[500px] h-[500px] rounded-full opacity-5"
-          style={{ background: 'radial-gradient(circle, #6366f1 0%, transparent 70%)' }} />
-        <div className="absolute bottom-0 right-0 w-[350px] h-[350px] rounded-full opacity-5"
-          style={{ background: 'radial-gradient(circle, #06b6d4 0%, transparent 70%)' }} />
+        <div className="absolute top-0 left-0 w-[500px] h-[500px] rounded-full opacity-[0.03]"
+          style={{ background: 'radial-gradient(circle, #ffffff 0%, transparent 70%)' }} />
+        <div className="absolute bottom-0 right-0 w-[350px] h-[350px] rounded-full opacity-[0.03]"
+          style={{ background: 'radial-gradient(circle, #ffffff 0%, transparent 70%)' }} />
         <div className="absolute inset-0 grid-pattern opacity-10" />
       </div>
 
@@ -69,13 +69,13 @@ export default function EducationSection() {
           initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }} transition={{ duration: 0.7 }}>
           <div className="flex items-center gap-3 mb-4">
-            <div className="h-px flex-1 max-w-12 bg-gradient-to-r from-transparent to-brand-500" />
-            <span className="text-brand-400 font-mono text-sm tracking-widest uppercase">Academic</span>
+            <div className="h-px flex-1 max-w-12 bg-gradient-to-r from-transparent to-white/50" />
+            <span className="text-white/60 font-mono text-sm tracking-widest uppercase">Academic</span>
           </div>
           <h2 className="text-4xl md:text-5xl font-bold text-white">
             Education &{' '}
             <span style={{
-              background: 'linear-gradient(135deg, #6366f1, #06b6d4)',
+              background: 'linear-gradient(135deg, #ffffff, #a1a1aa)',
               WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
             }}>
               Qualifications
@@ -90,15 +90,15 @@ export default function EducationSection() {
         <motion.div
           className="mb-12 p-5 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center gap-4"
           style={{
-            background: 'linear-gradient(135deg, rgba(99,102,241,0.08) 0%, rgba(6,182,212,0.06) 100%)',
-            border: '1px solid rgba(99,102,241,0.25)',
+            background: 'linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)',
+            border: '1px solid rgba(255,255,255,0.08)',
           }}
           initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }} transition={{ duration: 0.6 }}>
           <div
             className="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0"
-            style={{ background: 'rgba(99,102,241,0.15)', border: '1px solid rgba(99,102,241,0.35)' }}>
-            <BuildingLibraryIcon className="w-7 h-7 text-brand-400" />
+            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
+            <BuildingLibraryIcon className="w-7 h-7 text-white" />
           </div>
           <div className="flex-1">
             <div className="flex flex-wrap items-center gap-3 mb-1">
@@ -113,7 +113,7 @@ export default function EducationSection() {
           <div className="text-right flex-shrink-0">
             <div className="flex items-baseline gap-1">
               <span className="text-4xl font-bold" style={{
-                background: 'linear-gradient(135deg, #6366f1, #06b6d4)',
+                background: 'linear-gradient(135deg, #ffffff, #a1a1aa)',
                 WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
               }}>7.6</span>
               <span className="text-slate-500 text-sm font-mono"> / 10</span>

@@ -74,12 +74,43 @@ export async function POST(request: NextRequest) {
       });
 
       if (stream) {
-        const response = (await client.chat.completions.create({
-          model,
-          messages,
-          stream: true,
-          ...parameters,
-        })) as unknown as AsyncIterable<unknown>;
+        let response: AsyncIterable<unknown>;
+        try {
+          response = (await client.chat.completions.create({
+            model,
+            messages,
+            stream: true,
+            ...parameters,
+          })) as unknown as AsyncIterable<unknown>;
+        } catch (error) {
+          const formatted = formatErrorResponse(error, normalizedProvider);
+          console.error('API Stream Setup Error:', { error: formatted.error, details: formatted.details });
+
+          // Return a stream that immediately yields the fallback message
+          const encoder = new TextEncoder();
+          const fallbackStream = new ReadableStream({
+            start(controller) {
+              controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'start' })}\n\n`));
+              controller.enqueue(
+                encoder.encode(
+                  `data: ${JSON.stringify({
+                    type: 'chunk',
+                    chunk: { choices: [{ delta: { content: TIMEOUT_FALLBACK_MESSAGE } }] },
+                  })}\n\n`
+                )
+              );
+              controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'done' })}\n\n`));
+              controller.close();
+            },
+          });
+          return new NextResponse(fallbackStream, {
+            headers: {
+              'Content-Type': 'text/event-stream',
+              'Cache-Control': 'no-cache',
+              Connection: 'keep-alive',
+            },
+          });
+        }
 
         const encoder = new TextEncoder();
         const readable = new ReadableStream({
@@ -95,15 +126,13 @@ export async function POST(request: NextRequest) {
               controller.close();
             } catch (error) {
               const formatted = formatErrorResponse(error, normalizedProvider);
-              console.error('API Route Error:', { error: formatted.error, details: formatted.details });
+              console.error('API Route Chunking Error:', { error: formatted.error, details: formatted.details });
 
               controller.enqueue(
                 encoder.encode(
                   `data: ${JSON.stringify({
                     type: 'chunk',
-                    chunk: {
-                      choices: [{ delta: { content: TIMEOUT_FALLBACK_MESSAGE } }],
-                    },
+                    chunk: { choices: [{ delta: { content: TIMEOUT_FALLBACK_MESSAGE } }] },
                   })}\n\n`
                 )
               );
