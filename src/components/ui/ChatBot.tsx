@@ -56,7 +56,11 @@ export default function ChatBot() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const { response, isLoading, error, sendMessage } = useChat('NVIDIA', 'deepseek-ai/deepseek-v3.2', true);
+  const { response, isLoading, error, sendMessage } = useChat(
+    'NVIDIA', 
+    'meta/llama-3.1-8b-instruct', 
+    true
+  );
 
   // Track if we've already added the current streaming response
   const streamingMsgRef = useRef<boolean>(false);

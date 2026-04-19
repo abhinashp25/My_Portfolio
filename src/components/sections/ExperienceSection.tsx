@@ -146,7 +146,7 @@ export default function ExperienceSection() {
             Experience &{' '}
             <span style={{ color: '#f472b6', textShadow: '0 0 20px rgba(244,114,182,0.5)' }}>Timeline</span>
           </h2>
-          <p className="text-slate-400 mt-4 max-w-xl mx-auto text-lg">
+          <p className="text-slate-400 mt-4 max-w-xl mx-auto text-lg leading-relaxed">
             A vertical journey through internships, projects, and professional milestones.
           </p>
         </motion.div>

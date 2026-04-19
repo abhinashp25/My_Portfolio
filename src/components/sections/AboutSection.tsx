@@ -3,6 +3,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { CodeBracketIcon, CpuChipIcon, ChartBarIcon, AcademicCapIcon, SparklesIcon } from '@heroicons/react/24/outline';
+import dynamic from 'next/dynamic';
+
+const GithubHeatmap = dynamic(() => import('@/components/ui/GithubHeatmap'), { ssr: false });
 
 const journey = [
   {
@@ -215,6 +218,17 @@ export default function AboutSection() {
             </div>
           </motion.div>
         </div>
+
+        {/* GitHub Heatmap Premium Feature */}
+        <motion.div
+          className="mt-16 w-full"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <GithubHeatmap />
+        </motion.div>
       </div>
     </section>
   );

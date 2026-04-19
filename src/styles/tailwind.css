@@ -239,3 +239,16 @@ body {
   pointer-events: none;
   opacity: 0.03;
 }
+
+/* Instant Light Mode Fallback */
+@media (prefers-color-scheme: light) {
+  html {
+    filter: invert(1) hue-rotate(180deg);
+    background-color: #f8fafc;
+  }
+  
+  /* Re-invert media so they look normal */
+  img, video, iframe, [style*="background-image"] {
+    filter: invert(1) hue-rotate(180deg);
+  }
+}
