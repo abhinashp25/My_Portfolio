@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { useChat } from '@/lib/hooks/useChat';
-import { XMarkIcon, ChatBubbleLeftRightIcon, PaperAirplaneIcon, SparklesIcon } from '@heroicons/react/24/outline';
+import { useState, useEffect, useRef, useMemo } from 'react';
+import { useChat, ChatConfig } from '@/lib/hooks/useChat';
+import { XMarkIcon, PaperAirplaneIcon, SparklesIcon, BoltIcon } from '@heroicons/react/24/outline';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -10,142 +10,123 @@ interface Message {
   timestamp: Date;
 }
 
-const SYSTEM_PROMPT = `You are an AI assistant for Abhinash Pradhan's portfolio website. You help visitors learn about Abhinash.
+// Strip markdown bold/italic so output looks clean in the chat bubble
+function stripMarkdown(text: string): string {
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '$1')
+    .replace(/\*(.+?)\*/g, '$1')
+    .replace(/`(.+?)`/g, '$1')
+    .replace(/#{1,6}\s+/g, '')
+    .trim();
+}
 
-About Abhinash Pradhan:
-- Full Stack Developer & AI/ML Enthusiast from India
-- Passionate about building intelligent web experiences at the intersection of software engineering and AI
+const SYSTEM_PROMPT = `You are an AI assistant for Abhinash Pradhan's portfolio. Answer concisely and professionally, no markdown formatting.
 
-Skills & Tech Stack:
-- Languages: Python, JavaScript, TypeScript, HTML, CSS
-- Frontend: React, Next.js, TailwindCSS
-- Backend: Node.js, Express.js, Flask
-- ML/AI: Machine Learning, Deep Learning, scikit-learn, TensorFlow, Pandas, NumPy, Matplotlib
-- Databases: MongoDB, SQL
-- Tools: Git, GitHub, Streamlit, OCR
+Abhinash Pradhan — Full Stack Developer & AI/ML Enthusiast from India.
+
+Skills: Python, JavaScript, TypeScript, React, Next.js, TailwindCSS, Node.js, Express.js, Flask, TensorFlow, scikit-learn, Pandas, NumPy, MongoDB, SQL, Git, Streamlit, OCR.
 
 Projects:
-1. Payment Date Prediction - ML model with 87% accuracy predicting invoice payment dates using gradient boosting
-2. Global Currency Detection AI - Computer vision system identifying 50+ world currencies using CNN + transfer learning
-3. AI Course Recommender - Collaborative filtering recommendation engine for online courses built with Streamlit
-4. Plant Disease Prediction - AI/ML project for detecting plant diseases from images (GitHub: github.com/abhinashp25/Plant_Disease_Prediction)
-5. Realtime Chat Application (Chatify) - Full-stack real-time messaging app with React + Socket.io (GitHub: github.com/abhinashp25/chatify)
-6. Factory Telemetry Analysis - Industrial IoT data analytics dashboard, reduced downtime by 30%
+1. Payment Date Prediction — ML model, 87% accuracy, gradient boosting
+2. Global Currency Detection AI — CNN + transfer learning, 50+ currencies
+3. AI Course Recommender — collaborative filtering, Streamlit
+4. Plant Disease Prediction — image-based AI/ML (github.com/abhinashp25/Plant_Disease_Prediction)
+5. Chatify — real-time chat, React + Socket.io (github.com/abhinashp25/chatify)
+6. Factory Telemetry Dashboard — IoT analytics, 30% downtime reduction
 
-Experience:
-- Python Internship Certificate
-- 5+ Machine Learning projects
-- Full Stack development experience
+Experience: Python Internship at Moniba Tech, AI/ML Internship at OCAC Bhubaneswar.
+GitHub: github.com/abhinashp25. Available for full-time roles.
 
-Contact:
-- GitHub: github.com/abhinashp25
-- Currently available for new opportunities
+Reply in plain text. Be warm, concise (under 100 words unless asked for detail).`;
 
-Be concise, friendly, and professional. Keep responses under 120 words unless asked for details.`;
+// Stable configs — defined outside component to keep useMemo dep stable
+const CHAT_CONFIGS: ChatConfig[] = [
+  { provider: 'GROQ',   model: 'llama-3.3-70b-versatile' },
+  { provider: 'GEMINI', model: 'gemini-2.0-flash' },
+];
 
 export default function ChatBot() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
-      content: "Hi! I'm Abhinash's AI assistant powered by DeepSeek V3.2. Ask me anything about his skills, projects, or experience! 🚀",
+      content: "Hi! I'm Abhinash's AI assistant. Ask me about his skills, projects, or experience! ⚡",
       timestamp: new Date(),
     },
   ]);
   const [input, setInput] = useState('');
+  const [activeProvider, setActiveProvider] = useState<string>('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-
-  const { response, isLoading, error, sendMessage } = useChat(
-    'NVIDIA', 
-    'meta/llama-3.1-8b-instruct', 
-    true
-  );
-
-  // Track if we've already added the current streaming response
   const streamingMsgRef = useRef<boolean>(false);
 
+  // Stable reference so useCallback deps don't change on every render
+  const { response, isLoading, error, sendMessage } = useChat(CHAT_CONFIGS, true);
+
+  // Auto-scroll
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, response]);
 
+  // Sync streaming response into the last message in real-time
   useEffect(() => {
-    if (error) {
-      // Instead of an intimidating error, provide a professional portfolio fallback
-      const fallbackMessage = "I'm currently in offline mode due to high traffic, but I'd love to help! Abhinash is a Full Stack Developer & AI/ML Enthusiast. Feel free to explore the projects and experience sections, or reach out via the Contact form!";
-
-      setMessages((prev) => {
-        const last = prev[prev.length - 1];
-        if (last?.role === 'assistant' && !last.content) {
-          return [
-            ...prev.slice(0, -1),
-            {
-              role: 'assistant',
-              content: fallbackMessage,
-              timestamp: new Date(),
-            },
-          ];
-        }
-        return prev;
-      });
-
-      streamingMsgRef.current = false;
-    }
-  }, [error]);
-
-  // Handle streaming response updates
-  useEffect(() => {
-    if (isLoading && response) {
-      // Update the streaming message in real-time
-      setMessages((prev) => {
-        const last = prev[prev.length - 1];
-        if (last?.role === 'assistant' && streamingMsgRef.current) {
-          return [
-            ...prev.slice(0, -1),
-            { role: 'assistant', content: response, timestamp: new Date() },
-          ];
-        }
-        return prev;
-      });
-    }
-  }, [response, isLoading]);
-
-  // When streaming completes
-  useEffect(() => {
-    if (!isLoading && response && streamingMsgRef.current) {
-      setMessages((prev) => {
+    if (!streamingMsgRef.current) return;
+    if (response) {
+      setMessages(prev => {
         const last = prev[prev.length - 1];
         if (last?.role === 'assistant') {
-          return [
-            ...prev.slice(0, -1),
-            { role: 'assistant', content: response, timestamp: new Date() },
-          ];
+          return [...prev.slice(0, -1), { ...last, content: stripMarkdown(response) }];
         }
         return prev;
       });
-      streamingMsgRef.current = false;
     }
-  }, [isLoading, response]);
+  }, [response]);
 
-  const handleSend = async () => {
+  // Finalize message once loading completes
+  useEffect(() => {
+    if (!isLoading && streamingMsgRef.current) {
+      streamingMsgRef.current = false;
+      setMessages(prev => {
+        const last = prev[prev.length - 1];
+        if (last?.role === 'assistant' && !last.content.trim()) {
+          return [...prev.slice(0, -1), { ...last, content: 'I could not generate a response. Please try again.' }];
+        }
+        return prev;
+      });
+    }
+  }, [isLoading]);
+
+  // Handle offline / error fallback
+  useEffect(() => {
+    if (!error) return;
+    streamingMsgRef.current = false;
+    setMessages(prev => {
+      const last = prev[prev.length - 1];
+      if (last?.role === 'assistant' && !last.content.trim()) {
+        return [...prev.slice(0, -1), {
+          ...last,
+          content: "I'm currently in offline mode. Abhinash is a Full Stack Developer & AI/ML engineer. Check the portfolio sections or use the Contact form to reach him directly!",
+        }];
+      }
+      return prev;
+    });
+  }, [error]);
+
+  const handleSend = () => {
     if (!input.trim() || isLoading) return;
-    const userMessage = input.trim();
+    const userText = input.trim();
     setInput('');
 
-    const newUserMsg: Message = { role: 'user', content: userMessage, timestamp: new Date() };
-    setMessages((prev) => [...prev, newUserMsg]);
+    setMessages(prev => [...prev, { role: 'user', content: userText, timestamp: new Date() }]);
 
-    // Add placeholder for streaming response
+    // Placeholder for streaming response
     streamingMsgRef.current = true;
-    setMessages((prev) => [
-      ...prev,
-      { role: 'assistant', content: '', timestamp: new Date() },
-    ]);
+    setMessages(prev => [...prev, { role: 'assistant', content: '', timestamp: new Date() }]);
 
     const apiMessages = [
       { role: 'system' as const, content: SYSTEM_PROMPT },
-      ...messages.slice(-8).map((m) => ({ role: m.role as 'user' | 'assistant', content: m.content })),
-      { role: 'user' as const, content: userMessage },
+      ...messages.slice(-8).map(m => ({ role: m.role as 'user' | 'assistant', content: m.content })),
+      { role: 'user' as const, content: userText },
     ];
 
     sendMessage(apiMessages, { max_tokens: 250 });
@@ -158,98 +139,113 @@ export default function ChatBot() {
 
   return (
     <>
-      {/* Floating button */}
+      {/* ── Floating Trigger Button ── */}
       <button
+        id="chatbot-toggle"
         onClick={() => (isOpen ? setIsOpen(false) : handleOpen())}
-        className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full flex items-center justify-center transition-transform duration-300 hover:scale-105"
+        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 group"
         style={{
-          background: 'rgba(20, 20, 20, 0.8)',
-          border: '1px solid rgba(255, 255, 255, 0.15)',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4), 0 0 20px rgba(255,255,255,0.05)',
-          backdropFilter: 'blur(20px)',
+          background: 'rgba(15, 15, 15, 0.85)',
+          border: '1px solid rgba(255,255,255,0.15)',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05) inset',
+          backdropFilter: 'blur(24px)',
         }}
         aria-label="Toggle AI Assistant"
       >
         {isOpen ? (
-          <XMarkIcon className="w-6 h-6 text-white" />
+          <XMarkIcon className="w-5 h-5 text-white/80" />
         ) : (
-          <SparklesIcon className="w-6 h-6 text-white" />
+          <SparklesIcon className="w-5 h-5 text-white/90 group-hover:text-white transition-colors" />
         )}
         {!isOpen && (
-          <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-emerald-400 rounded-full animate-pulse border-2 border-dark-900" />
+          <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-emerald-400 rounded-full border-2 border-black animate-pulse" />
         )}
       </button>
 
-      {/* Chat window */}
+      {/* ── Chat Window ── */}
       <div
-        className={`fixed bottom-24 right-6 z-40 w-[350px] md:w-[400px] rounded-[24px] overflow-hidden transition-all duration-400 ease-out origin-bottom-right ${
-          isOpen ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-8 pointer-events-none'
-        }`}
+        className={`fixed bottom-24 right-6 z-50 w-[360px] md:w-[400px] rounded-[20px] overflow-hidden
+          transition-all duration-300 ease-out origin-bottom-right
+          ${isOpen ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto' : 'opacity-0 scale-95 translate-y-6 pointer-events-none'}`}
         style={{
-          background: 'rgba(10, 10, 10, 0.85)',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
-          boxShadow: '0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05) inset',
-          backdropFilter: 'blur(30px) saturate(150%)',
+          background: 'rgba(8, 8, 8, 0.92)',
+          border: '1px solid rgba(255,255,255,0.09)',
+          boxShadow: '0 24px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.04) inset',
+          backdropFilter: 'blur(40px) saturate(180%)',
         }}
       >
         {/* Header */}
-        <div
-          className="px-5 py-4 flex items-center gap-3 backdrop-blur-md"
-          style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
-        >
+        <div className="px-5 py-3.5 flex items-center gap-3" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
           <div
-            className="w-10 h-10 rounded-[14px] flex items-center justify-center border border-white/10"
-            style={{ background: 'rgba(255,255,255,0.05)' }}
+            className="w-9 h-9 rounded-xl flex items-center justify-center"
+            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
           >
-            <SparklesIcon className="w-5 h-5 text-white" />
+            <SparklesIcon className="w-4 h-4 text-white/80" />
           </div>
-          <div className="flex-1">
-            <p className="text-white text-[15px] font-medium tracking-wide">AI Assistant</p>
-            <div className="flex items-center gap-1.5 mt-0.5">
-              <div className={`w-1.5 h-1.5 rounded-full ${isLoading ? 'bg-white/50 animate-pulse' : 'bg-emerald-400'}`} />
-              <p className="text-white/40 text-[11px] font-mono tracking-widest uppercase">{isLoading ? 'Processing' : 'Connected'}</p>
+          <div className="flex-1 min-w-0">
+            <p className="text-white text-sm font-semibold tracking-wide leading-none">AI Assistant</p>
+            <div className="flex items-center gap-1.5 mt-1">
+              <span className={`w-1.5 h-1.5 rounded-full ${isLoading ? 'bg-amber-400 animate-pulse' : 'bg-emerald-400'}`} />
+              <p className="text-white/35 text-[10px] font-mono uppercase tracking-widest">
+                {isLoading ? 'Generating…' : 'Groq · Gemini'}
+              </p>
             </div>
+          </div>
+          <div className="flex items-center gap-1">
+            <BoltIcon className="w-3 h-3 text-amber-400/70" />
+            <span className="text-[10px] font-mono text-amber-400/70">Ultra-fast</span>
           </div>
           <button
             onClick={() => setIsOpen(false)}
-            className="p-1.5 rounded-lg hover:bg-white/10 transition-colors"
+            className="ml-1 p-1.5 rounded-lg hover:bg-white/8 transition-colors"
           >
-            <XMarkIcon className="w-4 h-4 text-slate-400" />
+            <XMarkIcon className="w-4 h-4 text-white/40" />
           </button>
         </div>
 
         {/* Messages */}
-        <div className="h-[340px] overflow-y-auto p-5 space-y-4 smooth-scroll">
+        <div className="h-[320px] overflow-y-auto p-4 space-y-3 scroll-smooth">
           {messages.map((msg, i) => (
-            <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in`}>
+            <div
+              key={i}
+              className={`flex items-end gap-2 animate-fade-in ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+            >
               {msg.role === 'assistant' && (
                 <div
-                  className="w-7 h-7 rounded-[10px] flex items-center justify-center mr-3 mt-1 flex-shrink-0 border border-white/10"
-                  style={{ background: 'rgba(255,255,255,0.03)' }}
+                  className="w-6 h-6 rounded-[8px] flex items-center justify-center flex-shrink-0 mb-0.5"
+                  style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}
                 >
-                  <SparklesIcon className="w-3.5 h-3.5 text-white/80" />
+                  <SparklesIcon className="w-3 h-3 text-white/60" />
                 </div>
               )}
               <div
-                className={`max-w-[82%] rounded-[18px] px-4 py-3 text-[14px] leading-relaxed font-sans ${
-                  msg.role === 'user' ? 'text-dark-900 rounded-br-[4px]' : 'text-slate-300 rounded-bl-[4px]'
+                className={`max-w-[80%] rounded-[16px] px-3.5 py-2.5 text-[13.5px] leading-[1.55] font-sans ${
+                  msg.role === 'user'
+                    ? 'rounded-br-[4px] text-[#111] font-medium'
+                    : 'rounded-bl-[4px] text-slate-300'
                 }`}
                 style={{
-                  background:
-                    msg.role === 'user' ? '#ffffff' : 'rgba(255,255,255,0.04)',
-                  border: msg.role === 'assistant' ? '1px solid rgba(255,255,255,0.06)' : 'none',
+                  background: msg.role === 'user'
+                    ? '#ffffff'
+                    : 'rgba(255,255,255,0.045)',
+                  border: msg.role === 'assistant' ? '1px solid rgba(255,255,255,0.07)' : 'none',
                 }}
               >
                 {msg.content || (
-                  <div className="flex gap-1.5 py-1.5 items-center">
-                    {[0, 1, 2].map((j) => (
-                      <div
+                  /* Typing indicator */
+                  <span className="flex gap-1 items-center h-4">
+                    {[0, 1, 2].map(j => (
+                      <span
                         key={j}
-                        className="w-1.5 h-1.5 rounded-full bg-slate-400/80 animate-pulse"
-                        style={{ animationDelay: `${j * 0.2}s` }}
+                        className="w-1.5 h-1.5 rounded-full bg-white/40 animate-bounce"
+                        style={{ animationDelay: `${j * 0.15}s`, animationDuration: '0.8s' }}
                       />
                     ))}
-                  </div>
+                  </span>
+                )}
+                {/* Blinking cursor while streaming */}
+                {msg.role === 'assistant' && isLoading && msg.content && i === messages.length - 1 && (
+                  <span className="inline-block w-0.5 h-3.5 bg-white/50 ml-0.5 animate-blink align-middle" />
                 )}
               </div>
             </div>
@@ -257,43 +253,42 @@ export default function ChatBot() {
           <div ref={messagesEndRef} />
         </div>
 
-        <div
-          className="px-4 py-4 flex items-center gap-3"
-          style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
-        >
+        {/* Input */}
+        <div className="px-4 py-3 flex items-center gap-2.5" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
           <input
             ref={inputRef}
+            id="chatbot-input"
             type="text"
             value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
-            placeholder="Ask anything..."
+            onChange={e => setInput(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && !e.shiftKey && handleSend()}
+            placeholder="Ask anything about Abhinash…"
             disabled={isLoading}
-            className="flex-1 rounded-full px-4 py-2.5 text-sm text-white placeholder-white/30 outline-none transition-all font-sans disabled:opacity-60"
+            className="flex-1 rounded-full px-4 py-2 text-[13px] text-white/90 placeholder-white/25 outline-none transition-all font-sans disabled:opacity-50"
             style={{
-              background: 'rgba(255,255,255,0.06)',
+              background: 'rgba(255,255,255,0.05)',
               border: '1px solid rgba(255,255,255,0.1)',
             }}
           />
           <button
+            id="chatbot-send"
             onClick={handleSend}
             disabled={!input.trim() || isLoading}
-            className="w-10 h-10 rounded-full flex items-center justify-center transition-transform duration-300 hover:scale-110 disabled:opacity-40 disabled:cursor-not-allowed bg-white"
+            className="w-9 h-9 rounded-full flex items-center justify-center bg-white transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed"
           >
-            <PaperAirplaneIcon className="w-4 h-4 text-dark-900 ml-0.5" />
+            <PaperAirplaneIcon className="w-4 h-4 text-black ml-0.5" />
           </button>
         </div>
 
-        <div
-          className="px-4 pb-4 flex flex-wrap gap-2"
-        >
-          {['About Abhinash', 'View Projects', 'Skills overview', 'Contact info'].map((prompt) => (
+        {/* Quick prompts */}
+        <div className="px-4 pb-3 flex flex-wrap gap-1.5">
+          {['About Abhinash', 'Show projects', 'Tech stack', 'Contact info'].map(prompt => (
             <button
               key={prompt}
               onClick={() => { setInput(prompt); inputRef.current?.focus(); }}
               disabled={isLoading}
-              className="text-[11px] px-3 py-1.5 rounded-full font-mono text-white/50 hover:text-white transition-all duration-300 disabled:opacity-40"
-              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}
+              className="text-[11px] px-2.5 py-1 rounded-full font-mono text-white/40 hover:text-white/70 transition-all duration-200 disabled:opacity-30"
+              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}
             >
               {prompt}
             </button>

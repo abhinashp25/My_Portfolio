@@ -1,239 +1,177 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { completion } from '@rocketnew/llm-sdk';
 import OpenAI from 'openai';
 
-const API_KEYS: Record<string, string | undefined> = {
-  OPEN_AI: process.env.OPENAI_API_KEY,
-  ANTHROPIC: process.env.ANTHROPIC_API_KEY,
-  GEMINI: process.env.GEMINI_API_KEY,
-  PERPLEXITY: process.env.PERPLEXITY_API_KEY,
-  NVIDIA: process.env.NVIDIA_API_KEY,
+// ─── Provider API Keys ────────────────────────────────────────────────────────
+const GROQ_API_KEY    = process.env.GROQ_API_KEY ?? '';
+const GEMINI_API_KEY  = process.env.GEMINI_API_KEY ?? '';
+const NVIDIA_API_KEY  = process.env.NVIDIA_API_KEY ?? '';
+const OPENAI_API_KEY  = process.env.OPENAI_API_KEY ?? '';
+
+// ─── Fallback message ─────────────────────────────────────────────────────────
+const FALLBACK = `I'm in offline mode right now, but here's a quick overview:
+Abhinash Pradhan — Full Stack Developer & AI/ML Enthusiast from India.
+Skills: React, Next.js, TypeScript, Node.js, Python, TensorFlow, MongoDB.
+GitHub: github.com/abhinashp25 | Feel free to explore the portfolio sections!`;
+
+// ─── Build an OpenAI-compatible client per provider ───────────────────────────
+function buildClient(provider: string): { client: OpenAI; apiKey: string } | null {
+  switch (provider) {
+    case 'GROQ':
+      if (!GROQ_API_KEY) return null;
+      return {
+        apiKey: GROQ_API_KEY,
+        client: new OpenAI({
+          apiKey: GROQ_API_KEY,
+          baseURL: 'https://api.groq.com/openai/v1',
+          timeout: 15_000,
+          maxRetries: 0,
+        }),
+      };
+
+    case 'GEMINI':
+      if (!GEMINI_API_KEY) return null;
+      return {
+        apiKey: GEMINI_API_KEY,
+        client: new OpenAI({
+          apiKey: GEMINI_API_KEY,
+          baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai',
+          timeout: 25_000,
+          maxRetries: 0,
+        }),
+      };
+
+    case 'NVIDIA':
+      if (!NVIDIA_API_KEY) return null;
+      return {
+        apiKey: NVIDIA_API_KEY,
+        client: new OpenAI({
+          apiKey: NVIDIA_API_KEY,
+          baseURL: process.env.NVIDIA_BASE_URL ?? 'https://integrate.api.nvidia.com/v1',
+          timeout: 30_000,
+          maxRetries: 0,
+        }),
+      };
+
+    case 'OPEN_AI':
+      if (!OPENAI_API_KEY) return null;
+      return {
+        apiKey: OPENAI_API_KEY,
+        client: new OpenAI({ apiKey: OPENAI_API_KEY, timeout: 30_000, maxRetries: 0 }),
+      };
+
+    default:
+      return null;
+  }
+}
+
+// ─── SSE Helpers ──────────────────────────────────────────────────────────────
+const enc = new TextEncoder();
+const sse = (data: object) => enc.encode(`data: ${JSON.stringify(data)}\n\n`);
+
+const sseHeaders = {
+  'Content-Type': 'text/event-stream',
+  'Cache-Control': 'no-cache, no-transform',
+  'Connection': 'keep-alive',
+  'X-Accel-Buffering': 'no',
 };
 
-const NVIDIA_BASE_URL = process.env.NVIDIA_BASE_URL || 'https://integrate.api.nvidia.com/v1';
-
-const PORTFOLIO_DATA = `
-Abhinash is a Full Stack Developer & AI/ML Enthusiast from India.
-Skills: Python, TypeScript, React, Next.js, Node.js, ML.
-Contact: Connect via the 'Contact' section below or visit github.com/abhinashp25!
-`;
-
-const TIMEOUT_FALLBACK_MESSAGE = `I am currently experiencing high traffic and operating in offline mode. \n\nHere is a quick overview:\n${PORTFOLIO_DATA}`;
-
-function isTimeoutError(error: unknown) {
-  const message = error instanceof Error ? error.message : String(error);
-  return message.toLowerCase().includes('timeout');
+// ─── Build an instant fallback SSE stream ─────────────────────────────────────
+function fallbackStream(): NextResponse {
+  const stream = new ReadableStream({
+    start(ctrl) {
+      ctrl.enqueue(sse({ type: 'start' }));
+      ctrl.enqueue(sse({ type: 'chunk', chunk: { choices: [{ delta: { content: FALLBACK } }] } }));
+      ctrl.enqueue(sse({ type: 'done' }));
+      ctrl.close();
+    },
+  });
+  return new NextResponse(stream, { headers: sseHeaders });
 }
 
-function formatErrorResponse(error: unknown, provider?: string) {
-  const statusCode = (error as any)?.statusCode || (error as any)?.status || 500;
-  const providerName = (error as any)?.llmProvider || provider || 'Unknown';
-  const message = error instanceof Error ? error.message : String(error);
-
-  let userMessage = `${providerName.toUpperCase()} API error: ${statusCode}`;
-  if (message.toLowerCase().includes('timeout')) {
-    userMessage = 'Request timeout - service is temporarily slow';
+// ─── POST handler ─────────────────────────────────────────────────────────────
+export async function POST(req: NextRequest) {
+  let body: any;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
   }
 
-  return {
-    error: userMessage,
-    details: message,
-    statusCode,
+  const {
+    provider = '',
+    model = '',
+    messages = [],
+    stream = true,
+    parameters = {},
+  } = body;
+
+  const P = String(provider).toUpperCase();
+
+  if (!P || !model || !messages.length) {
+    return NextResponse.json({ error: 'Missing provider, model, or messages' }, { status: 400 });
+  }
+
+  const built = buildClient(P);
+  if (!built) {
+    return NextResponse.json(
+      { error: `Provider "${P}" is not configured or API key is missing.` },
+      { status: 400 }
+    );
+  }
+
+  const { client } = built;
+  const params = {
+    model,
+    messages,
+    max_tokens: parameters?.max_tokens ?? 350,
+    temperature: parameters?.temperature ?? 0.7,
   };
-}
 
-export async function POST(request: NextRequest) {
-  let body: any = {};
+  // ── Streaming path ────────────────────────────────────────────────────────
+  if (stream) {
+    let openaiStream: AsyncIterable<any>;
 
-  try {
-    body = await request.json();
-    const { provider, model, messages, stream = false, parameters = {} } = body;
-    const normalizedProvider = String(provider || '').toUpperCase();
-
-    if (!provider || !model || !messages?.length) {
-      return NextResponse.json(
-        { error: 'Missing required fields: provider, model, messages', details: 'Request validation failed' },
-        { status: 400 }
-      );
-    }
-
-    const apiKey = API_KEYS[normalizedProvider];
-    if (!apiKey) {
-      return NextResponse.json(
-        { error: `${normalizedProvider} API key is not configured`, details: 'The API key for this provider is missing in environment variables' },
-        { status: 400 }
-      );
-    }
-
-    if (normalizedProvider === 'NVIDIA') {
-      const client = new OpenAI({
-        apiKey,
-        baseURL: NVIDIA_BASE_URL,
-        timeout: 30000,
-        maxRetries: 0,
-      });
-
-      if (stream) {
-        let response: AsyncIterable<unknown>;
-        try {
-          response = (await client.chat.completions.create({
-            model,
-            messages,
-            stream: true,
-            ...parameters,
-          })) as unknown as AsyncIterable<unknown>;
-        } catch (error) {
-          const formatted = formatErrorResponse(error, normalizedProvider);
-          console.error('API Stream Setup Error:', { error: formatted.error, details: formatted.details });
-
-          // Return a stream that immediately yields the fallback message
-          const encoder = new TextEncoder();
-          const fallbackStream = new ReadableStream({
-            start(controller) {
-              controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'start' })}\n\n`));
-              controller.enqueue(
-                encoder.encode(
-                  `data: ${JSON.stringify({
-                    type: 'chunk',
-                    chunk: { choices: [{ delta: { content: TIMEOUT_FALLBACK_MESSAGE } }] },
-                  })}\n\n`
-                )
-              );
-              controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'done' })}\n\n`));
-              controller.close();
-            },
-          });
-          return new NextResponse(fallbackStream, {
-            headers: {
-              'Content-Type': 'text/event-stream',
-              'Cache-Control': 'no-cache',
-              Connection: 'keep-alive',
-            },
-          });
-        }
-
-        const encoder = new TextEncoder();
-        const readable = new ReadableStream({
-          async start(controller) {
-            try {
-              controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'start' })}\n\n`));
-
-              for await (const chunk of response) {
-                controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'chunk', chunk })}\n\n`));
-              }
-
-              controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'done' })}\n\n`));
-              controller.close();
-            } catch (error) {
-              const formatted = formatErrorResponse(error, normalizedProvider);
-              console.error('API Route Chunking Error:', { error: formatted.error, details: formatted.details });
-
-              controller.enqueue(
-                encoder.encode(
-                  `data: ${JSON.stringify({
-                    type: 'chunk',
-                    chunk: { choices: [{ delta: { content: TIMEOUT_FALLBACK_MESSAGE } }] },
-                  })}\n\n`
-                )
-              );
-              controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'done' })}\n\n`));
-              controller.close();
-            }
-          },
-        });
-
-        return new NextResponse(readable, {
-          headers: {
-            'Content-Type': 'text/event-stream',
-            'Cache-Control': 'no-cache',
-            Connection: 'keep-alive',
-          },
-        });
-      }
-
-      try {
-        const response = await client.chat.completions.create({
-          model,
-          messages,
-          stream: false,
-          ...parameters,
-        });
-
-        return NextResponse.json(response);
-      } catch (error) {
-        const formatted = formatErrorResponse(error, normalizedProvider);
-        console.error('API Route Error:', { error: formatted.error, details: formatted.details });
-
-        return NextResponse.json({
-          id: 'fallback-timeout',
-          object: 'chat.completion',
-          created: Math.floor(Date.now() / 1000),
-          model,
-          choices: [
-            {
-              index: 0,
-              message: { role: 'assistant', content: TIMEOUT_FALLBACK_MESSAGE },
-              finish_reason: 'stop',
-            },
-          ],
-        });
-      }
-    }
-
-    if (stream) {
-      const response = await completion({
-        model,
-        messages,
+    try {
+      openaiStream = (await client.chat.completions.create({
+        ...params,
         stream: true,
-        api_key: apiKey,
-        ...parameters,
-      });
-
-      const encoder = new TextEncoder();
-      const readable = new ReadableStream({
-        async start(controller) {
-          try {
-            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'start' })}\n\n`));
-
-            for await (const chunk of response as unknown as AsyncIterable<unknown>) {
-              controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'chunk', chunk })}\n\n`));
-            }
-
-            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'done' })}\n\n`));
-            controller.close();
-          } catch (error) {
-            const formatted = formatErrorResponse(error, normalizedProvider);
-            console.error('API Route Error:', { error: formatted.error, details: formatted.details });
-            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'error', error: formatted.error, details: formatted.details })}\n\n`));
-            controller.close();
-          }
-        },
-      });
-
-      return new NextResponse(readable, {
-        headers: {
-          'Content-Type': 'text/event-stream',
-          'Cache-Control': 'no-cache',
-          Connection: 'keep-alive',
-        },
-      });
+      })) as AsyncIterable<any>;
+    } catch (err: any) {
+      console.error(`[${P}] Stream setup failed:`, err?.message ?? err);
+      return fallbackStream();
     }
 
-    const response = await completion({
-      model,
-      messages,
-      stream: false,
-      api_key: apiKey,
-      ...parameters,
+    const readable = new ReadableStream({
+      async start(ctrl) {
+        ctrl.enqueue(sse({ type: 'start' }));
+        try {
+          for await (const chunk of openaiStream) {
+            ctrl.enqueue(sse({ type: 'chunk', chunk }));
+          }
+        } catch (err: any) {
+          console.error(`[${P}] Mid-stream error:`, err?.message ?? err);
+        }
+        ctrl.enqueue(sse({ type: 'done' }));
+        ctrl.close();
+      },
     });
 
-    return NextResponse.json(response);
-  } catch (error) {
-    const formatted = formatErrorResponse(error, body?.provider);
-    console.error('API Route Error:', { error: formatted.error, details: formatted.details });
+    return new NextResponse(readable, { headers: sseHeaders });
+  }
+
+  // ── Non-streaming path ────────────────────────────────────────────────────
+  try {
+    const result = await client.chat.completions.create({ ...params, stream: false });
+    return NextResponse.json(result);
+  } catch (err: any) {
+    console.error(`[${P}] Non-stream error:`, err?.message ?? err);
     return NextResponse.json(
-      { error: formatted.error, details: formatted.details },
-      { status: formatted.statusCode }
+      {
+        choices: [{
+          message: { role: 'assistant', content: FALLBACK },
+          finish_reason: 'stop',
+        }],
+      }
     );
   }
 }

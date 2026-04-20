@@ -3,7 +3,9 @@
 import { useState, useCallback, useRef } from 'react';
 import { getChatCompletion, getStreamingChatCompletion } from '@/lib/ai/chatCompletion';
 
-export function useChat(provider: string, modelOrModels: string | string[], streaming: boolean = true) {
+export type ChatConfig = { provider: string; model: string };
+
+export function useChat(configs: ChatConfig[], streaming: boolean = true) {
   const [response, setResponse] = useState('');
   const [fullResponse, setFullResponse] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -18,7 +20,6 @@ export function useChat(provider: string, modelOrModels: string | string[], stre
       setIsLoading(true);
       setError(null);
 
-      const models = Array.isArray(modelOrModels) ? modelOrModels : [modelOrModels];
       const requestId = Symbol('request');
       activeRequestRef.current = requestId;
 
@@ -28,7 +29,7 @@ export function useChat(provider: string, modelOrModels: string | string[], stre
 
       try {
         if (streaming) {
-          const runModel = async (model: string) => {
+          const runModel = async ({ provider, model }: ChatConfig) => {
             let hasVisibleContent = false;
             
             await getStreamingChatCompletion(
@@ -53,7 +54,7 @@ export function useChat(provider: string, modelOrModels: string | string[], stre
               () => {
                 if (activeRequestRef.current !== requestId) return;
                 completedCount++;
-                if (winnerFound || completedCount === models.length) {
+                if (winnerFound || completedCount === configs.length) {
                   setResponse((prev) => (prev.trim() ? prev : 'I could not generate a response this time. Please try again.'));
                   setIsLoading(false);
                   activeRequestRef.current = null;
@@ -63,7 +64,7 @@ export function useChat(provider: string, modelOrModels: string | string[], stre
                 if (activeRequestRef.current !== requestId) return;
                 errors.push(err);
                 completedCount++;
-                if (completedCount === models.length && !winnerFound) {
+                if (completedCount === configs.length && !winnerFound) {
                   setError(errors[0] || new Error('All models failed.'));
                   setIsLoading(false);
                   activeRequestRef.current = null;
@@ -73,14 +74,14 @@ export function useChat(provider: string, modelOrModels: string | string[], stre
             );
           };
 
-          // Race all models
-          models.forEach(runModel);
+          // Race all provider/model combinations
+          configs.forEach(runModel);
 
         } else {
           try {
             // Race standard JSON completions
             const result = await Promise.any(
-              models.map(m => getChatCompletion(provider, m, messages, parameters))
+              configs.map(c => getChatCompletion(c.provider, c.model, messages, parameters))
             );
             if (activeRequestRef.current === requestId) {
               setFullResponse(result);
@@ -90,7 +91,7 @@ export function useChat(provider: string, modelOrModels: string | string[], stre
             }
           } catch (aggErr) {
             if (activeRequestRef.current === requestId) {
-              setError(new Error('All models failed to respond.'));
+              setError(new Error('All APIs failed to respond.'));
               setIsLoading(false);
               activeRequestRef.current = null;
             }
@@ -104,7 +105,7 @@ export function useChat(provider: string, modelOrModels: string | string[], stre
         }
       }
     },
-    [provider, modelOrModels, streaming]
+    [configs, streaming]
   );
 
   return { response, fullResponse, isLoading, error, sendMessage };
