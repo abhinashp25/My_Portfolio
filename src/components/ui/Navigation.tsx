@@ -128,6 +128,7 @@ export default function Navigation() {
             animate={{
               left: pill.left,
               width: pill.width,
+              opacity: activeSection ? 1 : 0,
             }}
             transition={{
               type: 'spring',
