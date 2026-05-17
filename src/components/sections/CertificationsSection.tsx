@@ -138,7 +138,7 @@ const certs = [
     credentialUrl: '/Data Analytics Job Simulation certificate.pdf',
     totalCertified: null,
     image: '/certificates/Data Analytics Job Simulation certificate.png',
-    issuerLogo: '/logos/deloitte logo.png',
+    issuerLogo: '/logos/deloitte logo copy.png',
   },
   {
     title: 'AI / ML Internship Certification',
@@ -182,7 +182,7 @@ const certs = [
     credentialUrl: '#',
     totalCertified: null,
     image: '/certificates/cyber job simulation.png',
-    issuerLogo: '/logos/deloitte logo.png',
+    issuerLogo: '/logos/deloitte logo copy.png',
   },
   {
     title: 'Technology Job Simulation',
@@ -204,7 +204,7 @@ const certs = [
     credentialUrl: '#',
     totalCertified: null,
     image: '/certificates/Technology job simulation.png',
-    issuerLogo: '/logos/deloitte logo.png',
+    issuerLogo: '/logos/deloitte logo copy.png',
   },
 ];
 
