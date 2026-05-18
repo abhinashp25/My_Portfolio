@@ -238,13 +238,13 @@ export default function CertificationsSection() {
               Credentials
             </span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-white">
+          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white">
             Certifications &{' '}
             <span style={{ color: '#06b6d4', textShadow: '0 0 20px rgba(6,182,212,0.5)' }}>
               Achievements
             </span>
           </h2>
-          <p className="text-slate-400 mt-4 max-w-xl text-lg">
+          <p className="text-slate-600 dark:text-slate-400 mt-4 max-w-xl text-lg">
             NPTEL certifications from IIT Kharagpur and professional internship credentials.
           </p>
         </motion.div>
@@ -261,10 +261,10 @@ export default function CertificationsSection() {
             >
               <motion.div
                 whileHover={{ y: -6, scale: 1.01 }}
-                className="group relative h-full rounded-2xl overflow-hidden flex flex-col backdrop-blur-xl bg-white/5 border border-white/10 shadow-[inset_0_0_20px_rgba(255,255,255,0.02),0_8px_32px_0_rgba(0,0,0,0.3)] transition-all duration-300"
+                className="group relative h-full rounded-2xl overflow-hidden flex flex-col backdrop-blur-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 shadow-[inset_0_0_20px_rgba(255,255,255,0.02),0_8px_32px_0_rgba(0,0,0,0.3)] transition-all duration-300"
               >
                 {/* Certificate Image Top Half */}
-                <div className="relative w-full h-48 sm:h-56 overflow-hidden bg-white/5 border-b border-white/10 shrink-0">
+                <div className="relative w-full h-48 sm:h-56 overflow-hidden bg-black/5 dark:bg-white/5 border-b border-black/10 dark:border-white/10 shrink-0">
                   {cert.image ? (
                     <img
                       src={cert.image}
@@ -381,7 +381,7 @@ export default function CertificationsSection() {
                       >
                         <AcademicCapIcon className="w-3.5 h-3.5" style={{ color: cert.color }} />
                       </div>
-                      <h3 className="text-sm font-bold text-white leading-snug">{cert.title}</h3>
+                      <h3 className="text-sm font-bold text-slate-900 dark:text-white leading-snug">{cert.title}</h3>
                     </div>
                   </div>
 

@@ -27,7 +27,7 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="relative min-h-screen bg-dark-900 overflow-x-hidden">
+    <main className="relative min-h-screen bg-slate-50 dark:bg-dark-900 overflow-x-hidden">
       <LoadingScreen />
       <Navigation />
 

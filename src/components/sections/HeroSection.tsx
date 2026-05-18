@@ -35,7 +35,7 @@ export default function HeroSection() {
   const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
 
   return (
-    <section ref={heroRef} className="relative min-h-screen flex items-center justify-center overflow-hidden bg-dark-900">
+    <section ref={heroRef} className="relative min-h-screen flex items-center justify-center overflow-hidden bg-slate-50 dark:bg-dark-900">
       
       {/* High-end ambient background glow following cursor gently */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
@@ -64,12 +64,12 @@ export default function HeroSection() {
         >
           {/* Subtle Availability Badge */}
           <motion.div variants={item}>
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 backdrop-blur-md">
               <span className="relative flex h-1.5 w-1.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-40" />
                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-white opacity-70" />
               </span>
-              <span className="text-[11px] font-medium text-white/70 tracking-wide uppercase">
+              <span className="text-[11px] font-medium text-slate-900 dark:text-white/70 tracking-wide uppercase">
                 Available for full-time roles
               </span>
             </div>
@@ -77,16 +77,16 @@ export default function HeroSection() {
 
           {/* Massive, clean headline */}
           <motion.div variants={item} className="space-y-4">
-            <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-bold text-white leading-[1.05] tracking-tight">
+            <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-bold text-slate-900 dark:text-white leading-[1.05] tracking-tight">
               Abhinash Pradhan.
             </h1>
-            <h2 className="text-3xl md:text-5xl lg:text-[4rem] font-medium text-white/40 leading-[1.1] tracking-tight">
+            <h2 className="text-3xl md:text-5xl lg:text-[4rem] font-medium text-slate-900 dark:text-white/40 leading-[1.1] tracking-tight">
               Crafting scalable systems & AI solutions.
             </h2>
           </motion.div>
 
           {/* Refined Bio */}
-          <motion.p variants={item} className="text-white/50 text-base sm:text-lg md:text-xl leading-relaxed max-w-[500px] font-light mx-auto lg:mx-0">
+          <motion.p variants={item} className="text-slate-900 dark:text-white/50 text-base sm:text-lg md:text-xl leading-relaxed max-w-[500px] font-light mx-auto lg:mx-0">
             I engineer production-grade applications that merge modern full-stack development with applied machine learning to solve complex problems and deliver exceptional user experiences.
           </motion.p>
 
@@ -94,7 +94,7 @@ export default function HeroSection() {
           <motion.div variants={item} className="pt-4 flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
             <button
               onClick={() => scrollTo('projects')}
-              className="group relative px-6 py-3 rounded-full bg-white text-dark-900 font-medium text-sm overflow-hidden transition-transform hover:scale-[1.02] active:scale-[0.98] w-full sm:w-auto flex justify-center"
+              className="group relative px-6 py-3 rounded-full bg-dark-900 dark:bg-white text-white dark:text-dark-900 font-medium text-sm overflow-hidden transition-transform hover:scale-[1.02] active:scale-[0.98] w-full sm:w-auto flex justify-center"
             >
               <span className="relative z-10 flex items-center gap-2">
                 Explore Work
@@ -105,9 +105,9 @@ export default function HeroSection() {
             <a
               href="/resume.pdf"
               download="Abhinash_Pradhan_Resume.pdf"
-              className="group relative px-6 py-3 rounded-full border border-white/20 bg-transparent text-white font-medium text-sm transition-all hover:bg-white/10 hover:border-white/40 active:scale-[0.98] flex items-center justify-center gap-2 w-full sm:w-auto"
+              className="group relative px-6 py-3 rounded-full border border-black/20 dark:border-white/20 bg-transparent text-slate-900 dark:text-white font-medium text-sm transition-all hover:bg-black/10 dark:bg-white/10 hover:border-white/40 active:scale-[0.98] flex items-center justify-center gap-2 w-full sm:w-auto"
             >
-              <svg className="w-4 h-4 text-white/70 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <svg className="w-4 h-4 text-slate-900 dark:text-white/70 group-hover:text-slate-900 dark:text-white transition-colors" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
               </svg>
               Download Resume

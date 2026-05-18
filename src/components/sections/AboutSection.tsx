@@ -14,7 +14,7 @@ const journey = [
     subtitle: 'The Beginning',
     description: 'Dove into Python programming, mastering fundamentals, data structures, and automation. Built small projects to solidify understanding.',
     icon: AcademicCapIcon,
-    color: '#ffffff',
+    color: '#6366f1',
     tags: ['Python', 'Algorithms', 'Automation'],
     size: 'col-span-2 row-span-1',
   },
@@ -24,7 +24,7 @@ const journey = [
     subtitle: 'AI Exploration',
     description: 'Built 5+ ML models solving real‑world problems. Explored scikit‑learn, pandas, and deep learning frameworks.',
     icon: CpuChipIcon,
-    color: '#e2e8f0',
+    color: '#06b6d4',
     tags: ['ML', 'TensorFlow', 'Pandas', 'scikit-learn'],
     size: 'col-span-1 row-span-2',
   },
@@ -34,7 +34,7 @@ const journey = [
     subtitle: 'Building Products',
     description: 'Mastered React, Node.js, and Express. Built complete web applications with real‑time features.',
     icon: CodeBracketIcon,
-    color: '#cbd5e1',
+    color: '#f472b6',
     tags: ['React', 'Node.js', 'Express', 'MongoDB'],
     size: 'col-span-1 row-span-1',
   },
@@ -44,16 +44,16 @@ const journey = [
     subtitle: 'Intelligent Systems',
     description: 'Combined web development with AI/ML to build intelligent applications. AI internship at OCAC Bhubaneswar — OCR, prediction models, data analytics dashboards.',
     icon: ChartBarIcon,
-    color: '#94a3b8',
+    color: '#10b981',
     tags: ['OCR', 'Analytics', 'Streamlit', 'SQL'],
     size: 'col-span-2 row-span-1',
   },
 ];
 
 const stats = [
-  { label: 'Projects Built', value: 10, suffix: '+', color: '#ffffff' },
-  { label: 'ML Models', value: 5, suffix: '+', color: '#e2e8f0' },
-  { label: 'Technologies', value: 15, suffix: '+', color: '#cbd5e1' },
+  { label: 'Projects Built', value: 10, suffix: '+', color: '#6366f1' },
+  { label: 'ML Models', value: 5, suffix: '+', color: '#06b6d4' },
+  { label: 'Technologies', value: 15, suffix: '+', color: '#f472b6' },
 ];
 
 function CountUp({ to, suffix }: { to: number; suffix: string }) {
@@ -100,7 +100,7 @@ export default function AboutSection() {
             <div className="h-px flex-1 max-w-12 bg-gradient-to-r from-transparent to-brand-500" />
             <span className="text-brand-400 font-mono text-sm tracking-widest uppercase">About Me</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-white">
+          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white">
             Developer{' '}
             <span className="gradient-text">Journey</span>
           </h2>
@@ -118,19 +118,19 @@ export default function AboutSection() {
             <SparklesIcon className="w-5 h-5 text-brand-400" />
             <span className="text-brand-400 font-mono text-xs tracking-widest uppercase">Who I Am</span>
           </div>
-          <div className="space-y-4 text-slate-300 leading-relaxed">
+          <div className="space-y-4 text-slate-700 dark:text-slate-300 leading-relaxed">
             <p>
-              I am a <span className="text-white font-medium">full stack engineer</span> focused on building
+              I am a <span className="text-slate-900 dark:text-white font-medium">full stack engineer</span> focused on building
               reliable products from idea to deployment, with hands-on ownership across frontend, backend, and data workflows.
             </p>
             <p>
-              My core strength is combining <span className="text-white font-medium">application engineering</span>{' '}
-              with <span className="text-white font-medium">applied machine learning</span> to solve practical
+              My core strength is combining <span className="text-slate-900 dark:text-white font-medium">application engineering</span>{' '}
+              with <span className="text-slate-900 dark:text-white font-medium">applied machine learning</span> to solve practical
               business problems with measurable outcomes.
             </p>
             <p>
-              I currently work with <span className="text-white font-medium">React/Next.js</span>,{' '}
-              <span className="text-white font-medium">Node.js</span>, and Python ML tooling, and I prioritize
+              I currently work with <span className="text-slate-900 dark:text-white font-medium">React/Next.js</span>,{' '}
+              <span className="text-slate-900 dark:text-white font-medium">Node.js</span>, and Python ML tooling, and I prioritize
               clean architecture, maintainable code, and fast iteration.
             </p>
           </div>
@@ -176,9 +176,9 @@ export default function AboutSection() {
                     <p className="text-xs font-mono uppercase tracking-widest mb-1" style={{ color: item.color }}>
                       {item.subtitle}
                     </p>
-                    <h3 className="text-lg font-bold text-white mb-2">{item.title}</h3>
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">{item.title}</h3>
                     <div className={`overflow-hidden transition-all duration-500 ${isExpanded ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'}`}>
-                      <p className="text-slate-400 text-sm mb-3">{item.description}</p>
+                      <p className="text-slate-600 dark:text-slate-400 text-sm mb-3">{item.description}</p>
                       <div className="flex flex-wrap gap-1">
                         {item.tags.map((tag) => (
                           <span key={tag} className="text-xs px-2 py-0.5 rounded-full font-mono"
@@ -209,7 +209,7 @@ export default function AboutSection() {
             <div className="space-y-3">
               {stats.map((stat) => (
                 <div key={stat.label} className="flex items-center justify-between">
-                  <span className="text-slate-400 text-sm">{stat.label}</span>
+                  <span className="text-slate-600 dark:text-slate-400 text-sm">{stat.label}</span>
                   <span className="font-bold text-lg" style={{ color: stat.color }}>
                     <CountUp to={stat.value} suffix={stat.suffix} />
                   </span>

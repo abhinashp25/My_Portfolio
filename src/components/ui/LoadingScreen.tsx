@@ -27,7 +27,7 @@ export default function LoadingScreen() {
 
   return (
     <div
-      className={`fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-dark-900 transition-opacity duration-700 ${
+      className={`fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-slate-50 dark:bg-dark-900 transition-opacity duration-700 ${
         fadeOut ? 'opacity-0' : 'opacity-100'
       }`}
     >
@@ -47,7 +47,7 @@ export default function LoadingScreen() {
 
         {/* Name */}
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-white font-jakarta tracking-wide">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white font-jakarta tracking-wide">
             Abhinash Pradhan
           </h1>
           <p className="text-cyber-400 text-sm font-mono mt-1 tracking-widest uppercase">
@@ -57,7 +57,7 @@ export default function LoadingScreen() {
 
         {/* Progress bar */}
         <div className="w-64">
-          <div className="h-1 bg-dark-700 rounded-full overflow-hidden">
+          <div className="h-1 bg-slate-100 dark:bg-dark-700 rounded-full overflow-hidden">
             <div
               className="h-full bg-gradient-to-r from-brand-500 via-cyber-500 to-neon-500 rounded-full transition-all duration-200"
               style={{ width: `${Math.min(progress, 100)}%` }}

@@ -43,12 +43,12 @@ export default function GithubHeatmap() {
 
   const getIntensityColor = (intensity: number) => {
     switch (intensity) {
-      case 0: return 'bg-white/5 border-white/5';
+      case 0: return 'bg-black/5 dark:bg-white/5 border-white/5';
       case 1: return 'bg-emerald-500/20 border-emerald-500/30';
       case 2: return 'bg-emerald-400/40 border-emerald-400/50';
       case 3: return 'bg-emerald-400/60 border-emerald-400/70';
       case 4: return 'bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.6)] border-emerald-300';
-      default: return 'bg-white/5 border-white/5';
+      default: return 'bg-black/5 dark:bg-white/5 border-white/5';
     }
   };
 
@@ -58,16 +58,16 @@ export default function GithubHeatmap() {
   const totalContributions = contributions.reduce((acc, curr) => acc + curr.count, 0);
 
   return (
-    <div className="w-full max-w-4xl mx-auto p-6 rounded-2xl bg-[#0a0a0a]/80 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4)] relative">
+    <div className="w-full max-w-4xl mx-auto p-6 rounded-2xl bg-white/90 dark:bg-[#0a0a0a]/80 backdrop-blur-xl border border-black/10 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] relative">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
         <div>
-          <h3 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+          <h3 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
             <svg viewBox="0 0 24 24" className="w-5 h-5 text-emerald-400" fill="currentColor">
               <path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.699-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.379.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.161 22 16.416 22 12c0-5.523-4.477-10-10-10z" />
             </svg>
             Activity Heatmap
           </h3>
-          <p className="text-sm text-slate-400 font-mono mt-1">
+          <p className="text-sm text-slate-600 dark:text-slate-400 font-mono mt-1">
             {totalContributions.toLocaleString()} contributions in the last year
           </p>
         </div>
@@ -126,14 +126,14 @@ export default function GithubHeatmap() {
             initial={{ opacity: 0, y: 10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 5, scale: 0.95 }}
-            className="absolute top-6 right-6 pointer-events-none z-50 flex items-center gap-3 px-4 py-2.5 rounded-lg border border-white/10 bg-dark-800/90 backdrop-blur-xl shadow-2xl"
+            className="absolute top-6 right-6 pointer-events-none z-50 flex items-center gap-3 px-4 py-2.5 rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-dark-800/90 backdrop-blur-xl shadow-2xl"
           >
             <div className={`w-3 h-3 rounded-full ${getIntensityColor(hoveredDay.intensity)} shadow-glow`} />
             <div>
-              <p className="text-white text-sm font-semibold">
+              <p className="text-slate-900 dark:text-white text-sm font-semibold">
                 {hoveredDay.count} contributions
               </p>
-              <p className="text-slate-400 text-xs font-mono">
+              <p className="text-slate-600 dark:text-slate-400 text-xs font-mono">
                 {new Date(hoveredDay.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}
               </p>
             </div>

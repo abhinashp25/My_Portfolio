@@ -71,8 +71,8 @@ export default function ContactSection() {
           htmlFor={id}
           className={`absolute left-4 transition-all duration-300 pointer-events-none z-10 ${
             isFocused || hasValue
-              ? '-top-2.5 text-[10px] sm:text-xs font-semibold tracking-wider uppercase text-white/70 px-2 py-0.5 rounded backdrop-blur-md bg-dark-900/60 border border-white/5'
-              : 'top-4 text-sm text-white/40'
+              ? '-top-2.5 text-[10px] sm:text-xs font-semibold tracking-wider uppercase text-slate-900 dark:text-white/70 px-2 py-0.5 rounded backdrop-blur-md bg-slate-50 dark:bg-dark-900/60 border border-white/5'
+              : 'top-4 text-sm text-slate-900 dark:text-white/40'
           }`}
         >
           {label}
@@ -86,8 +86,8 @@ export default function ContactSection() {
             onChange={(e) => setForm({ ...form, [id]: e.target.value })}
             onFocus={() => setFocused(id)}
             onBlur={() => setFocused(null)}
-            className={`w-full bg-white/[0.02] backdrop-blur-xl rounded-2xl px-4 py-4 text-white text-sm outline-none transition-all duration-300 resize-none
-              ${isFocused ? 'border-white/30 shadow-[0_0_30px_rgba(255,255,255,0.05)]' : 'border-white/10 hover:border-white/20'} 
+            className={`w-full bg-slate-100/80 dark:bg-white/[0.02] backdrop-blur-xl rounded-2xl px-4 py-4 text-slate-900 dark:text-white text-sm outline-none transition-all duration-300 resize-none
+              ${isFocused ? 'border-indigo-400/60 shadow-[0_0_20px_rgba(99,102,241,0.1)]' : 'border-black/10 dark:border-white/10 hover:border-black/20 dark:border-white/20'} 
               ${error ? 'border-red-500/50' : 'border'}
             `}
           />
@@ -99,8 +99,8 @@ export default function ContactSection() {
             onChange={(e) => setForm({ ...form, [id]: e.target.value })}
             onFocus={() => setFocused(id)}
             onBlur={() => setFocused(null)}
-            className={`w-full bg-white/[0.02] backdrop-blur-xl rounded-2xl px-4 py-4 text-white text-sm outline-none transition-all duration-300
-              ${isFocused ? 'border-white/30 shadow-[0_0_30px_rgba(255,255,255,0.05)]' : 'border-white/10 hover:border-white/20'}
+            className={`w-full bg-slate-100/80 dark:bg-white/[0.02] backdrop-blur-xl rounded-2xl px-4 py-4 text-slate-900 dark:text-white text-sm outline-none transition-all duration-300
+              ${isFocused ? 'border-indigo-400/60 shadow-[0_0_20px_rgba(99,102,241,0.1)]' : 'border-black/10 dark:border-white/10 hover:border-black/20 dark:border-white/20'}
               ${error ? 'border-red-500/50' : 'border'}
             `}
           />
@@ -128,12 +128,12 @@ export default function ContactSection() {
           transition={{ duration: 0.8 }}
           className="text-center max-w-2xl mx-auto mb-20"
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 backdrop-blur-md mb-6">
             <span className="w-1.5 h-1.5 rounded-full bg-white opacity-70" />
-            <span className="text-[11px] font-medium text-white/70 tracking-widest uppercase">Contact</span>
+            <span className="text-[11px] font-medium text-slate-900 dark:text-white/70 tracking-widest uppercase">Contact</span>
           </div>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-tight">
-            Let's build something <span className="text-transparent bg-clip-text bg-gradient-to-r from-white/40 to-white">together.</span>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 dark:text-white tracking-tight leading-tight">
+            Let's build something <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500 dark:from-indigo-400 dark:to-purple-400">together.</span>
           </h2>
         </motion.div>
 
@@ -147,7 +147,7 @@ export default function ContactSection() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="lg:col-span-3"
           >
-            <div className="relative rounded-[2.5rem] p-6 sm:p-10 overflow-hidden bg-white/[0.01] border border-white/10 backdrop-blur-[40px] shadow-[0_30px_80px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.1)]">
+            <div className="relative rounded-[2.5rem] p-6 sm:p-10 overflow-hidden bg-white/80 dark:bg-white/[0.01] border border-black/10 dark:border-white/10 backdrop-blur-[40px] shadow-[0_8px_32px_rgba(0,0,0,0.08)] dark:shadow-[0_30px_80px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.1)]">
               {/* Internal Glass Sheen */}
               <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-50" />
               
@@ -160,13 +160,13 @@ export default function ContactSection() {
                   <div className="w-20 h-20 rounded-full flex items-center justify-center mb-6 bg-gradient-to-tr from-emerald-500/20 to-teal-500/20 border border-emerald-500/30 shadow-[0_0_40px_rgba(16,185,129,0.2)]">
                     <CheckCircleIcon className="w-10 h-10 text-emerald-400" />
                   </div>
-                  <h3 className="text-3xl font-bold text-white mb-3">Message Sent</h3>
-                  <p className="text-white/50 text-base max-w-sm">
+                  <h3 className="text-3xl font-bold text-slate-900 dark:text-white mb-3">Message Sent</h3>
+                  <p className="text-slate-900 dark:text-white/50 text-base max-w-sm">
                     Thank you for reaching out. I'll get back to you as soon as possible.
                   </p>
                   <button
                     onClick={() => setSubmitted(false)}
-                    className="mt-8 px-6 py-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-sm font-medium text-white transition-all duration-300"
+                    className="mt-8 px-6 py-3 rounded-full bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:bg-white/10 border border-black/10 dark:border-white/10 text-sm font-medium text-slate-900 dark:text-white transition-all duration-300"
                   >
                     Send another message
                   </button>
@@ -182,10 +182,10 @@ export default function ContactSection() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="group relative w-full py-4 rounded-2xl font-semibold text-white transition-all duration-300 overflow-hidden disabled:opacity-50"
+                    className="group relative w-full py-4 rounded-2xl font-semibold text-slate-900 dark:text-white transition-all duration-300 overflow-hidden disabled:opacity-50"
                   >
                     {/* Glass Button Background */}
-                    <div className="absolute inset-0 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl transition-all duration-300 group-hover:bg-white/15" />
+                    <div className="absolute inset-0 bg-black/10 dark:bg-white/10 backdrop-blur-md border border-black/20 dark:border-white/20 rounded-2xl transition-all duration-300 group-hover:bg-white/15" />
                     <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     
                     <div className="relative z-10 flex items-center justify-center gap-2">
@@ -215,15 +215,15 @@ export default function ContactSection() {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="lg:col-span-2 flex flex-col gap-4 sm:gap-6"
           >
-            <div className="rounded-[2rem] p-8 bg-white/[0.01] border border-white/10 backdrop-blur-2xl shadow-[0_20px_40px_rgba(0,0,0,0.3)]">
-              <h3 className="text-white text-lg font-medium mb-3 flex items-center gap-2">
+            <div className="rounded-[2rem] p-8 bg-slate-100/80 dark:bg-white/[0.01] border border-black/10 dark:border-white/10 backdrop-blur-2xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] dark:shadow-[0_20px_40px_rgba(0,0,0,0.3)]">
+              <h3 className="text-slate-900 dark:text-white text-lg font-medium mb-3 flex items-center gap-2">
                 <span className="relative flex w-2.5 h-2.5">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60"></span>
                   <span className="relative inline-flex rounded-full w-2.5 h-2.5 bg-emerald-500"></span>
                 </span>
                 Available for Roles
               </h3>
-              <p className="text-white/50 text-sm leading-relaxed font-light">
+              <p className="text-slate-900 dark:text-white/50 text-sm leading-relaxed font-light">
                 I am actively exploring opportunities in full stack engineering and AI product development. Let's discuss how my skills align with your goals.
               </p>
             </div>
@@ -235,7 +235,7 @@ export default function ContactSection() {
                   href={link.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group relative flex items-center gap-5 p-5 rounded-[2rem] bg-white/[0.01] border border-white/5 backdrop-blur-md overflow-hidden transition-all duration-500 hover:-translate-y-1 hover:border-white/20"
+                  className="group relative flex items-center gap-5 p-5 rounded-[2rem] bg-slate-100/80 dark:bg-white/[0.01] border border-black/10 dark:border-white/5 backdrop-blur-md overflow-hidden transition-all duration-500 hover:-translate-y-1 hover:border-black/20 dark:hover:border-white/20"
                 >
                   {/* Subtle hover gradient sheen */}
                   <div className={`absolute inset-0 bg-gradient-to-r ${link.color} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
@@ -250,8 +250,8 @@ export default function ContactSection() {
                     />
                   </div>
                   <div>
-                    <p className="text-white font-medium text-base">{link.label}</p>
-                    <p className="text-white/50 text-[11px] font-mono mt-1 group-hover:text-white/80 transition-colors">{link.username}</p>
+                    <p className="text-slate-900 dark:text-white font-medium text-base">{link.label}</p>
+                    <p className="text-slate-900 dark:text-white/50 text-[11px] font-mono mt-1 group-hover:text-slate-900 dark:text-white/80 transition-colors">{link.username}</p>
                   </div>
                 </a>
               );

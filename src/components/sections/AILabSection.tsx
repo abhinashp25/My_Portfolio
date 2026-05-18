@@ -99,10 +99,10 @@ export default function AILabSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.7 }}
         >
-          <h2 className="text-3xl md:text-5xl font-bold text-white tracking-tight drop-shadow-sm mb-4">
+          <h2 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white tracking-tight drop-shadow-sm mb-4">
             Developer Laboratory
           </h2>
-          <p className="text-slate-400 max-w-xl mx-auto text-sm md:text-base">
+          <p className="text-slate-600 dark:text-slate-400 max-w-xl mx-auto text-sm md:text-base">
             Interactive AI Engine. Configure parameters, select a model architecture, and stream real-time prediction logits.
           </p>
         </motion.div>
@@ -110,22 +110,21 @@ export default function AILabSection() {
         <div className={`grid lg:grid-cols-2 gap-6 transition-all duration-1000 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`} style={{ transitionDelay: '150ms' }}>
           
           {/* Input Panel (Liquid Glass) */}
-          <div className="rounded-3xl p-6 sm:p-8 relative overflow-hidden backdrop-blur-2xl shadow-[0_4px_24px_rgba(0,0,0,0.2)] border border-white/10 flex flex-col"
-               style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.01) 100%)' }}>
+          <div className="rounded-3xl p-6 sm:p-8 relative overflow-hidden backdrop-blur-2xl shadow-[0_4px_24px_rgba(0,0,0,0.1)] border border-black/10 dark:border-white/10 flex flex-col bg-white/80 dark:bg-white/[0.04]">
             
             <div className="relative z-10 flex flex-col flex-1 gap-6">
-              <div className="flex items-center gap-3 border-b border-white/10 pb-4">
-                <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/10">
+              <div className="flex items-center gap-3 border-b border-black/10 dark:border-white/10 pb-4">
+                <div className="w-10 h-10 rounded-xl bg-black/5 dark:bg-white/5 flex items-center justify-center border border-black/10 dark:border-white/10">
                   <AdjustmentsHorizontalIcon className="w-5 h-5 text-blue-400" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold text-white tracking-tight">Parameters</h3>
+                  <h3 className="text-xl font-semibold text-slate-900 dark:text-white tracking-tight">Parameters</h3>
                 </div>
               </div>
 
               {/* Model Selector */}
               <div className="space-y-2">
-                <label className="text-[10px] font-mono text-slate-400 uppercase tracking-widest">Model Architecture</label>
+                <label className="text-[10px] font-mono text-slate-600 dark:text-slate-400 uppercase tracking-widest">Model Architecture</label>
                 <div className="flex flex-wrap gap-2">
                   {MODELS.map(model => (
                     <button
@@ -134,8 +133,8 @@ export default function AILabSection() {
                       disabled={isLoading}
                       className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors border ${
                         activeModel.id === model.id 
-                          ? 'bg-blue-500/20 border-blue-500/40 text-blue-200' 
-                          : 'bg-white/5 border-white/10 text-slate-400 hover:bg-white/10 hover:text-white'
+                          ? 'bg-blue-500/20 border-blue-500/40 text-blue-700 dark:text-blue-200' 
+                          : 'bg-black/5 dark:bg-white/5 border-black/10 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:bg-black/10 dark:bg-white/10 hover:text-slate-900 dark:text-white'
                       } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                       {model.name}
@@ -146,9 +145,9 @@ export default function AILabSection() {
 
               <div className="space-y-4">
                 {/* Monthly Income */}
-                <div className="space-y-2.5 p-4 rounded-xl bg-black/20 border border-white/5 backdrop-blur-md">
+                <div className="space-y-2.5 p-4 rounded-xl bg-black/5 dark:bg-black/20 border border-black/10 dark:border-white/5 backdrop-blur-md">
                   <div className="flex justify-between items-center">
-                    <label className="text-xs font-medium text-slate-300">Monthly Income</label>
+                    <label className="text-xs font-medium text-slate-700 dark:text-slate-300">Monthly Income</label>
                     <span className="text-xs font-mono text-blue-400">₹{income.toLocaleString()}</span>
                   </div>
                   <input
@@ -158,14 +157,14 @@ export default function AILabSection() {
                     onChange={(e) => setIncome(Number(e.target.value))}
                     disabled={isLoading}
                     className="w-full h-1.5 rounded-full appearance-none cursor-pointer disabled:opacity-50"
-                    style={{ background: `linear-gradient(to right, #38bdf8 0%, #38bdf8 ${((income - 20000) / 180000) * 100}%, rgba(255,255,255,0.1) ${((income - 20000) / 180000) * 100}%, rgba(255,255,255,0.1) 100%)` }}
+                    style={{ background: `linear-gradient(to right, #38bdf8 0%, #38bdf8 ${((income - 20000) / 180000) * 100}%, rgba(0,0,0,0.12) ${((income - 20000) / 180000) * 100}%, rgba(0,0,0,0.12) 100%)` }}
                   />
                 </div>
 
                 {/* Credit Score */}
-                <div className="space-y-2.5 p-4 rounded-xl bg-black/20 border border-white/5 backdrop-blur-md">
+                <div className="space-y-2.5 p-4 rounded-xl bg-black/5 dark:bg-black/20 border border-black/10 dark:border-white/5 backdrop-blur-md">
                   <div className="flex justify-between items-center">
-                    <label className="text-xs font-medium text-slate-300">Credit Score</label>
+                    <label className="text-xs font-medium text-slate-700 dark:text-slate-300">Credit Score</label>
                     <span className="text-xs font-mono text-purple-400">{creditScore}</span>
                   </div>
                   <input
@@ -175,13 +174,13 @@ export default function AILabSection() {
                     onChange={(e) => setCreditScore(Number(e.target.value))}
                     disabled={isLoading}
                     className="w-full h-1.5 rounded-full appearance-none cursor-pointer disabled:opacity-50"
-                    style={{ background: `linear-gradient(to right, #a78bfa 0%, #a78bfa ${((creditScore - 300) / 550) * 100}%, rgba(255,255,255,0.1) ${((creditScore - 300) / 550) * 100}%, rgba(255,255,255,0.1) 100%)` }}
+                    style={{ background: `linear-gradient(to right, #a78bfa 0%, #a78bfa ${((creditScore - 300) / 550) * 100}%, rgba(0,0,0,0.12) ${((creditScore - 300) / 550) * 100}%, rgba(0,0,0,0.12) 100%)` }}
                   />
                 </div>
 
                 {/* Invoice Amount */}
-                <div className="space-y-2.5 p-4 rounded-xl bg-black/20 border border-white/5 backdrop-blur-md">
-                  <label className="text-xs font-medium text-slate-300 block">Invoice Amount</label>
+                <div className="space-y-2.5 p-4 rounded-xl bg-black/5 dark:bg-black/20 border border-black/10 dark:border-white/5 backdrop-blur-md">
+                  <label className="text-xs font-medium text-slate-700 dark:text-slate-300 block">Invoice Amount</label>
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-mono text-sm">₹</span>
                     <input
@@ -189,7 +188,7 @@ export default function AILabSection() {
                       value={invoiceAmount}
                       onChange={(e) => setInvoiceAmount(Number(e.target.value))}
                       disabled={isLoading}
-                      className="w-full bg-black/30 border border-white/10 rounded-lg pl-8 pr-3 py-2 text-white font-mono text-sm focus:outline-none focus:border-blue-400/50 transition-colors disabled:opacity-50"
+                      className="w-full bg-slate-100 dark:bg-black/30 border border-black/10 dark:border-white/10 rounded-lg pl-8 pr-3 py-2 text-slate-900 dark:text-white font-mono text-sm focus:outline-none focus:border-blue-400/50 transition-colors disabled:opacity-50"
                     />
                   </div>
                 </div>
@@ -199,12 +198,12 @@ export default function AILabSection() {
               <button
                 onClick={runPrediction}
                 disabled={isLoading}
-                className="w-full mt-auto py-3 rounded-xl font-semibold text-black transition-all duration-300 hover:opacity-90 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #cbd5e1 100%)' }}
+                className="w-full mt-auto py-3 rounded-xl font-semibold transition-all duration-300 hover:opacity-90 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-white"
+                style={{ background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)' }}
               >
                 {isLoading ? (
                   <>
-                    <div className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" />
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                     <span className="text-sm">Processing...</span>
                   </>
                 ) : (
@@ -221,7 +220,7 @@ export default function AILabSection() {
           <div className="flex flex-col gap-6">
             
             {/* Live Terminal Stream */}
-            <div className="rounded-3xl overflow-hidden backdrop-blur-2xl shadow-[0_4px_24px_rgba(0,0,0,0.2)] border border-white/10 flex flex-col h-40"
+            <div className="rounded-3xl overflow-hidden backdrop-blur-2xl shadow-[0_4px_24px_rgba(0,0,0,0.2)] border border-black/10 dark:border-white/10 flex flex-col h-40"
                  style={{ background: 'linear-gradient(135deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.7) 100%)' }}>
               <div className="flex items-center justify-between px-5 py-3 border-b border-white/10 bg-white/5">
                 <div className="flex items-center gap-2">
@@ -232,7 +231,7 @@ export default function AILabSection() {
               <div className="p-4 font-mono text-[11px] sm:text-xs flex-1 overflow-hidden relative flex flex-col justify-end">
                 {!isLoading && logs.length === 0 && !result && (
                   <div className="absolute inset-0 p-4">
-                    <p className="text-slate-500">awaiting signal...</p>
+                    <p className="text-slate-400">awaiting signal...</p>
                   </div>
                 )}
                 <div className="space-y-1.5">
@@ -255,16 +254,15 @@ export default function AILabSection() {
             </div>
 
             {/* Results Chart */}
-            <div className="rounded-3xl p-6 sm:p-8 flex-1 relative overflow-hidden backdrop-blur-2xl shadow-[0_4px_24px_rgba(0,0,0,0.2)] border border-white/10 flex flex-col"
-                 style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.01) 100%)' }}>
+            <div className="rounded-3xl p-6 sm:p-8 flex-1 relative overflow-hidden backdrop-blur-2xl shadow-[0_4px_24px_rgba(0,0,0,0.1)] border border-black/10 dark:border-white/10 flex flex-col bg-white/80 dark:bg-white/[0.04]">
               
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h3 className="text-xl font-semibold text-white tracking-tight">Prediction Matrix</h3>
+                  <h3 className="text-xl font-semibold text-slate-900 dark:text-white tracking-tight">Prediction Matrix</h3>
                 </div>
                 {result && (
                   <div className="text-right">
-                    <p className="text-[10px] font-mono text-slate-400 uppercase tracking-widest">Confidence</p>
+                    <p className="text-[10px] font-mono text-slate-600 dark:text-slate-400 uppercase tracking-widest">Confidence</p>
                     <p className="text-base font-bold text-emerald-400">{activeModel.baseAccuracy}%</p>
                   </div>
                 )}
@@ -272,8 +270,8 @@ export default function AILabSection() {
 
               {!result && !isLoading && (
                 <div className="flex-1 flex flex-col items-center justify-center text-center opacity-40">
-                  <BeakerIcon className="w-12 h-12 text-slate-400 mb-3" />
-                  <p className="text-slate-300 text-sm font-medium">Awaiting Data</p>
+                  <BeakerIcon className="w-12 h-12 text-slate-600 dark:text-slate-400 mb-3" />
+                  <p className="text-slate-700 dark:text-slate-300 text-sm font-medium">Awaiting Data</p>
                 </div>
               )}
 
@@ -319,10 +317,10 @@ export default function AILabSection() {
                   </div>
                   
                   {/* Summary Callout */}
-                  <div className="mt-4 p-3.5 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between">
+                  <div className="mt-4 p-3.5 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 flex items-center justify-between">
                     <div>
-                      <p className="text-[10px] text-slate-400 font-mono uppercase tracking-wider mb-0.5">Primary Outcome</p>
-                      <p className="text-base font-bold text-white">{result[0].label}</p>
+                      <p className="text-[10px] text-slate-600 dark:text-slate-400 font-mono uppercase tracking-wider mb-0.5">Primary Outcome</p>
+                      <p className="text-base font-bold text-slate-900 dark:text-white">{result[0].label}</p>
                     </div>
                     <div className="px-3 py-1.5 rounded-lg text-sm font-bold" 
                          style={{ background: `${result[0].color}20`, color: result[0].color, border: `1px solid ${result[0].color}40` }}>

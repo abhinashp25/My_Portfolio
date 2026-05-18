@@ -74,7 +74,7 @@ function EducationCard({ edu, index }: { edu: any; index: number }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.15 }}
       transition={{ duration: 0.8, delay: index * 0.15, ease: [0.16, 1, 0.3, 1] }}
-      className="group relative w-full h-[280px] sm:h-[320px] md:h-[350px] rounded-[2rem] overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-transform duration-1000 hover:-translate-y-2 border border-white/10 hover:border-white/20"
+      className="group relative w-full h-[280px] sm:h-[320px] md:h-[350px] rounded-[2rem] overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-transform duration-1000 hover:-translate-y-2 border border-black/10 dark:border-white/10 hover:border-black/20 dark:border-white/20"
     >
       {/* Background Image Carousel (Full width & height) */}
       {edu.images && edu.images.length > 0 ? (
@@ -133,13 +133,13 @@ function EducationCard({ edu, index }: { edu: any; index: number }) {
           
           <div className="flex items-center gap-2 mb-3">
             <span
-              className="text-[9px] sm:text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full border border-white/10"
+              className="text-[9px] sm:text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full border border-black/10 dark:border-white/10"
               style={{ background: `${edu.color}20`, color: edu.color }}
             >
               {edu.level}
             </span>
             <span
-              className="text-[9px] sm:text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full border border-white/10"
+              className="text-[9px] sm:text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full border border-black/10 dark:border-white/10"
               style={{ background: `${edu.statusColor}15`, color: edu.statusColor }}
             >
               {edu.status}
@@ -157,11 +157,11 @@ function EducationCard({ edu, index }: { edu: any; index: number }) {
           </p>
 
           <div className="flex flex-wrap items-center gap-3 text-xs text-slate-200 mb-5">
-            <span className="flex items-center gap-1.5 bg-white/5 px-3 py-1.5 rounded-lg border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]">
+            <span className="flex items-center gap-1.5 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]">
               <MapPinIcon className="w-3.5 h-3.5" style={{ color: edu.color }} />
               {edu.location}
             </span>
-            <span className="flex items-center gap-1.5 bg-white/5 px-3 py-1.5 rounded-lg border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]">
+            <span className="flex items-center gap-1.5 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]">
               <CalendarIcon className="w-3.5 h-3.5" style={{ color: edu.color }} />
               {edu.period}
             </span>
@@ -173,7 +173,7 @@ function EducationCard({ edu, index }: { edu: any; index: number }) {
               <span
                 key={h}
                 className="text-[10px] sm:text-xs px-3 py-1.5 rounded-lg font-medium text-slate-200 transition-all duration-500 hover:text-white hover:bg-white/10 border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] cursor-default"
-                style={{ background: 'rgba(255,255,255,0.03)' }}
+                style={{ background: 'rgba(255,255,255,0.05)' }}
               >
                 {h}
               </span>
@@ -185,7 +185,7 @@ function EducationCard({ edu, index }: { edu: any; index: number }) {
 
       {/* Carousel Indicators (Always visible at the top) */}
       {edu.images && edu.images.length > 1 && (
-        <div className="absolute top-5 right-5 flex gap-1.5 z-40 bg-black/40 px-2.5 py-1.5 rounded-full backdrop-blur-md border border-white/10 opacity-70 hover:opacity-100 transition-opacity duration-700">
+        <div className="absolute top-5 right-5 flex gap-1.5 z-40 bg-black/40 px-2.5 py-1.5 rounded-full backdrop-blur-md border border-black/10 dark:border-white/10 opacity-70 hover:opacity-100 transition-opacity duration-700">
           {edu.images.map((_: any, idx: number) => (
             <button
               key={idx}
@@ -231,10 +231,10 @@ export default function EducationSection() {
           transition={{ duration: 0.7 }}
         >
           
-          <h2 className="text-4xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-100 to-white/60 drop-shadow-sm mb-6">
+          <h2 className="text-4xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-sky-500 via-blue-400 to-violet-500 drop-shadow-sm mb-6">
             Education & Qualifications
           </h2>
-          <p className="text-slate-400 max-w-2xl mx-auto text-lg md:text-xl font-light leading-relaxed">
+          <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto text-lg md:text-xl font-light leading-relaxed">
             Building the foundations of technology, engineering, and problem-solving through continuous learning.
           </p>
         </motion.div>

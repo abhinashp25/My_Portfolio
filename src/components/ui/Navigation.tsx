@@ -100,8 +100,8 @@ export default function Navigation() {
       <motion.div
         className={`pointer-events-auto hidden md:flex items-center justify-between gap-8 px-6 rounded-full border backdrop-blur-2xl transition-all duration-500 ${
           scrolled
-            ? 'py-2 bg-black/60 border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.3)]'
-            : 'py-3 bg-white/5 border-white/5'
+            ? 'py-2 bg-white/80 dark:bg-black/60 border-black/10 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.1)]'
+            : 'py-3 bg-black/5 dark:bg-white/5 border-white/5'
         }`}
         initial={{ y: -80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -112,7 +112,7 @@ export default function Navigation() {
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           className="flex items-center gap-0.5 group"
         >
-          <span className="text-xl font-semibold text-white tracking-tight">
+          <span className="text-xl font-semibold text-slate-900 dark:text-white tracking-tight">
             ABHINASH
           </span>
           <span className="text-indigo-500 text-xl font-bold group-hover:scale-125 transition-transform duration-300">
@@ -136,7 +136,7 @@ export default function Navigation() {
               damping: 25,
               mass: 0.8,
             }}
-            className="absolute top-0 bottom-0 rounded-full bg-white/10 border border-white/10 backdrop-blur-md"
+            className="absolute top-0 bottom-0 rounded-full bg-black/10 dark:bg-white/10 border border-black/10 dark:border-white/10 backdrop-blur-md"
           />
 
           {navLinks.map((link, index) => {
@@ -151,8 +151,8 @@ export default function Navigation() {
                 onClick={() => handleNavClick(link.href)}
                 className={`relative z-10 px-4 py-1.5 text-[13px] font-medium transition-all duration-300 ${
                   isActive
-                    ? 'text-white'
-                    : 'text-white/60 hover:text-white'
+                    ? 'text-slate-900 dark:text-white'
+                    : 'text-slate-900 dark:text-white/60 hover:text-slate-900 dark:text-white'
                 }`}
               >
                 {link.label}
@@ -166,7 +166,7 @@ export default function Navigation() {
           href="https://github.com/abhinashp25"
           target="_blank"
           rel="noopener noreferrer"
-          className="px-4 py-1.5 rounded-full bg-white text-black text-[13px] font-semibold hover:scale-105 active:scale-95 transition-all duration-300"
+          className="px-4 py-1.5 rounded-full bg-slate-900 dark:bg-white text-white dark:text-black text-[13px] font-semibold hover:scale-105 active:scale-95 transition-all duration-300"
         >
           GitHub
         </a>
@@ -176,17 +176,17 @@ export default function Navigation() {
       <div
         className={`pointer-events-auto md:hidden w-full flex items-center justify-between px-6 py-4 rounded-2xl transition-all duration-300 ${
           scrolled
-            ? 'bg-black/60 backdrop-blur-xl border border-white/10'
+            ? 'bg-white/80 dark:bg-black/60 backdrop-blur-xl border border-black/10 dark:border-white/10'
             : 'bg-transparent'
         }`}
       >
-        <span className="text-white font-semibold text-lg">ABHINASH.</span>
+        <span className="text-slate-900 dark:text-white font-semibold text-lg">ABHINASH.</span>
 
         <button onClick={() => setMobileOpen(!mobileOpen)}>
           {mobileOpen ? (
-            <XMarkIcon className="w-6 h-6 text-white" />
+            <XMarkIcon className="w-6 h-6 text-slate-900 dark:text-white" />
           ) : (
-            <Bars3Icon className="w-6 h-6 text-white" />
+            <Bars3Icon className="w-6 h-6 text-slate-900 dark:text-white" />
           )}
         </button>
       </div>
@@ -198,13 +198,13 @@ export default function Navigation() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="pointer-events-auto md:hidden absolute top-24 left-4 right-4 bg-black/90 backdrop-blur-2xl border border-white/10 rounded-2xl p-4 shadow-xl flex flex-col gap-2"
+            className="pointer-events-auto md:hidden absolute top-24 left-4 right-4 bg-black/90 backdrop-blur-2xl border border-black/10 dark:border-white/10 rounded-2xl p-4 shadow-xl flex flex-col gap-2"
           >
             {navLinks.map((link) => (
               <button
                 key={link.href}
                 onClick={() => handleNavClick(link.href)}
-                className="px-4 py-3 rounded-xl text-left text-sm text-white/70 hover:text-white hover:bg-white/5 transition"
+                className="px-4 py-3 rounded-xl text-left text-sm text-slate-900 dark:text-white/70 hover:text-slate-900 dark:text-white hover:bg-black/5 dark:bg-white/5 transition"
               >
                 {link.label}
               </button>

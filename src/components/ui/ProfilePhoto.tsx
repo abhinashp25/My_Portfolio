@@ -132,12 +132,12 @@ export default function ProfilePhoto() {
           transition={{ delay: 0.6, duration: 0.8, type: 'spring' }}
           style={{ transform: 'translateZ(50px)' }} // Pops out of the card
         >
-          <div className="flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 rounded-full bg-dark-900/80 backdrop-blur-xl border border-white/20 shadow-[0_15px_30px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.2)]">
+          <div className="flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 rounded-full bg-slate-50 dark:bg-dark-900/80 backdrop-blur-xl border border-black/20 dark:border-white/20 shadow-[0_15px_30px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.2)]">
             <span className="relative flex w-2 h-2 sm:w-2.5 sm:h-2.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full w-2 h-2 sm:w-2.5 sm:h-2.5 bg-emerald-500"></span>
             </span>
-            <span className="text-white/90 font-semibold font-mono text-[9px] sm:text-[10px] tracking-widest uppercase">
+            <span className="text-slate-900 dark:text-white/90 font-semibold font-mono text-[9px] sm:text-[10px] tracking-widest uppercase">
               Available
             </span>
           </div>

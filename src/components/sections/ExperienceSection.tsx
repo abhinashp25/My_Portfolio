@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
-import { BriefcaseIcon, AcademicCapIcon, CodeBracketIcon, CpuChipIcon } from '@heroicons/react/24/outline';
+import { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import Image from 'next/image';
 
 const timelineItems = [
   {
@@ -14,23 +14,21 @@ const timelineItems = [
     location: 'Kolkata, West Bengal',
     description: 'Automated internal workflows by developing Python scripts, reducing manual data entry efforts by 30%. Engineered highly testable logic and applied clean OOP design principles to ensure long-term codebase scalability.',
     skills: ['Python', 'OOP', 'Automation', 'Data Structures', 'Scripting'],
-    icon: CodeBracketIcon,
+    image: '/logos/MONIBATECH.png',
     color: '#6366f1',
-    accentColor: '#4f46e5',
     certId: '20240905MON0030',
   },
   {
-    year: '2024–2026',
+    year: '2024',
     side: 'right' as const,
-    type: 'Research & Projects',
-    title: 'Machine Learning & AI Development',
-    company: 'Self-Directed / Academic',
-    location: 'India',
-    description: 'Delivered an invoice payment date prediction model achieving 87% accuracy using Gradient Boosting. Built scalable OCR and computer-vision pipelines, significantly reducing processing times for real-world image datasets.',
-    skills: ['Python', 'scikit-learn', 'TensorFlow', 'Keras', 'Pandas', 'NumPy', 'Feature Engineering', 'CNN', 'OCR'],
-    icon: CpuChipIcon,
-    color: '#06b6d4',
-    accentColor: '#0891b2',
+    type: 'Internship',
+    title: 'AI / ML Internship',
+    company: 'OCAC — Odisha Computer Application Centre',
+    location: 'Bhubaneswar, Odisha',
+    description: 'Accelerated public-sector digital workflows by engineering accurate OCR-driven document pipelines. Designed and deployed interactive Streamlit analytics dashboards, translating complex predictive models into actionable insights for operational teams.',
+    skills: ['Python', 'AI/ML', 'OCR', 'Computer Vision', 'Streamlit', 'SQL', 'Deep Learning', 'Data Analytics'],
+    image: '/logos/ocac_logo.jpeg',
+    color: '#818cf8',
     certId: null,
   },
   {
@@ -42,228 +40,178 @@ const timelineItems = [
     location: 'India',
     description: 'Led end-to-end development of robust full-stack products including Chatify, achieving sub-100ms real-time messaging latency using Socket.io and React. Designed scalable Node.js/MongoDB backend architectures with secure JWT auth flows.',
     skills: ['React', 'Node.js', 'Express', 'MongoDB', 'Socket.io', 'JWT', 'TypeScript', 'REST APIs'],
-    icon: BriefcaseIcon,
+    image: '/assets/images/abhinash.jpg',
     color: '#f472b6',
-    accentColor: '#db2777',
     certId: null,
   },
   {
-    year: '2024',
+    year: '2024–2026',
     side: 'right' as const,
-    type: 'Internship',
-    title: 'AI / ML Internship',
-    company: 'OCAC — Odisha Computer Application Centre',
-    location: 'Bhubaneswar, Odisha',
-    description: 'Accelerated public-sector digital workflows by engineering accurate OCR-driven document pipelines. Designed and deployed interactive Streamlit analytics dashboards, translating complex predictive models into actionable insights for operational teams.',
-    skills: ['Python', 'AI/ML', 'OCR', 'Computer Vision', 'Streamlit', 'SQL', 'Deep Learning', 'Data Analytics'],
-    icon: AcademicCapIcon,
-    color: '#818cf8',
-    accentColor: '#7c3aed',
+    type: 'Research & Projects',
+    title: 'Machine Learning & AI Development',
+    company: 'Self-Directed / Academic',
+    location: 'India',
+    description: 'Delivered an invoice payment date prediction model achieving 87% accuracy using Gradient Boosting. Built scalable OCR and computer-vision pipelines, significantly reducing processing times for real-world image datasets.',
+    skills: ['Python', 'scikit-learn', 'TensorFlow', 'Keras', 'Pandas', 'NumPy', 'Feature Engineering', 'CNN', 'OCR'],
+    image: '/assets/images/abhinash.jpg',
+    color: '#06b6d4',
     certId: null,
   },
 ];
 
 export default function ExperienceSection() {
-  const lineRef = useRef<HTMLDivElement>(null);
-  const sectionRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Elegant scroll-driven timeline line
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start center', 'end center']
+  });
 
-  useEffect(() => {
-    let cleanup: (() => void) | undefined;
-
-    const init = async () => {
-      const { gsap } = await import('gsap');
-      const { ScrollTrigger } = await import('gsap/ScrollTrigger');
-      gsap.registerPlugin(ScrollTrigger);
-
-      if (!lineRef.current || !sectionRef.current) return;
-
-      gsap.fromTo(
-        lineRef.current,
-        { scaleY: 0 },
-        {
-          scaleY: 1,
-          transformOrigin: 'top center',
-          ease: 'none',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 75%',
-            end: 'bottom 30%',
-            scrub: 1.2,
-          },
-        }
-      );
-
-      const cards = sectionRef.current.querySelectorAll('.tl-card');
-      cards.forEach((card) => {
-        const isLeft = card.classList.contains('tl-left');
-        gsap.fromTo(
-          card,
-          { opacity: 0, x: isLeft ? -60 : 60 },
-          {
-            opacity: 1, x: 0, duration: 0.8, ease: 'power3.out',
-            scrollTrigger: { trigger: card, start: 'top 82%' },
-          }
-        );
-      });
-
-      const dots = sectionRef.current.querySelectorAll('.tl-dot');
-      dots.forEach((dot) => {
-        gsap.fromTo(
-          dot,
-          { scale: 0, opacity: 0 },
-          {
-            scale: 1, opacity: 1, duration: 0.5, ease: 'back.out(2)',
-            scrollTrigger: { trigger: dot, start: 'top 82%' },
-          }
-        );
-      });
-
-      cleanup = () => ScrollTrigger.getAll().forEach((t) => t.kill());
-    };
-
-    init();
-    return () => cleanup?.();
-  }, []);
+  const lineHeight = useTransform(scrollYProgress, [0, 1], ['0%', '100%']);
 
   return (
-    <section id="experience" ref={sectionRef} className="relative py-24 px-6">
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full opacity-5"
-          style={{ background: 'radial-gradient(circle, #818cf8 0%, transparent 70%)' }} />
+    <section id="experience" ref={containerRef} className="relative py-32 px-6 overflow-hidden">
+      
+      {/* Subtle Ambient Background */}
+      <div className="absolute inset-0 pointer-events-none z-0 flex items-center justify-center opacity-30">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] bg-indigo-500/10 rounded-full blur-[150px] mix-blend-screen" />
       </div>
 
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-6xl mx-auto relative z-10">
+        
         {/* Header */}
-        <motion.div className="mb-20 text-center"
-          initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }} transition={{ duration: 0.7 }}>
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="h-px w-12 bg-gradient-to-r from-transparent to-neon-500" />
-            <span className="text-neon-400 font-mono text-sm tracking-widest uppercase">Career</span>
-            <div className="h-px w-12 bg-gradient-to-l from-transparent to-neon-500" />
+        <motion.div 
+          className="mb-24 text-center max-w-2xl mx-auto"
+          initial={{ opacity: 0, y: 30, filter: 'blur(10px)' }} 
+          whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          viewport={{ once: true, margin: "-100px" }} 
+          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 backdrop-blur-md mb-6">
+            <span className="w-1.5 h-1.5 rounded-full bg-white opacity-70" />
+            <span className="text-[11px] font-medium text-slate-900 dark:text-white/70 tracking-widest uppercase">Career Journey</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-white">
-            Experience &{' '}
-            <span style={{ color: '#f472b6', textShadow: '0 0 20px rgba(244,114,182,0.5)' }}>Timeline</span>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 dark:text-white tracking-tight leading-tight">
+            Experience & <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-indigo-400">Timeline</span>
           </h2>
-          <p className="text-slate-400 mt-4 max-w-xl mx-auto text-lg leading-relaxed">
-            A vertical journey through internships, projects, and professional milestones.
+          <p className="text-slate-900 dark:text-white/50 mt-6 text-lg leading-relaxed font-light">
+            A vertical journey through internships, specialized projects, and full stack milestones.
           </p>
         </motion.div>
 
-        {/* Timeline */}
+        {/* Timeline Container */}
         <div className="relative">
-          {/* Background line */}
-          <div className="absolute left-1/2 top-0 bottom-0 w-px bg-white/5 -translate-x-1/2 hidden md:block" />
-          {/* Animated line */}
-          <div
-            ref={lineRef}
-            className="absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2 hidden md:block"
+          
+          {/* Faded Background Line (Desktop only) */}
+          <div className="absolute left-1/2 top-0 bottom-0 w-px bg-black/5 dark:bg-white/5 -translate-x-1/2 hidden md:block" />
+          
+          {/* Scroll-Driven Glowing Line (Desktop only) */}
+          <motion.div
+            className="absolute left-1/2 top-0 w-[2px] -translate-x-1/2 hidden md:block z-10"
             style={{
-              background: 'linear-gradient(to bottom, #6366f1, #06b6d4, #f472b6, #818cf8)',
-              transformOrigin: 'top center',
+              height: lineHeight,
+              background: 'linear-gradient(to bottom, transparent, #818cf8, #f472b6, transparent)',
+              boxShadow: '0 0 20px rgba(129, 140, 248, 0.5)',
             }}
           />
 
-          <div className="space-y-16 md:space-y-0">
+          <div className="space-y-12 md:space-y-24">
             {timelineItems.map((item, i) => {
-              const Icon = item.icon;
               const isLeft = item.side === 'left';
 
               return (
-                <div
-                  key={item.title}
-                  className={`tl-card ${isLeft ? 'tl-left' : 'tl-right'} relative md:flex md:items-center ${isLeft ? 'md:flex-row' : 'md:flex-row-reverse'} gap-8 md:mb-16`}
-                >
-                  {/* Card */}
-                  <div className={`flex-1 ${isLeft ? 'md:text-right' : 'md:text-left'}`}>
+                <div key={item.title} className={`relative md:flex md:items-center gap-8 lg:gap-16 ${isLeft ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
+                  
+                  {/* Card Section */}
+                  <div className={`flex-1 flex ${isLeft ? 'md:justify-end' : 'md:justify-start'}`}>
                     <motion.div
-                      whileHover={{ y: -4 }}
-                      className="rounded-2xl p-6 inline-block w-full md:max-w-sm relative overflow-hidden group"
-                      style={{
-                        background: 'rgba(255,255,255,0.025)',
-                        border: `1px solid ${item.color}25`,
-                        transition: 'box-shadow 0.3s',
-                      }}
-                      onMouseEnter={(e) => {
-                        (e.currentTarget as HTMLElement).style.boxShadow = `0 0 40px ${item.color}20, 0 20px 40px rgba(0,0,0,0.3)`;
-                        (e.currentTarget as HTMLElement).style.borderColor = `${item.color}50`;
-                      }}
-                      onMouseLeave={(e) => {
-                        (e.currentTarget as HTMLElement).style.boxShadow = 'none';
-                        (e.currentTarget as HTMLElement).style.borderColor = `${item.color}25`;
-                      }}
+                      initial={{ opacity: 0, y: 40, filter: 'blur(10px)' }}
+                      whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                      viewport={{ once: true, margin: "-100px" }}
+                      transition={{ duration: 1, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+                      className="group relative w-full md:max-w-lg rounded-[2rem] p-6 sm:p-8 bg-white/[0.01] border border-black/10 dark:border-white/10 backdrop-blur-[40px] shadow-[0_20px_40px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.1)] hover:border-black/20 dark:border-white/20 transition-all duration-500 overflow-hidden"
                     >
-                      {/* Top accent */}
-                      <div
-                        className="absolute top-0 h-0.5 left-0 right-0 opacity-60"
-                        style={{ background: `linear-gradient(${isLeft ? '270deg' : '90deg'}, transparent, ${item.color})` }}
-                      />
-                      {/* Hover glow */}
-                      <div
-                        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                        style={{ background: `radial-gradient(circle at ${isLeft ? '100% 0%' : '0% 0%'}, ${item.color}10, transparent 60%)` }}
+                      {/* Ambient hover glow inside card */}
+                      <div 
+                        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none mix-blend-screen"
+                        style={{ background: `radial-gradient(circle at ${isLeft ? '100% 0%' : '0% 0%'}, ${item.color}15, transparent 70%)` }}
                       />
 
-                      <div className={`relative z-10 flex items-start gap-4 ${isLeft ? 'md:flex-row-reverse' : 'md:flex-row'}`}>
-                        <div
-                          className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
-                          style={{ background: `${item.color}20`, border: `1px solid ${item.color}40` }}
-                        >
-                          <Icon className="w-6 h-6" style={{ color: item.color }} />
+                      <div className="relative z-10 flex flex-col gap-6">
+                        {/* Header: Logo and Title */}
+                        <div className="flex items-center gap-5">
+                          {/* Company/Personal Logo */}
+                          <div className="relative w-14 h-14 flex-shrink-0 rounded-2xl overflow-hidden shadow-lg border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5">
+                            <Image 
+                              src={item.image} 
+                              alt={item.company} 
+                              fill 
+                              sizes="56px"
+                              className="object-cover group-hover:scale-110 transition-transform duration-700" 
+                            />
+                          </div>
+                          
+                          <div>
+                            <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight leading-snug">{item.title}</h3>
+                            <p className="text-sm font-medium mt-1" style={{ color: item.color }}>{item.company}</p>
+                          </div>
                         </div>
 
-                        <div className={`flex-1 ${isLeft ? 'md:text-right' : ''}`}>
-                          <div className={`flex items-center gap-2 mb-1 flex-wrap ${isLeft ? 'md:justify-end' : ''}`}>
+                        {/* Meta info: Date & Type */}
+                        <div className="flex items-center gap-3 flex-wrap">
+                          <span className="text-[10px] sm:text-xs font-mono px-3 py-1 rounded-full uppercase tracking-wider" style={{ background: `${item.color}15`, color: item.color, border: `1px solid ${item.color}30` }}>
+                            {item.type}
+                          </span>
+                          <span className="text-[11px] font-mono text-slate-900 dark:text-white/50">{item.year}</span>
+                          <span className="text-[11px] font-mono text-slate-900 dark:text-white/40 hidden sm:inline-block">•</span>
+                          <span className="text-[11px] font-mono text-slate-900 dark:text-white/40">{item.location}</span>
+                        </div>
+
+                        {/* Description */}
+                        <p className="text-slate-900 dark:text-white/60 text-sm sm:text-base leading-relaxed font-light">
+                          {item.description}
+                        </p>
+
+                        {/* Certificate ID */}
+                        {item.certId && (
+                          <div className="flex items-center gap-2">
+                            <span className="text-[10px] uppercase tracking-widest text-slate-900 dark:text-white/30 font-mono">Credential ID:</span>
+                            <span className="text-xs font-mono text-slate-900 dark:text-white/60">{item.certId}</span>
+                          </div>
+                        )}
+
+                        {/* Skills */}
+                        <div className="flex flex-wrap gap-2 pt-2">
+                          {item.skills.map((skill) => (
                             <span
-                              className="text-xs font-mono px-2 py-0.5 rounded-full"
-                              style={{ background: `${item.color}15`, color: item.color, border: `1px solid ${item.color}30` }}
+                              key={skill}
+                              className="text-[11px] px-2.5 py-1 rounded-md font-mono bg-black/5 dark:bg-white/5 text-slate-900 dark:text-white/70 border border-white/5"
                             >
-                              {item.type}
+                              {skill}
                             </span>
-                            <span className="text-xs font-mono text-slate-500">{item.year}</span>
-                          </div>
-
-                          <h3 className="text-lg font-bold text-white mb-0.5">{item.title}</h3>
-                          <p className="text-sm font-medium mb-0.5" style={{ color: item.color }}>{item.company}</p>
-                          <p className="text-xs font-mono text-slate-500 mb-3">{item.location}</p>
-                          <p className="text-slate-400 text-sm leading-relaxed mb-4">{item.description}</p>
-
-                          {item.certId && (
-                            <p className="text-xs font-mono text-slate-600 mb-3">
-                              Cert ID: {item.certId}
-                            </p>
-                          )}
-
-                          <div className={`flex flex-wrap gap-1.5 ${isLeft ? 'md:justify-end' : ''}`}>
-                            {item.skills.map((skill) => (
-                              <span
-                                key={skill}
-                                className="text-xs px-2 py-0.5 rounded font-mono"
-                                style={{ background: `${item.color}10`, color: item.color, border: `1px solid ${item.color}20` }}
-                              >
-                                {skill}
-                              </span>
-                            ))}
-                          </div>
+                          ))}
                         </div>
                       </div>
                     </motion.div>
                   </div>
 
-                  {/* Center dot */}
-                  <div className="tl-dot hidden md:flex w-12 h-12 flex-shrink-0 items-center justify-center relative z-10">
-                    <div
-                      className="w-4 h-4 rounded-full border-2"
+                  {/* Center Node (Desktop only) */}
+                  <div className="hidden md:flex w-12 h-12 flex-shrink-0 items-center justify-center relative z-20">
+                    <motion.div
+                      initial={{ scale: 0, opacity: 0 }}
+                      whileInView={{ scale: 1, opacity: 1 }}
+                      viewport={{ once: true, margin: "-100px" }}
+                      transition={{ duration: 0.5, delay: 0.3, type: 'spring' }}
+                      className="w-4 h-4 rounded-full border-2 bg-slate-50 dark:bg-dark-900"
                       style={{
-                        background: item.color,
-                        borderColor: item.accentColor,
-                        boxShadow: `0 0 16px ${item.color}80, 0 0 32px ${item.color}30`,
+                        borderColor: item.color,
+                        boxShadow: `0 0 20px ${item.color}60`,
                       }}
                     />
                   </div>
 
-                  {/* Spacer */}
+                  {/* Spacer (Desktop only) */}
                   <div className="flex-1 hidden md:block" />
                 </div>
               );

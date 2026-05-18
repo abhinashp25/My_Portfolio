@@ -31,7 +31,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`scroll-smooth ${jakarta.variable} ${jetbrains.variable}`}>
-      <body className="bg-dark-900 text-slate-200 font-sans antialiased overflow-x-hidden">
+      <body className="bg-slate-50 dark:bg-dark-900 text-slate-900 dark:text-slate-200 font-sans antialiased overflow-x-hidden">
         <ClientConsole />
         {children}
         <Toaster

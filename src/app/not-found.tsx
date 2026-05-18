@@ -7,7 +7,7 @@ export default function NotFound() {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-dark-900 px-6">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 dark:bg-dark-900 px-6">
       {/* Background orbs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div
@@ -40,21 +40,21 @@ export default function NotFound() {
           <span className="text-2xl font-bold gradient-text font-jakarta">AP</span>
         </div>
 
-        <h2 className="text-2xl font-bold text-white mb-3">Page Not Found</h2>
-        <p className="text-slate-400 mb-8 font-mono text-sm">
+        <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-3">Page Not Found</h2>
+        <p className="text-slate-600 dark:text-slate-400 mb-8 font-mono text-sm">
           Looks like this page got lost in the void. Let's get you back on track.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <button
             onClick={() => router.back()}
-            className="px-6 py-3 rounded-xl font-semibold glass neon-border text-slate-300 hover:text-white hover:shadow-glow transition-all duration-300 hover:scale-105 font-mono text-sm"
+            className="px-6 py-3 rounded-xl font-semibold glass neon-border text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:text-white hover:shadow-glow transition-all duration-300 hover:scale-105 font-mono text-sm"
           >
             ← Go Back
           </button>
           <button
             onClick={() => router.push('/')}
-            className="px-6 py-3 rounded-xl font-semibold text-white transition-all duration-300 hover:shadow-glow-lg hover:scale-105 font-mono text-sm"
+            className="px-6 py-3 rounded-xl font-semibold text-slate-900 dark:text-white transition-all duration-300 hover:shadow-glow-lg hover:scale-105 font-mono text-sm"
             style={{ background: 'linear-gradient(135deg, #6366f1, #4f46e5)' }}
           >
             Back to Home

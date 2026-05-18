@@ -21,7 +21,7 @@ const skillsData = [
   { name: 'Matplotlib', description: 'Data visualization & plotting', color: '#f472b6', size: 52 },
   { name: 'Flask', description: 'Lightweight Python web framework', color: '#94a3b8', size: 50 },
   { name: 'Git', description: 'Version control & branching', color: '#fb7185', size: 50 },
-  { name: 'GitHub', description: 'Code hosting & collaboration', color: '#e2e8f0', size: 50 },
+  { name: 'GitHub', description: 'Code hosting & collaboration', color: '#64748b', size: 50 },
   { name: 'Streamlit', description: 'Rapid ML app deployment', color: '#ff4b4b', size: 48 },
   { name: 'OCR', description: 'Optical character recognition systems', color: '#fbbf24', size: 46 },
   { name: 'TypeScript', description: 'Typed JavaScript for scalable apps', color: '#3b82f6', size: 54 },
@@ -91,11 +91,11 @@ export default function SkillsSection() {
             <div className="h-px flex-1 max-w-12 bg-gradient-to-r from-transparent to-cyan-500" />
             <span className="text-cyan-400 font-mono text-sm tracking-widest uppercase">Skills Galaxy</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-white">
+          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white">
             Technology{' '}
             <span style={{ color: '#06b6d4', textShadow: '0 0 20px rgba(6,182,212,0.6)' }}>Universe</span>
           </h2>
-          <p className="text-slate-400 mt-4 max-w-xl text-lg">
+          <p className="text-slate-600 dark:text-slate-400 mt-4 max-w-xl text-lg">
             Hover over each skill orb to explore. Filter by category below.
           </p>
         </motion.div>
@@ -107,7 +107,7 @@ export default function SkillsSection() {
           <motion.button
             onClick={() => setActiveCategory(null)}
             whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}
-            className={`px-3 py-1.5 rounded-full text-xs font-mono transition-all duration-300 ${!activeCategory ? 'text-white' : 'text-slate-400 hover:text-white'}`}
+            className={`px-3 py-1.5 rounded-full text-xs font-mono transition-all duration-300 ${!activeCategory ? 'text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:text-white'}`}
             style={{
               background: !activeCategory ? 'rgba(99,102,241,0.3)' : 'rgba(255,255,255,0.04)',
               border: `1px solid ${!activeCategory ? 'rgba(99,102,241,0.6)' : 'rgba(255,255,255,0.08)'}`,
@@ -120,7 +120,7 @@ export default function SkillsSection() {
               key={cat.label}
               onClick={() => setActiveCategory(activeCategory === cat.label ? null : cat.label)}
               whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}
-              className={`px-3 py-1.5 rounded-full text-xs font-mono transition-all duration-300 ${activeCategory === cat.label ? 'text-white' : 'text-slate-400 hover:text-white'}`}
+              className={`px-3 py-1.5 rounded-full text-xs font-mono transition-all duration-300 ${activeCategory === cat.label ? 'text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:text-white'}`}
               style={{
                 background: activeCategory === cat.label ? `${cat.color}30` : 'rgba(255,255,255,0.04)',
                 border: `1px solid ${activeCategory === cat.label ? `${cat.color}60` : 'rgba(255,255,255,0.08)'}`,
@@ -134,19 +134,18 @@ export default function SkillsSection() {
 
         {/* Galaxy */}
         <motion.div
-          className="relative w-full rounded-3xl overflow-hidden"
+          className="relative w-full rounded-3xl overflow-hidden bg-slate-50 dark:bg-slate-900"
           style={{
             height: '520px',
-            background: 'rgba(15,23,42,0.8)',
             border: '1px solid rgba(99,102,241,0.15)',
-            boxShadow: '0 0 60px rgba(99,102,241,0.05), inset 0 0 60px rgba(0,0,0,0.3)',
+            boxShadow: '0 0 60px rgba(99,102,241,0.05), inset 0 0 60px rgba(0,0,0,0.1)',
           }}
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-dark-900 to-slate-900" />
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-100 via-white to-slate-100 dark:from-slate-900 dark:via-dark-900 dark:to-slate-900" />
           <div className="absolute inset-0"
             style={{ backgroundImage: 'radial-gradient(rgba(99,102,241,0.06) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
 
@@ -167,9 +166,8 @@ export default function SkillsSection() {
                   <AnimatePresence>
                     {isHovered && (
                       <motion.div
-                        className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 rounded-xl px-3 py-2 whitespace-nowrap z-30 pointer-events-none"
+                        className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 rounded-xl px-3 py-2 whitespace-nowrap z-30 pointer-events-none bg-white/95 dark:bg-[#0f172a]/96"
                         style={{
-                          background: 'rgba(15,23,42,0.96)',
                           border: `1px solid ${skill.color}50`,
                           boxShadow: `0 0 20px ${skill.color}30`,
                           backdropFilter: 'blur(10px)',
@@ -179,8 +177,8 @@ export default function SkillsSection() {
                         exit={{ opacity: 0, y: 4, scale: 0.9 }}
                         transition={{ duration: 0.2 }}
                       >
-                        <p className="text-white text-xs font-semibold">{skill.name}</p>
-                        <p className="text-slate-400 text-xs mt-0.5 max-w-[180px] whitespace-normal">{skill.description}</p>
+                        <p className="text-slate-900 dark:text-white text-xs font-semibold">{skill.name}</p>
+                        <p className="text-slate-600 dark:text-slate-400 text-xs mt-0.5 max-w-[180px] whitespace-normal">{skill.description}</p>
                         <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0"
                           style={{ borderLeft: '5px solid transparent', borderRight: '5px solid transparent', borderTop: `5px solid ${skill.color}50` }} />
                       </motion.div>
@@ -236,8 +234,8 @@ export default function SkillsSection() {
             <motion.div
               key={cat.label}
               whileHover={{ y: -4 }}
-              className="rounded-2xl p-4 transition-all duration-300"
-              style={{ background: 'rgba(255,255,255,0.02)', border: `1px solid ${cat.color}20` }}
+              className="rounded-2xl p-4 transition-all duration-300 bg-black/5 dark:bg-white/5"
+              style={{ border: `1px solid ${cat.color}20` }}
             >
               <div className="text-xs font-mono font-bold mb-3 tracking-widest uppercase" style={{ color: cat.color }}>
                 {cat.label}
@@ -247,7 +245,7 @@ export default function SkillsSection() {
                   <div key={s} className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 rounded-full flex-shrink-0"
                       style={{ background: cat.color, boxShadow: `0 0 4px ${cat.color}` }} />
-                    <span className="text-xs text-slate-400 font-mono">{s}</span>
+                    <span className="text-xs text-slate-600 dark:text-slate-400 font-mono">{s}</span>
                   </div>
                 ))}
               </div>

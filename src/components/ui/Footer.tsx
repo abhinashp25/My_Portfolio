@@ -39,7 +39,7 @@ export default function Footer() {
         </svg>
       </div>
 
-      <div className="bg-dark-900 border-t border-white/5 px-6 py-10">
+      <div className="bg-slate-50 dark:bg-dark-900 border-t border-black/10 dark:border-white/5 px-6 py-10">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             {/* Logo & tagline */}
@@ -48,7 +48,7 @@ export default function Footer() {
                 <Image src="/assets/images/logo.svg" alt="AP Logo" width={40} height={40} className="w-full h-full" />
               </div>
               <div>
-                <p className="text-white font-semibold text-sm">Abhinash Pradhan</p>
+                <p className="text-slate-900 dark:text-white font-semibold text-sm">Abhinash Pradhan</p>
                 <p className="text-slate-500 text-xs font-mono">Full Stack Developer & AI/ML Enthusiast</p>
               </div>
             </div>
@@ -84,7 +84,7 @@ export default function Footer() {
             </div>
           </div>
 
-          <div className="mt-8 pt-6 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-3">
+          <div className="mt-8 pt-6 border-t border-black/10 dark:border-white/5 flex flex-col md:flex-row items-center justify-between gap-3">
             <p className="text-slate-500 text-sm text-center">
               Built with passion and modern web technologies.
             </p>

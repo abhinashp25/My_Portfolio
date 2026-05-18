@@ -177,7 +177,7 @@ function ProjectCard({
         onMouseEnter={() => setHovered(true)}
         onMouseOut={() => setHovered(false)}
         onClick={onClick}
-        className="group relative h-full rounded-2xl overflow-hidden flex flex-col bg-dark-900/40 backdrop-blur-md border transition-transform duration-300 cursor-pointer"
+        className="group relative h-full rounded-2xl overflow-hidden flex flex-col bg-slate-50 dark:bg-dark-900/40 backdrop-blur-md border transition-transform duration-300 cursor-pointer"
         style={{
           borderColor: hovered ? `${project.color}40` : 'rgba(255,255,255,0.05)',
         }}
@@ -191,7 +191,7 @@ function ProjectCard({
           }}
         />
         {/* Media Header */}
-        <div className="relative w-full h-48 sm:h-52 overflow-hidden bg-[#0a0a0a] shrink-0 border-b border-white/10">
+        <div className="relative w-full h-48 sm:h-52 overflow-hidden bg-[#0a0a0a] shrink-0 border-b border-black/10 dark:border-white/10">
           {project.video ? (
             <video
               src={project.video}
@@ -232,7 +232,7 @@ function ProjectCard({
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="flex items-center justify-center w-8 h-8 rounded-full backdrop-blur-md text-white hover:scale-110 transition-transform"
+              className="flex items-center justify-center w-8 h-8 rounded-full backdrop-blur-md text-slate-900 dark:text-white hover:scale-110 transition-transform"
               style={{
                 background: `${project.color}40`,
                 border: `1px solid ${project.color}60`,
@@ -246,7 +246,7 @@ function ProjectCard({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="flex items-center justify-center w-8 h-8 rounded-full backdrop-blur-md text-white hover:scale-110 transition-transform"
+                className="flex items-center justify-center w-8 h-8 rounded-full backdrop-blur-md text-slate-900 dark:text-white hover:scale-110 transition-transform"
                 style={{
                   background: 'rgba(255,255,255,0.2)',
                   border: '1px solid rgba(255,255,255,0.3)',
@@ -258,17 +258,17 @@ function ProjectCard({
           </div>
         </div>
 
-        <div className="relative z-10 p-5 sm:p-6 flex flex-col flex-1 bg-dark-900/60">
+        <div className="relative z-10 p-5 sm:p-6 flex flex-col flex-1 bg-slate-50 dark:bg-dark-900/60">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-lg font-bold text-white leading-tight">{project.title}</h3>
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white leading-tight">{project.title}</h3>
             {project.stats && (
-              <span className="text-xs font-mono text-slate-400 flex items-center gap-1">
+              <span className="text-xs font-mono text-slate-600 dark:text-slate-400 flex items-center gap-1">
                 <StarIcon className="w-3.5 h-3.5" style={{ color: project.color }} />
                 {project.stats}
               </span>
             )}
           </div>
-          <p className="text-slate-400 text-sm mb-5 leading-relaxed flex-1">
+          <p className="text-slate-600 dark:text-slate-400 text-sm mb-5 leading-relaxed flex-1">
             {project.description}
           </p>
 
@@ -277,7 +277,7 @@ function ProjectCard({
             {project.tech.slice(0, 4).map((t) => (
               <span
                 key={t}
-                className="text-[10px] px-2 py-0.5 rounded font-mono text-slate-300"
+                className="text-[10px] px-2 py-0.5 rounded font-mono text-slate-700 dark:text-slate-300"
                 style={{
                   background: 'rgba(255,255,255,0.05)',
                   border: '1px solid rgba(255,255,255,0.1)',
@@ -324,17 +324,17 @@ export default function ProjectsSection() {
         >
           <div className="flex items-center gap-3 mb-4">
             <div className="h-px flex-1 max-w-12 bg-gradient-to-r from-transparent to-white/50" />
-            <span className="text-white/60 font-mono text-sm tracking-widest uppercase">
+            <span className="text-slate-900 dark:text-white/60 font-mono text-sm tracking-widest uppercase">
               Selected Work
             </span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-white">
+          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white">
             Impact-Focused{' '}
-            <span style={{ color: '#ffffff', textShadow: '0 0 20px rgba(255,255,255,0.2)' }}>
+            <span className="text-slate-900 dark:text-white drop-shadow-md dark:drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]">
               Case Studies
             </span>
           </h2>
-          <p className="text-slate-400 mt-4 max-w-xl text-lg">
+          <p className="text-slate-600 dark:text-slate-400 mt-4 max-w-xl text-lg">
             A curated set of engineering and AI projects with measurable outcomes, architecture
             decisions, and delivery focus.
           </p>
@@ -354,7 +354,7 @@ export default function ProjectsSection() {
               onClick={() => setFilter(cat)}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.97 }}
-              className={`px-3 py-1.5 rounded-full text-xs font-mono transition-all duration-300 ${filter === cat ? 'text-white' : 'text-slate-400 hover:text-white'}`}
+              className={`px-3 py-1.5 rounded-full text-xs font-mono transition-all duration-300 ${filter === cat ? 'text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:text-white'}`}
               style={{
                 background: filter === cat ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.04)',
                 border: `1px solid ${filter === cat ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.08)'}`,
@@ -386,16 +386,16 @@ export default function ProjectsSection() {
           transition={{ duration: 0.6, delay: 0.3 }}
         >
           {[
-            { label: 'Shipped Applications', value: '5+', color: '#ffffff' },
-            { label: 'Peak ML Accuracy', value: '98%', color: '#e2e8f0' },
-            { label: 'Real-Time Latency', value: '<100ms', color: '#cbd5e1' },
+            { label: 'Shipped Applications', value: '5+', color: 'var(--color-text)' },
+            { label: 'Peak ML Accuracy', value: '98%', color: '#3b82f6' },
+            { label: 'Real-Time Latency', value: '<100ms', color: '#8b5cf6' },
           ].map((s) => (
             <div
               key={s.label}
               className="rounded-2xl p-4 text-center"
               style={{ background: 'rgba(255,255,255,0.02)', border: `1px solid ${s.color}20` }}
             >
-              <div className="text-2xl font-bold font-mono" style={{ color: s.color }}>
+              <div className="text-2xl font-bold font-mono" style={{ color: s.color === 'var(--color-text)' ? 'inherit' : s.color }}>
                 {s.value}
               </div>
               <div className="text-xs text-slate-500 mt-1 font-mono">{s.label}</div>
@@ -417,9 +417,8 @@ export default function ProjectsSection() {
           >
             <div className="absolute inset-0 bg-[#020617]/60 backdrop-blur-md" />
             <motion.div
-              className="relative z-10 max-w-2xl w-full rounded-3xl overflow-hidden flex flex-col max-h-[90vh]"
+              className="relative z-10 max-w-2xl w-full rounded-3xl overflow-hidden flex flex-col max-h-[90vh] bg-slate-50/90 dark:bg-dark-900/40"
               style={{
-                background: 'rgba(255, 255, 255, 0.03)',
                 border: `1px solid rgba(255, 255, 255, 0.1)`,
                 boxShadow: `inset 0 0 32px rgba(255,255,255,0.02), 0 0 80px ${selectedProject.color}15, 0 32px 64px rgba(0,0,0,0.6)`,
                 backdropFilter: 'blur(40px)',
@@ -455,7 +454,7 @@ export default function ProjectsSection() {
 
                 <button
                   onClick={() => setSelectedProject(null)}
-                  className="absolute top-4 right-4 p-2 rounded-full backdrop-blur-xl bg-black/40 text-white hover:bg-black/60 hover:scale-110 transition-all border border-white/10 z-20"
+                  className="absolute top-4 right-4 p-2 rounded-full backdrop-blur-xl bg-black/40 text-white hover:bg-black/60 hover:scale-110 transition-all border border-white/20 z-20"
                 >
                   <XMarkIcon className="w-5 h-5" />
                 </button>
@@ -485,38 +484,36 @@ export default function ProjectsSection() {
                       {selectedProject.category}
                     </span>
                     {selectedProject.stats && (
-                      <span className="text-xs font-mono text-slate-400 flex items-center gap-1">
+                      <span className="text-xs font-mono text-slate-600 dark:text-slate-400 flex items-center gap-1">
                         <StarIcon className="w-3 h-3" style={{ color: selectedProject.color }} />
                         {selectedProject.stats}
                       </span>
                     )}
                   </div>
-                  <h3 className="text-3xl font-bold text-white tracking-tight">
+                  <h3 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
                     {selectedProject.title}
                   </h3>
                 </div>
 
                 <div className="mb-8">
-                  <h4 className="text-sm font-mono text-slate-400 uppercase tracking-widest mb-3">
+                  <h4 className="text-sm font-mono text-slate-600 dark:text-slate-400 uppercase tracking-widest mb-3">
                     About Project
                   </h4>
-                  <p className="text-slate-300 leading-relaxed text-[15px]">
+                  <p className="text-slate-700 dark:text-slate-300 leading-relaxed text-[15px]">
                     {selectedProject.longDescription}
                   </p>
                 </div>
 
                 <div className="mb-8">
-                  <h4 className="text-sm font-mono text-slate-400 uppercase tracking-widest mb-3">
+                  <h4 className="text-sm font-mono text-slate-600 dark:text-slate-400 uppercase tracking-widest mb-3">
                     Core Technologies
                   </h4>
                   <div className="flex flex-wrap gap-2">
                     {selectedProject.tech.map((t) => (
                       <span
                         key={t}
-                        className="text-xs px-3 py-1.5 rounded-lg font-mono"
+                        className="text-xs px-3 py-1.5 rounded-lg font-mono bg-black/5 dark:bg-white/5 text-slate-700 dark:text-slate-200"
                         style={{
-                          background: 'rgba(255,255,255,0.03)',
-                          color: '#e2e8f0',
                           border: '1px solid rgba(255,255,255,0.1)',
                           boxShadow: 'inset 0 0 10px rgba(255,255,255,0.02)',
                         }}
@@ -534,7 +531,7 @@ export default function ProjectsSection() {
                     rel="noopener noreferrer"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium text-white transition-all shadow-lg"
+                    className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium text-slate-900 dark:text-white transition-all shadow-lg"
                     style={{
                       background: `linear-gradient(135deg, ${selectedProject.color}40, ${selectedProject.color}20)`,
                       border: `1px solid ${selectedProject.color}50`,
@@ -551,7 +548,7 @@ export default function ProjectsSection() {
                       rel="noopener noreferrer"
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium text-white transition-all backdrop-blur-md"
+                      className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium text-slate-900 dark:text-white transition-all backdrop-blur-md"
                       style={{
                         background: 'rgba(255,255,255,0.05)',
                         border: '1px solid rgba(255,255,255,0.1)',

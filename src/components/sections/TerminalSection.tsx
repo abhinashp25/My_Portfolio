@@ -24,7 +24,7 @@ const THEMES: Record<string, string> = {
   neon: 'text-pink-400',
   cyber: 'text-cyan-400',
   hacker: 'text-amber-400',
-  light: 'text-slate-200'
+  light: 'text-slate-800 dark:text-slate-200'
 };
 
 const commands: Record<string, string[]> = {
@@ -296,19 +296,19 @@ export default function TerminalSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.7 }}
         >
-          <div className="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-full border border-white/10 bg-white/5 backdrop-blur-md shadow-lg cursor-pointer hover:bg-white/10 transition-colors"
+          <div className="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-full border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 backdrop-blur-md shadow-lg cursor-pointer hover:bg-black/10 dark:bg-white/10 transition-colors"
                onClick={() => inputRef.current?.focus()}>
             <CommandLineIcon className="w-4 h-4 text-indigo-400" />
-            <span className="text-white/80 font-mono text-xs tracking-widest uppercase">
+            <span className="text-slate-900 dark:text-white/80 font-mono text-xs tracking-widest uppercase">
               Interactive Shell
             </span>
           </div>
           
-          <h2 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-indigo-200 to-white/60 drop-shadow-sm mb-4">
+          <h2 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-400 to-cyan-500 drop-shadow-sm mb-4">
             Developer Console
           </h2>
-          <p className="text-slate-400 max-w-xl mx-auto text-base">
-            Execute commands to explore my technical footprint. Try <code className="text-indigo-300 bg-white/5 px-2 py-0.5 rounded font-mono text-sm border border-white/10">theme neon</code> or press <code className="text-indigo-300 bg-white/5 px-2 py-0.5 rounded font-mono text-sm border border-white/10">Tab</code> to autocomplete.
+          <p className="text-slate-600 dark:text-slate-400 max-w-xl mx-auto text-base">
+            Execute commands to explore my technical footprint. Try <code className="text-indigo-300 bg-black/5 dark:bg-white/5 px-2 py-0.5 rounded font-mono text-sm border border-black/10 dark:border-white/10">theme neon</code> or press <code className="text-indigo-300 bg-black/5 dark:bg-white/5 px-2 py-0.5 rounded font-mono text-sm border border-black/10 dark:border-white/10">Tab</code> to autocomplete.
           </p>
         </motion.div>
 
@@ -322,7 +322,7 @@ export default function TerminalSection() {
           }}
           onClick={() => inputRef.current?.focus()}
         >
-          <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-white/5">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5">
             <div className="flex gap-2.5">
               <div className="w-3.5 h-3.5 rounded-full bg-[#ff5f56] border border-[#e0443e] shadow-inner" />
               <div className="w-3.5 h-3.5 rounded-full bg-[#ffbd2e] border border-[#dea123] shadow-inner" />
@@ -330,8 +330,8 @@ export default function TerminalSection() {
             </div>
             
             <div className="flex items-center gap-2 px-4 py-1.5 rounded-md bg-black/30 border border-white/5 shadow-inner">
-              <SparklesIcon className="w-3.5 h-3.5 text-slate-400" />
-              <span className="text-xs font-mono text-slate-300">abhinash@portfolio ~ -zsh</span>
+              <SparklesIcon className="w-3.5 h-3.5 text-slate-600 dark:text-slate-400" />
+              <span className="text-xs font-mono text-slate-700 dark:text-slate-300">abhinash@portfolio ~ -zsh</span>
             </div>
             
             <div className="w-12" />
