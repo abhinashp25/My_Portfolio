@@ -74,96 +74,124 @@ function EducationCard({ edu, index }: { edu: any; index: number }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.15 }}
       transition={{ duration: 0.8, delay: index * 0.15, ease: [0.16, 1, 0.3, 1] }}
-      className="group relative"
+      className="group relative w-full rounded-[2rem] overflow-hidden shadow-2xl transition-transform duration-500 hover:-translate-y-1"
     >
-      <div
-        className="relative rounded-[2rem] overflow-hidden backdrop-blur-2xl transition-all duration-500 hover:-translate-y-2 flex flex-col md:flex-row"
+      {/* Background Image Carousel (Full width & height) */}
+      {edu.images && edu.images.length > 0 ? (
+        <div className="absolute inset-0 z-0">
+          <AnimatePresence mode="wait">
+            <motion.img
+              key={currentImageIndex}
+              src={edu.images[currentImageIndex]}
+              alt={`${edu.institution} image`}
+              initial={{ opacity: 0, scale: 1.05 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1.5, ease: "easeInOut" }}
+              className="absolute inset-0 w-full h-full object-cover object-center"
+            />
+          </AnimatePresence>
+        </div>
+      ) : (
+        <div className="absolute inset-0 z-0 bg-gradient-to-br from-white/5 to-white/0" />
+      )}
+
+      {/* The Liquid Glass Gradient Overlay */}
+      <div 
+        className="absolute inset-0 z-10 pointer-events-none hidden md:block"
         style={{
-          background: 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%)',
-          border: `1px solid rgba(255,255,255,0.1)`,
-          boxShadow: '0 8px 32px 0 rgba(0,0,0,0.3)',
+          background: `linear-gradient(to right, rgba(5,5,5,0.98) 0%, rgba(5,5,5,0.9) 45%, rgba(5,5,5,0.2) 75%, transparent 100%)`,
+        }}
+      />
+      <div 
+        className="absolute inset-0 z-10 pointer-events-none md:hidden"
+        style={{
+          background: `linear-gradient(to top, rgba(5,5,5,0.98) 0%, rgba(5,5,5,0.9) 60%, rgba(5,5,5,0.2) 100%)`,
+        }}
+      />
+      
+      {/* Additional backdrop blur layer for the text area specifically */}
+      <div className="absolute inset-y-0 left-0 w-full md:w-[65%] z-10 backdrop-blur-xl hidden md:block" 
+           style={{ maskImage: 'linear-gradient(to right, black 70%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to right, black 70%, transparent 100%)' }} />
+      <div className="absolute inset-x-0 bottom-0 h-[80%] z-10 backdrop-blur-xl md:hidden" 
+           style={{ maskImage: 'linear-gradient(to top, black 60%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to top, black 60%, transparent 100%)' }} />
+
+      {/* Main Content Container */}
+      <div
+        className="relative z-20 flex flex-col justify-end md:justify-center p-6 sm:p-8 md:p-12 min-h-[420px] md:min-h-[340px] border border-white/10 group-hover:border-white/20 rounded-[2rem] transition-colors duration-500"
+        style={{
+          boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.05)',
         }}
         onMouseEnter={(e) => {
-          (e.currentTarget as HTMLElement).style.boxShadow = `0 20px 60px -10px ${edu.color}30, 0 8px 32px 0 rgba(0,0,0,0.4)`;
-          (e.currentTarget as HTMLElement).style.borderColor = `${edu.color}50`;
+          (e.currentTarget as HTMLElement).style.borderColor = `${edu.color}40`;
         }}
         onMouseLeave={(e) => {
-          (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 32px 0 rgba(0,0,0,0.3)';
           (e.currentTarget as HTMLElement).style.borderColor = `rgba(255,255,255,0.1)`;
         }}
       >
-        {/* Glow behind content */}
-        <div 
-          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"
-          style={{ background: `radial-gradient(circle at 50% 0%, ${edu.color}15, transparent 70%)` }} 
-        />
-
-        {/* Content Side */}
-        <div className="relative z-10 p-8 md:p-12 flex-1 flex flex-col justify-center">
-          <div className="flex items-center gap-4 mb-6">
+        <div className="md:w-[65%] flex flex-col h-full justify-center">
+          {/* Header Row */}
+          <div className="flex items-center gap-4 mb-5">
             <div
-              className="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg"
+              className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg backdrop-blur-lg"
               style={{
-                background: `linear-gradient(135deg, ${edu.color}20, transparent)`,
+                background: `linear-gradient(135deg, ${edu.color}30, rgba(0,0,0,0.5))`,
                 border: `1px solid ${edu.color}40`,
-                boxShadow: `inset 0 0 20px ${edu.color}10`
+                boxShadow: `inset 0 0 20px ${edu.color}20`
               }}
             >
-              <Icon className="w-7 h-7" style={{ color: edu.color }} />
+              <Icon className="w-6 h-6" style={{ color: edu.color }} />
             </div>
-            <div>
-              <div className="flex flex-wrap items-center gap-2 mb-1.5">
-                <span
-                  className="text-xs font-bold tracking-wider uppercase px-3 py-1 rounded-full"
-                  style={{ background: `${edu.color}20`, color: edu.color, border: `1px solid ${edu.color}30` }}
-                >
-                  {edu.level}
-                </span>
-                <span
-                  className="text-xs font-bold tracking-wider uppercase px-3 py-1 rounded-full"
-                  style={{
-                    background: `${edu.statusColor}15`,
-                    color: edu.statusColor,
-                    border: `1px solid ${edu.statusColor}30`,
-                  }}
-                >
-                  {edu.status}
-                </span>
-              </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <span
+                className="text-[10px] sm:text-xs font-bold tracking-widest uppercase px-3 py-1 rounded-full backdrop-blur-md"
+                style={{ background: `${edu.color}15`, color: edu.color, border: `1px solid ${edu.color}30` }}
+              >
+                {edu.level}
+              </span>
+              <span
+                className="text-[10px] sm:text-xs font-bold tracking-widest uppercase px-3 py-1 rounded-full backdrop-blur-md"
+                style={{
+                  background: `${edu.statusColor}10`,
+                  color: edu.statusColor,
+                  border: `1px solid ${edu.statusColor}25`,
+                }}
+              >
+                {edu.status}
+              </span>
             </div>
           </div>
 
-          <h3 className="text-2xl md:text-3xl font-bold text-white mb-2 leading-tight tracking-tight">
+          <h3 className="text-2xl sm:text-3xl font-bold text-white mb-1.5 leading-tight tracking-tight drop-shadow-md">
             {edu.degree}
           </h3>
-          <p className="text-lg font-medium mb-1" style={{ color: edu.color }}>
+          <p className="text-base sm:text-lg font-medium mb-1 drop-shadow-md" style={{ color: edu.color }}>
             {edu.institution}
           </p>
-          <p className="text-slate-400 text-sm font-mono mb-6">
+          <p className="text-slate-300 text-xs sm:text-sm font-mono mb-5 drop-shadow-md">
             {edu.affiliation}
           </p>
 
-          <div className="flex flex-wrap items-center gap-6 text-sm text-slate-300 mb-8">
-            <span className="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-lg border border-white/5 backdrop-blur-sm">
+          <div className="flex flex-wrap items-center gap-4 text-xs sm:text-sm text-slate-200 mb-6">
+            <span className="flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/10">
               <MapPinIcon className="w-4 h-4" style={{ color: edu.color }} />
               {edu.location}
             </span>
-            <span className="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-lg border border-white/5 backdrop-blur-sm">
+            <span className="flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/10">
               <CalendarIcon className="w-4 h-4" style={{ color: edu.color }} />
               {edu.period}
             </span>
           </div>
 
           {/* Highlights */}
-          <div className="flex flex-wrap gap-2 mt-auto">
+          <div className="flex flex-wrap gap-2">
             {edu.highlights.map((h: string) => (
               <span
                 key={h}
-                className="text-xs px-3 py-1.5 rounded-xl font-medium text-slate-300 transition-colors duration-300 hover:text-white"
+                className="text-[10px] sm:text-xs px-3 py-1.5 rounded-xl font-medium text-slate-200 transition-colors duration-300 hover:text-white hover:bg-white/10 backdrop-blur-md shadow-sm"
                 style={{
-                  background: 'rgba(255,255,255,0.03)',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.1)'
+                  background: 'rgba(0,0,0,0.4)',
+                  border: '1px solid rgba(255,255,255,0.15)',
                 }}
               >
                 {h}
@@ -172,41 +200,20 @@ function EducationCard({ edu, index }: { edu: any; index: number }) {
           </div>
         </div>
 
-        {/* Image Side - Carousel */}
-        {edu.images && edu.images.length > 0 && (
-          <div className="relative w-full md:w-[45%] min-h-[250px] md:min-h-full overflow-hidden shrink-0 border-t md:border-t-0 md:border-l border-white/10">
-            <AnimatePresence mode="wait">
-              <motion.img
-                key={currentImageIndex}
-                src={edu.images[currentImageIndex]}
-                alt={`${edu.institution} image`}
-                initial={{ opacity: 0, scale: 1.05 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 1, ease: "easeInOut" }}
-                className="absolute inset-0 w-full h-full object-cover object-center"
+        {/* Carousel Indicators */}
+        {edu.images && edu.images.length > 1 && (
+          <div className="absolute top-6 right-6 md:bottom-8 md:top-auto flex gap-1.5 z-30 bg-black/40 px-3 py-1.5 rounded-full backdrop-blur-md border border-white/10">
+            {edu.images.map((_: any, idx: number) => (
+              <button
+                key={idx}
+                onClick={() => setCurrentImageIndex(idx)}
+                className={`h-1.5 rounded-full transition-all duration-500 ${
+                  idx === currentImageIndex 
+                    ? 'bg-white w-5 shadow-[0_0_8px_rgba(255,255,255,0.8)]' 
+                    : 'bg-white/40 w-1.5 hover:bg-white/80'
+                }`}
               />
-            </AnimatePresence>
-
-            {/* Seamless Glass Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a]/80 via-transparent to-transparent md:bg-gradient-to-l md:from-transparent md:via-[#0a0a0a]/20 md:to-[#0a0a0a]/90 pointer-events-none" />
-
-            {/* Image indicators */}
-            {edu.images.length > 1 && (
-              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-20 bg-black/40 px-4 py-2 rounded-full backdrop-blur-md border border-white/10 shadow-lg">
-                {edu.images.map((_: any, idx: number) => (
-                  <button
-                    key={idx}
-                    onClick={() => setCurrentImageIndex(idx)}
-                    className={`h-1.5 rounded-full transition-all duration-500 ${
-                      idx === currentImageIndex 
-                        ? 'bg-white w-6 shadow-[0_0_10px_rgba(255,255,255,0.8)]' 
-                        : 'bg-white/40 w-2 hover:bg-white/80'
-                    }`}
-                  />
-                ))}
-              </div>
-            )}
+            ))}
           </div>
         )}
       </div>
