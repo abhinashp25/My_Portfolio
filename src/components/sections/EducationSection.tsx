@@ -74,11 +74,11 @@ function EducationCard({ edu, index }: { edu: any; index: number }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.15 }}
       transition={{ duration: 0.8, delay: index * 0.15, ease: [0.16, 1, 0.3, 1] }}
-      className="group relative w-full rounded-[2rem] overflow-hidden shadow-2xl transition-transform duration-500 hover:-translate-y-1"
+      className="group relative w-full h-[280px] sm:h-[320px] md:h-[350px] rounded-[2rem] overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-transform duration-1000 hover:-translate-y-2 border border-white/10 hover:border-white/20"
     >
       {/* Background Image Carousel (Full width & height) */}
       {edu.images && edu.images.length > 0 ? (
-        <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 z-0 overflow-hidden">
           <AnimatePresence mode="wait">
             <motion.img
               key={currentImageIndex}
@@ -88,7 +88,7 @@ function EducationCard({ edu, index }: { edu: any; index: number }) {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 1.5, ease: "easeInOut" }}
-              className="absolute inset-0 w-full h-full object-cover object-center"
+              className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-[1500ms] group-hover:scale-110"
             />
           </AnimatePresence>
         </div>
@@ -96,127 +96,112 @@ function EducationCard({ edu, index }: { edu: any; index: number }) {
         <div className="absolute inset-0 z-0 bg-gradient-to-br from-white/5 to-white/0" />
       )}
 
-      {/* The Liquid Glass Gradient Overlay */}
-      <div 
-        className="absolute inset-0 z-10 pointer-events-none hidden md:block"
-        style={{
-          background: `linear-gradient(to right, rgba(5,5,5,0.98) 0%, rgba(5,5,5,0.9) 45%, rgba(5,5,5,0.2) 75%, transparent 100%)`,
-        }}
-      />
-      <div 
-        className="absolute inset-0 z-10 pointer-events-none md:hidden"
-        style={{
-          background: `linear-gradient(to top, rgba(5,5,5,0.98) 0%, rgba(5,5,5,0.9) 60%, rgba(5,5,5,0.2) 100%)`,
-        }}
-      />
-      
-      {/* Additional backdrop blur layer for the text area specifically */}
-      <div className="absolute inset-y-0 left-0 w-full md:w-[65%] z-10 backdrop-blur-xl hidden md:block" 
-           style={{ maskImage: 'linear-gradient(to right, black 70%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to right, black 70%, transparent 100%)' }} />
-      <div className="absolute inset-x-0 bottom-0 h-[80%] z-10 backdrop-blur-xl md:hidden" 
-           style={{ maskImage: 'linear-gradient(to top, black 60%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to top, black 60%, transparent 100%)' }} />
+      {/* Persistent Bottom Gradient for Title Readability in Default State */}
+      <div className="absolute inset-x-0 bottom-0 h-1/2 z-10 bg-gradient-to-t from-black/90 via-black/40 to-transparent transition-opacity duration-1000 group-hover:opacity-0" />
 
-      {/* Main Content Container */}
-      <div
-        className="relative z-20 flex flex-col justify-end md:justify-center p-6 sm:p-8 md:p-12 min-h-[420px] md:min-h-[340px] border border-white/10 group-hover:border-white/20 rounded-[2rem] transition-colors duration-500"
+      {/* Default State Content (Visible when not hovering) */}
+      <div className="absolute inset-x-0 bottom-0 z-20 p-5 sm:p-6 flex items-end gap-4 transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-8 group-hover:opacity-0">
+        <div
+          className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center flex-shrink-0 shadow-xl backdrop-blur-md"
+          style={{
+            background: `linear-gradient(135deg, ${edu.color}40, rgba(0,0,0,0.6))`,
+            border: `1px solid ${edu.color}50`,
+            boxShadow: `inset 0 0 20px ${edu.color}30`
+          }}
+        >
+          <Icon className="w-6 h-6 sm:w-7 sm:h-7" style={{ color: edu.color }} />
+        </div>
+        <div>
+          <h3 className="text-lg sm:text-xl font-bold text-white leading-tight drop-shadow-lg mb-0.5">
+            {edu.institution}
+          </h3>
+          <p className="text-xs sm:text-sm font-semibold drop-shadow-lg" style={{ color: edu.color }}>
+            {edu.degree}
+          </p>
+        </div>
+      </div>
+
+      {/* Hover State: Liquid Glass Overlay */}
+      <div 
+        className="absolute inset-0 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-[1200ms] ease-in-out flex flex-col justify-end p-5 sm:p-8 backdrop-blur-2xl"
         style={{
-          boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.05)',
-        }}
-        onMouseEnter={(e) => {
-          (e.currentTarget as HTMLElement).style.borderColor = `${edu.color}40`;
-        }}
-        onMouseLeave={(e) => {
-          (e.currentTarget as HTMLElement).style.borderColor = `rgba(255,255,255,0.1)`;
+          background: 'linear-gradient(to top, rgba(10,10,10,0.95) 0%, rgba(10,10,10,0.85) 60%, rgba(10,10,10,0.6) 100%)',
+          borderTop: '1px solid rgba(255,255,255,0.1)'
         }}
       >
-        <div className="md:w-[65%] flex flex-col h-full justify-center">
-          {/* Header Row */}
-          <div className="flex items-center gap-4 mb-5">
-            <div
-              className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg backdrop-blur-lg"
-              style={{
-                background: `linear-gradient(135deg, ${edu.color}30, rgba(0,0,0,0.5))`,
-                border: `1px solid ${edu.color}40`,
-                boxShadow: `inset 0 0 20px ${edu.color}20`
-              }}
+        <div className="translate-y-4 group-hover:translate-y-0 transition-transform duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] flex flex-col h-full justify-center">
+          
+          <div className="flex items-center gap-2 mb-3">
+            <span
+              className="text-[9px] sm:text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full border border-white/10"
+              style={{ background: `${edu.color}20`, color: edu.color }}
             >
-              <Icon className="w-6 h-6" style={{ color: edu.color }} />
-            </div>
-            <div className="flex flex-wrap items-center gap-2">
-              <span
-                className="text-[10px] sm:text-xs font-bold tracking-widest uppercase px-3 py-1 rounded-full backdrop-blur-md"
-                style={{ background: `${edu.color}15`, color: edu.color, border: `1px solid ${edu.color}30` }}
-              >
-                {edu.level}
-              </span>
-              <span
-                className="text-[10px] sm:text-xs font-bold tracking-widest uppercase px-3 py-1 rounded-full backdrop-blur-md"
-                style={{
-                  background: `${edu.statusColor}10`,
-                  color: edu.statusColor,
-                  border: `1px solid ${edu.statusColor}25`,
-                }}
-              >
-                {edu.status}
-              </span>
-            </div>
+              {edu.level}
+            </span>
+            <span
+              className="text-[9px] sm:text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full border border-white/10"
+              style={{ background: `${edu.statusColor}15`, color: edu.statusColor }}
+            >
+              {edu.status}
+            </span>
           </div>
 
-          <h3 className="text-2xl sm:text-3xl font-bold text-white mb-1.5 leading-tight tracking-tight drop-shadow-md">
+          <h3 className="text-xl sm:text-2xl font-bold text-white mb-2 leading-tight tracking-tight">
             {edu.degree}
           </h3>
-          <p className="text-base sm:text-lg font-medium mb-1 drop-shadow-md" style={{ color: edu.color }}>
+          <p className="text-sm sm:text-base font-medium mb-2" style={{ color: edu.color }}>
             {edu.institution}
           </p>
-          <p className="text-slate-300 text-xs sm:text-sm font-mono mb-5 drop-shadow-md">
+          <p className="text-slate-300 text-xs sm:text-sm font-mono mb-4">
             {edu.affiliation}
           </p>
 
-          <div className="flex flex-wrap items-center gap-4 text-xs sm:text-sm text-slate-200 mb-6">
-            <span className="flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/10">
-              <MapPinIcon className="w-4 h-4" style={{ color: edu.color }} />
+          <div className="flex flex-wrap items-center gap-3 text-xs text-slate-200 mb-5">
+            <span className="flex items-center gap-1.5 bg-white/5 px-3 py-1.5 rounded-lg border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]">
+              <MapPinIcon className="w-3.5 h-3.5" style={{ color: edu.color }} />
               {edu.location}
             </span>
-            <span className="flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/10">
-              <CalendarIcon className="w-4 h-4" style={{ color: edu.color }} />
+            <span className="flex items-center gap-1.5 bg-white/5 px-3 py-1.5 rounded-lg border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]">
+              <CalendarIcon className="w-3.5 h-3.5" style={{ color: edu.color }} />
               {edu.period}
             </span>
           </div>
 
           {/* Highlights */}
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 mt-auto">
             {edu.highlights.map((h: string) => (
               <span
                 key={h}
-                className="text-[10px] sm:text-xs px-3 py-1.5 rounded-xl font-medium text-slate-200 transition-colors duration-300 hover:text-white hover:bg-white/10 backdrop-blur-md shadow-sm"
-                style={{
-                  background: 'rgba(0,0,0,0.4)',
-                  border: '1px solid rgba(255,255,255,0.15)',
-                }}
+                className="text-[10px] sm:text-xs px-3 py-1.5 rounded-lg font-medium text-slate-200 transition-all duration-500 hover:text-white hover:bg-white/10 border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] cursor-default"
+                style={{ background: 'rgba(255,255,255,0.03)' }}
               >
                 {h}
               </span>
             ))}
           </div>
-        </div>
 
-        {/* Carousel Indicators */}
-        {edu.images && edu.images.length > 1 && (
-          <div className="absolute top-6 right-6 md:bottom-8 md:top-auto flex gap-1.5 z-30 bg-black/40 px-3 py-1.5 rounded-full backdrop-blur-md border border-white/10">
-            {edu.images.map((_: any, idx: number) => (
-              <button
-                key={idx}
-                onClick={() => setCurrentImageIndex(idx)}
-                className={`h-1.5 rounded-full transition-all duration-500 ${
-                  idx === currentImageIndex 
-                    ? 'bg-white w-5 shadow-[0_0_8px_rgba(255,255,255,0.8)]' 
-                    : 'bg-white/40 w-1.5 hover:bg-white/80'
-                }`}
-              />
-            ))}
-          </div>
-        )}
+        </div>
       </div>
+
+      {/* Carousel Indicators (Always visible at the top) */}
+      {edu.images && edu.images.length > 1 && (
+        <div className="absolute top-5 right-5 flex gap-1.5 z-40 bg-black/40 px-2.5 py-1.5 rounded-full backdrop-blur-md border border-white/10 opacity-70 hover:opacity-100 transition-opacity duration-700">
+          {edu.images.map((_: any, idx: number) => (
+            <button
+              key={idx}
+              onClick={(e) => {
+                e.stopPropagation();
+                setCurrentImageIndex(idx);
+              }}
+              className={`h-1 rounded-full transition-all duration-700 ${
+                idx === currentImageIndex 
+                  ? 'bg-white w-4 shadow-[0_0_8px_rgba(255,255,255,0.8)]' 
+                  : 'bg-white/40 w-1.5 hover:bg-white/80'
+              }`}
+            />
+          ))}
+        </div>
+      )}
     </motion.div>
   );
 }
