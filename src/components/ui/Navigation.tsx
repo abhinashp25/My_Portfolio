@@ -152,7 +152,7 @@ export default function Navigation() {
                 className={`relative z-10 px-4 py-1.5 text-[13px] font-medium transition-all duration-300 ${
                   isActive
                     ? 'text-slate-900 dark:text-white'
-                    : 'text-slate-900 dark:text-white/60 hover:text-slate-900 dark:text-white'
+                    : 'text-slate-600 hover:text-slate-900 dark:text-white/60 dark:hover:text-white'
                 }`}
               >
                 {link.label}

@@ -128,28 +128,7 @@ const projects: Project[] = [
 
 const categories = ['All', 'Machine Learning', 'Computer Vision', 'Full Stack', 'Frontend'];
 
-// 3D tilt handlers
-function useTilt() {
-  const ref = useRef<HTMLDivElement>(null);
-
-  const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!ref.current) return;
-    const rect = ref.current.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
-    ref.current.style.transition = 'transform 0.1s ease';
-    ref.current.style.transform = `perspective(1000px) rotateX(${-y * 6}deg) rotateY(${x * 6}deg) translateZ(4px) scale(1.02)`;
-  };
-
-  const onLeave = () => {
-    if (!ref.current) return;
-    ref.current.style.transition = 'transform 0.55s cubic-bezier(0.16,1,0.3,1)';
-    ref.current.style.transform =
-      'perspective(900px) rotateX(0deg) rotateY(0deg) translateZ(0px) scale(1)';
-  };
-
-  return { ref, onMove, onLeave };
-}
+// Removed 3D tilt for performance - using CSS hover instead
 
 function ProjectCard({
   project,
@@ -160,38 +139,24 @@ function ProjectCard({
   index: number;
   onClick: () => void;
 }) {
-  const { ref, onMove, onLeave } = useTilt();
-  const [hovered, setHovered] = useState(false);
-
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "0px 0px -50px 0px" }}
-      transition={{ duration: 0.4, delay: (index % 3) * 0.05, ease: 'easeOut' }}
+      viewport={{ once: true, margin: '0px 0px -40px 0px' }}
+      transition={{ duration: 0.35, delay: (index % 3) * 0.04, ease: 'easeOut' }}
+      className="h-full"
     >
       <div
-        ref={ref}
-        onMouseMove={onMove}
-        onMouseLeave={onLeave}
-        onMouseEnter={() => setHovered(true)}
-        onMouseOut={() => setHovered(false)}
         onClick={onClick}
-        className="group relative h-full rounded-2xl overflow-hidden flex flex-col bg-slate-50 dark:bg-dark-900/40 backdrop-blur-md border transition-transform duration-300 cursor-pointer"
-        style={{
-          borderColor: hovered ? `${project.color}40` : 'rgba(255,255,255,0.05)',
-        }}
+        className="group relative h-full rounded-2xl overflow-hidden flex flex-col bg-white dark:bg-dark-900/50 border border-black/10 dark:border-white/8 hover:border-black/20 dark:hover:border-white/20 transition-all duration-300 cursor-pointer hover:-translate-y-1 hover:shadow-xl dark:hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)] will-change-transform"
       >
-        {/* Hardware-accelerated hover glow layer to prevent box-shadow lag */}
-        <div 
-          className="absolute inset-0 z-0 pointer-events-none transition-opacity duration-300"
-          style={{
-            opacity: hovered ? 1 : 0,
-            boxShadow: `inset 0 0 20px rgba(255,255,255,0.02), 0 0 40px ${project.color}15`,
-          }}
-        />
-        {/* Media Header */}
-        <div className="relative w-full h-48 sm:h-52 overflow-hidden bg-[#0a0a0a] shrink-0 border-b border-black/10 dark:border-white/10">
+        {/* Accent top line */}
+        <div className="absolute top-0 left-0 right-0 h-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10"
+          style={{ background: `linear-gradient(90deg, transparent, ${project.color}, transparent)` }} />
+
+        {/* Media Header — fixed height for uniform cards */}
+        <div className="relative w-full h-48 overflow-hidden bg-[#0a0a0a] shrink-0">
           {project.video ? (
             <video
               src={project.video}
@@ -199,44 +164,42 @@ function ProjectCard({
               loop
               muted
               playsInline
-              className="w-full h-full object-cover opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-out"
+              preload="none"
+              className="w-full h-full object-cover opacity-75 group-hover:opacity-100 group-hover:scale-[1.03] transition-all duration-500 ease-out"
             />
           ) : project.image ? (
             <img
               src={project.image}
               alt={project.title}
-              className="w-full h-full object-cover opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-out"
+              loading="lazy"
+              className="w-full h-full object-cover opacity-75 group-hover:opacity-100 group-hover:scale-[1.03] transition-all duration-500 ease-out"
             />
-          ) : null}
-          {/* Overlay gradient */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent pointer-events-none" />
+          ) : (
+            <div className="w-full h-full" style={{ background: `linear-gradient(135deg, ${project.color}20 0%, rgba(0,0,0,0.8) 100%)` }} />
+          )}
 
-          {/* Category Badge positioned over media */}
-          <div className="absolute top-4 left-4">
+          {/* Dark overlay for readability */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent pointer-events-none" />
+
+          {/* Category Badge */}
+          <div className="absolute top-3 left-3 z-10">
             <span
-              className="text-[10px] font-mono px-2.5 py-1 rounded-full backdrop-blur-md"
-              style={{
-                background: `${project.color}25`,
-                color: '#fff',
-                border: `1px solid ${project.color}50`,
-              }}
+              className="text-[10px] font-semibold font-mono px-2.5 py-1 rounded-full backdrop-blur-md tracking-wide"
+              style={{ background: `${project.color}30`, color: '#fff', border: `1px solid ${project.color}60` }}
             >
               {project.category}
             </span>
           </div>
 
-          {/* Buttons overlay (visible on hover) */}
-          <div className="absolute bottom-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
+          {/* Action Buttons (hover) */}
+          <div className="absolute bottom-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-1 group-hover:translate-y-0 z-20">
             <a
               href={project.github}
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="flex items-center justify-center w-8 h-8 rounded-full backdrop-blur-md text-slate-900 dark:text-white hover:scale-110 transition-transform"
-              style={{
-                background: `${project.color}40`,
-                border: `1px solid ${project.color}60`,
-              }}
+              className="flex items-center justify-center w-8 h-8 rounded-full backdrop-blur-md text-white hover:scale-110 transition-transform"
+              style={{ background: `${project.color}50`, border: `1px solid ${project.color}70` }}
             >
               <CodeBracketIcon className="w-4 h-4" />
             </a>
@@ -246,11 +209,8 @@ function ProjectCard({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="flex items-center justify-center w-8 h-8 rounded-full backdrop-blur-md text-slate-900 dark:text-white hover:scale-110 transition-transform"
-                style={{
-                  background: 'rgba(255,255,255,0.2)',
-                  border: '1px solid rgba(255,255,255,0.3)',
-                }}
+                className="flex items-center justify-center w-8 h-8 rounded-full backdrop-blur-md text-white hover:scale-110 transition-transform"
+                style={{ background: 'rgba(255,255,255,0.25)', border: '1px solid rgba(255,255,255,0.4)' }}
               >
                 <PlayIcon className="w-4 h-4" />
               </a>
@@ -258,36 +218,39 @@ function ProjectCard({
           </div>
         </div>
 
-        <div className="relative z-10 p-5 sm:p-6 flex flex-col flex-1 bg-slate-50 dark:bg-dark-900/60">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white leading-tight">{project.title}</h3>
-            {project.stats && (
-              <span className="text-xs font-mono text-slate-600 dark:text-slate-400 flex items-center gap-1">
-                <StarIcon className="w-3.5 h-3.5" style={{ color: project.color }} />
-                {project.stats}
+        {/* Card Body — flex-1 ensures all cards fill equal height */}
+        <div className="flex flex-col flex-1 p-5">
+          {/* Title row */}
+          <div className="flex items-start justify-between gap-2 mb-2">
+            <h3 className="text-base font-bold text-slate-900 dark:text-white leading-snug">{project.title}</h3>
+            {project.featured && (
+              <span className="shrink-0 text-[9px] font-bold px-1.5 py-0.5 rounded font-mono tracking-widest uppercase"
+                style={{ background: `${project.color}15`, color: project.color, border: `1px solid ${project.color}30` }}>
+                Featured
               </span>
             )}
           </div>
-          <p className="text-slate-600 dark:text-slate-400 text-sm mb-5 leading-relaxed flex-1">
+
+          {/* Description — fixed min height so all cards align */}
+          <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed flex-1 line-clamp-3">
             {project.description}
           </p>
 
-          {/* Tech */}
-          <div className="flex flex-wrap gap-1.5 mt-auto">
+          {/* Divider */}
+          <div className="h-px bg-black/5 dark:bg-white/5 my-4" />
+
+          {/* Tech Stack */}
+          <div className="flex flex-wrap gap-1.5">
             {project.tech.slice(0, 4).map((t) => (
               <span
                 key={t}
-                className="text-[10px] px-2 py-0.5 rounded font-mono text-slate-700 dark:text-slate-300"
-                style={{
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                }}
+                className="text-[10px] px-2 py-0.5 rounded-md font-mono font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-white/5 border border-black/8 dark:border-white/10"
               >
                 {t}
               </span>
             ))}
             {project.tech.length > 4 && (
-              <span className="text-[10px] px-2 py-0.5 rounded font-mono text-slate-500">
+              <span className="text-[10px] px-2 py-0.5 rounded-md font-mono text-slate-400 bg-slate-100 dark:bg-white/5 border border-black/8 dark:border-white/10">
                 +{project.tech.length - 4}
               </span>
             )}
@@ -343,30 +306,28 @@ export default function ProjectsSection() {
         {/* Filters */}
         <motion.div
           className="flex flex-wrap gap-2 mb-10"
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.1 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
         >
           {categories.map((cat) => (
-            <motion.button
+            <button
               key={cat}
               onClick={() => setFilter(cat)}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.97 }}
-              className={`px-3 py-1.5 rounded-full text-xs font-mono transition-all duration-300 ${filter === cat ? 'text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:text-white'}`}
-              style={{
-                background: filter === cat ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.04)',
-                border: `1px solid ${filter === cat ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.08)'}`,
-              }}
+              className={`px-3.5 py-1.5 rounded-full text-xs font-mono font-medium transition-all duration-200 border ${
+                filter === cat
+                  ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 border-slate-900 dark:border-white'
+                  : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 border-black/10 dark:border-white/10 hover:bg-slate-200 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white'
+              }`}
             >
               {cat}
-            </motion.button>
+            </button>
           ))}
         </motion.div>
 
-        {/* Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Grid — auto-rows ensures all cards same height */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 auto-rows-fr">
           {filtered.map((project, i) => (
             <ProjectCard
               key={project.title}
@@ -380,25 +341,24 @@ export default function ProjectsSection() {
         {/* Stats bar */}
         <motion.div
           className="mt-12 grid grid-cols-3 gap-4"
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.3 }}
+          transition={{ duration: 0.4, delay: 0.2 }}
         >
           {[
-            { label: 'Shipped Applications', value: '5+', color: 'var(--color-text)' },
+            { label: 'Shipped Applications', value: '5+', color: '#6366f1' },
             { label: 'Peak ML Accuracy', value: '98%', color: '#3b82f6' },
             { label: 'Real-Time Latency', value: '<100ms', color: '#8b5cf6' },
           ].map((s) => (
             <div
               key={s.label}
-              className="rounded-2xl p-4 text-center"
-              style={{ background: 'rgba(255,255,255,0.02)', border: `1px solid ${s.color}20` }}
+              className="rounded-2xl p-4 sm:p-5 text-center bg-white dark:bg-white/[0.02] border border-black/8 dark:border-white/8"
             >
-              <div className="text-2xl font-bold font-mono" style={{ color: s.color === 'var(--color-text)' ? 'inherit' : s.color }}>
+              <div className="text-2xl sm:text-3xl font-bold font-mono" style={{ color: s.color }}>
                 {s.value}
               </div>
-              <div className="text-xs text-slate-500 mt-1 font-mono">{s.label}</div>
+              <div className="text-xs text-slate-500 dark:text-slate-500 mt-1.5 font-mono">{s.label}</div>
             </div>
           ))}
         </motion.div>
