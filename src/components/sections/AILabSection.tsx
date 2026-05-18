@@ -2,15 +2,38 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { BeakerIcon, CpuChipIcon } from '@heroicons/react/24/outline';
+import { BeakerIcon, CpuChipIcon, CommandLineIcon, AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
+import { motion } from 'framer-motion';
+
+const MODELS = [
+  { id: 'dnn', name: 'Deep Neural Network', time: 2000, baseAccuracy: 94 },
+  { id: 'gbm', name: 'Gradient Boosting', time: 1500, baseAccuracy: 91 },
+  { id: 'rf', name: 'Random Forest', time: 1000, baseAccuracy: 88 },
+];
+
+const LOG_MESSAGES = [
+  "Initializing tensors...",
+  "Loading model weights...",
+  "Applying layer normalization...",
+  "Optimizing loss function...",
+  "Computing forward pass...",
+  "Applying dropout...",
+  "Generating final logits...",
+  "Prediction complete."
+];
 
 export default function AILabSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
-  const [income, setIncome] = useState(50000);
-  const [creditScore, setCreditScore] = useState(700);
-  const [invoiceAmount, setInvoiceAmount] = useState(10000);
+  
+  // State
+  const [income, setIncome] = useState(65000);
+  const [creditScore, setCreditScore] = useState(720);
+  const [invoiceAmount, setInvoiceAmount] = useState(15000);
+  const [activeModel, setActiveModel] = useState(MODELS[0]);
+  
   const [isLoading, setIsLoading] = useState(false);
+  const [logs, setLogs] = useState<string[]>([]);
   const [result, setResult] = useState<{ label: string; value: number; color: string }[] | null>(null);
 
   useEffect(() => {
@@ -25,128 +48,150 @@ export default function AILabSection() {
   const runPrediction = () => {
     setIsLoading(true);
     setResult(null);
+    setLogs([]);
+
+    let logIndex = 0;
+    const logInterval = setInterval(() => {
+      if (logIndex < LOG_MESSAGES.length) {
+        setLogs(prev => [...prev, LOG_MESSAGES[logIndex]]);
+        logIndex++;
+      }
+    }, activeModel.time / LOG_MESSAGES.length);
 
     setTimeout(() => {
-      // Simulated prediction logic
-      const incomeRatio = Math.min(income / 100000, 1);
+      clearInterval(logInterval);
+      
+      const incomeRatio = Math.min(income / 150000, 1);
       const creditRatio = Math.min((creditScore - 300) / 550, 1);
       const invoiceRatio = Math.min(invoiceAmount / 50000, 1);
+      const modelVariance = (activeModel.baseAccuracy - 90) / 100;
+      
+      const score = incomeRatio * 0.35 + creditRatio * 0.45 + (1 - invoiceRatio) * 0.2 + modelVariance;
 
-      const score = incomeRatio * 0.3 + creditRatio * 0.5 + (1 - invoiceRatio) * 0.2;
-
-      const onTime = Math.round(score * 70 + 10);
-      const late30 = Math.round((1 - score) * 40 + 5);
-      const late60 = Math.round((1 - score) * 25 + 3);
+      const onTime = Math.min(Math.round(score * 75 + 10), 98);
+      const late30 = Math.max(Math.round((1 - score) * 35 + 5), 1);
+      const late60 = Math.max(Math.round((1 - score) * 20 + 2), 0);
       const late90 = Math.max(0, 100 - onTime - late30 - late60);
 
       setResult([
-        { label: 'On Time', value: onTime, color: '#ffffff' },
-        { label: '< 30 days', value: late30, color: '#e2e8f0' },
-        { label: '30-60 days', value: late60, color: '#94a3b8' },
+        { label: 'On Time', value: onTime, color: '#38bdf8' },
+        { label: '< 30 days', value: late30, color: '#818cf8' },
+        { label: '30-60 days', value: late60, color: '#a78bfa' },
         { label: '> 60 days', value: late90, color: '#475569' },
       ]);
       setIsLoading(false);
-    }, 1800);
+    }, activeModel.time);
   };
 
   return (
-    <section id="ailab" ref={sectionRef} className="relative py-24 px-6">
-      <div className="max-w-6xl mx-auto">
+    <section id="ailab" ref={sectionRef} className="relative py-20 px-6 overflow-hidden">
+      {/* Subtle realistic ambient lighting for the glass */}
+      <div className="absolute inset-0 pointer-events-none flex justify-center items-center opacity-30">
+        <div className="w-[500px] h-[300px] bg-blue-500/20 rounded-full blur-[100px]" />
+      </div>
+
+      <div className="max-w-5xl mx-auto relative z-10">
         {/* Header */}
-        <div className={`mb-16 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-          <div className="flex items-center gap-3 mb-4">
-            <div className="h-px flex-1 max-w-12 bg-gradient-to-r from-transparent to-white/50" />
-            <span className="text-white/60 font-mono text-sm tracking-widest uppercase">AI Lab</span>
-          </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-white">
-            Developer{' '}
-            <span style={{
-              background: 'linear-gradient(135deg, #ffffff, #a1a1aa)',
-              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
-              textShadow: '0 0 20px rgba(255,255,255,0.2)'
-            }}>Laboratory</span>
+        <motion.div 
+          className="mb-12 text-center"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
+        >
+          <h2 className="text-3xl md:text-5xl font-bold text-white tracking-tight drop-shadow-sm mb-4">
+            Developer Laboratory
           </h2>
-          <p className="text-slate-400 mt-4 max-w-xl text-lg">
-            Live demo of Invoice Payment Prediction — enter parameters and watch the AI predict.
+          <p className="text-slate-400 max-w-xl mx-auto text-sm md:text-base">
+            Interactive AI Engine. Configure parameters, select a model architecture, and stream real-time prediction logits.
           </p>
-        </div>
+        </motion.div>
 
-        <div className={`grid lg:grid-cols-2 gap-8 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`} style={{ transitionDelay: '200ms' }}>
-          {/* Input Panel */}
-          <div className="rounded-2xl" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.1)' }}>
-            {/* Terminal header */}
-            <div className="flex items-center gap-2 px-4 py-3 border-b border-white/5 bg-dark-800/50">
-              <div className="w-3 h-3 rounded-full bg-red-500/80" />
-              <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
-              <div className="w-3 h-3 rounded-full bg-green-500/80" />
-              <span className="ml-2 text-xs font-mono text-slate-500">invoice_predictor.py</span>
-            </div>
-
-            <div className="p-6 space-y-6">
-              <div className="flex items-center gap-3 mb-2">
-                <BeakerIcon className="w-5 h-5 text-cyber-400" />
-                <h3 className="text-white font-semibold">Input Parameters</h3>
-              </div>
-
-              {/* Monthly Income */}
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <label className="text-sm font-mono text-slate-400">Monthly Income</label>
-                  <span className="text-sm font-mono text-slate-300">₹{income.toLocaleString()}</span>
+        <div className={`grid lg:grid-cols-2 gap-6 transition-all duration-1000 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`} style={{ transitionDelay: '150ms' }}>
+          
+          {/* Input Panel (Liquid Glass) */}
+          <div className="rounded-3xl p-6 sm:p-8 relative overflow-hidden backdrop-blur-2xl shadow-[0_4px_24px_rgba(0,0,0,0.2)] border border-white/10 flex flex-col"
+               style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.01) 100%)' }}>
+            
+            <div className="relative z-10 flex flex-col flex-1 gap-6">
+              <div className="flex items-center gap-3 border-b border-white/10 pb-4">
+                <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/10">
+                  <AdjustmentsHorizontalIcon className="w-5 h-5 text-blue-400" />
                 </div>
-                <input
-                  type="range"
-                  min={10000}
-                  max={200000}
-                  step={5000}
-                  value={income}
-                  onChange={(e) => setIncome(Number(e.target.value))}
-                  className="w-full h-1.5 rounded-full appearance-none cursor-pointer"
-                  style={{
-                    background: `linear-gradient(to right, #ffffff 0%, #ffffff ${((income - 10000) / 190000) * 100}%, #334155 ${((income - 10000) / 190000) * 100}%, #334155 100%)`,
-                  }}
-                />
-                <div className="flex justify-between text-xs font-mono text-slate-600">
-                  <span>₹10K</span><span>₹2L</span>
+                <div>
+                  <h3 className="text-xl font-semibold text-white tracking-tight">Parameters</h3>
                 </div>
               </div>
 
-              {/* Credit Score */}
+              {/* Model Selector */}
               <div className="space-y-2">
-                <div className="flex justify-between">
-                  <label className="text-sm font-mono text-slate-400">Credit Score</label>
-                  <span className="text-sm font-mono text-slate-300">{creditScore}</span>
-                </div>
-                <input
-                  type="range"
-                  min={300}
-                  max={850}
-                  step={10}
-                  value={creditScore}
-                  onChange={(e) => setCreditScore(Number(e.target.value))}
-                  className="w-full h-1.5 rounded-full appearance-none cursor-pointer"
-                  style={{
-                    background: `linear-gradient(to right, #6366f1 0%, #6366f1 ${((creditScore - 300) / 550) * 100}%, #334155 ${((creditScore - 300) / 550) * 100}%, #334155 100%)`,
-                  }}
-                />
-                <div className="flex justify-between text-xs font-mono text-slate-600">
-                  <span>300 (Poor)</span><span>850 (Excellent)</span>
+                <label className="text-[10px] font-mono text-slate-400 uppercase tracking-widest">Model Architecture</label>
+                <div className="flex flex-wrap gap-2">
+                  {MODELS.map(model => (
+                    <button
+                      key={model.id}
+                      onClick={() => !isLoading && setActiveModel(model)}
+                      disabled={isLoading}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors border ${
+                        activeModel.id === model.id 
+                          ? 'bg-blue-500/20 border-blue-500/40 text-blue-200' 
+                          : 'bg-white/5 border-white/10 text-slate-400 hover:bg-white/10 hover:text-white'
+                      } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                      {model.name}
+                    </button>
+                  ))}
                 </div>
               </div>
 
-              {/* Invoice Amount */}
-              <div className="space-y-2">
-                <label className="text-sm font-mono text-slate-400 block">Invoice Amount</label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-mono text-sm">₹</span>
+              <div className="space-y-4">
+                {/* Monthly Income */}
+                <div className="space-y-2.5 p-4 rounded-xl bg-black/20 border border-white/5 backdrop-blur-md">
+                  <div className="flex justify-between items-center">
+                    <label className="text-xs font-medium text-slate-300">Monthly Income</label>
+                    <span className="text-xs font-mono text-blue-400">₹{income.toLocaleString()}</span>
+                  </div>
                   <input
-                    type="number"
-                    value={invoiceAmount}
-                    onChange={(e) => setInvoiceAmount(Number(e.target.value))}
-                    className="w-full bg-dark-800 border border-dark-700 rounded-xl pl-8 pr-4 py-3 text-white font-mono text-sm focus:outline-none focus:border-slate-500 transition-all"
-                    placeholder="Enter invoice amount"
-                    style={{ background: 'rgba(255,255,255,0.03)' }}
+                    type="range"
+                    min={20000} max={200000} step={5000}
+                    value={income}
+                    onChange={(e) => setIncome(Number(e.target.value))}
+                    disabled={isLoading}
+                    className="w-full h-1.5 rounded-full appearance-none cursor-pointer disabled:opacity-50"
+                    style={{ background: `linear-gradient(to right, #38bdf8 0%, #38bdf8 ${((income - 20000) / 180000) * 100}%, rgba(255,255,255,0.1) ${((income - 20000) / 180000) * 100}%, rgba(255,255,255,0.1) 100%)` }}
                   />
+                </div>
+
+                {/* Credit Score */}
+                <div className="space-y-2.5 p-4 rounded-xl bg-black/20 border border-white/5 backdrop-blur-md">
+                  <div className="flex justify-between items-center">
+                    <label className="text-xs font-medium text-slate-300">Credit Score</label>
+                    <span className="text-xs font-mono text-purple-400">{creditScore}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min={300} max={850} step={10}
+                    value={creditScore}
+                    onChange={(e) => setCreditScore(Number(e.target.value))}
+                    disabled={isLoading}
+                    className="w-full h-1.5 rounded-full appearance-none cursor-pointer disabled:opacity-50"
+                    style={{ background: `linear-gradient(to right, #a78bfa 0%, #a78bfa ${((creditScore - 300) / 550) * 100}%, rgba(255,255,255,0.1) ${((creditScore - 300) / 550) * 100}%, rgba(255,255,255,0.1) 100%)` }}
+                  />
+                </div>
+
+                {/* Invoice Amount */}
+                <div className="space-y-2.5 p-4 rounded-xl bg-black/20 border border-white/5 backdrop-blur-md">
+                  <label className="text-xs font-medium text-slate-300 block">Invoice Amount</label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-mono text-sm">₹</span>
+                    <input
+                      type="number"
+                      value={invoiceAmount}
+                      onChange={(e) => setInvoiceAmount(Number(e.target.value))}
+                      disabled={isLoading}
+                      className="w-full bg-black/30 border border-white/10 rounded-lg pl-8 pr-3 py-2 text-white font-mono text-sm focus:outline-none focus:border-blue-400/50 transition-colors disabled:opacity-50"
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -154,97 +199,117 @@ export default function AILabSection() {
               <button
                 onClick={runPrediction}
                 disabled={isLoading}
-                className="w-full py-3 rounded-xl font-semibold text-dark-900 transition-all duration-300 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                style={{ background: 'linear-gradient(135deg, #ffffff, #e2e8f0)', boxShadow: '0 0 20px rgba(255,255,255,0.15)' }}
+                className="w-full mt-auto py-3 rounded-xl font-semibold text-black transition-all duration-300 hover:opacity-90 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #cbd5e1 100%)' }}
               >
                 {isLoading ? (
                   <>
-                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    <span className="font-mono text-sm">Running Model...</span>
+                    <div className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" />
+                    <span className="text-sm">Processing...</span>
                   </>
                 ) : (
                   <>
                     <CpuChipIcon className="w-4 h-4" />
-                    <span>Run Prediction</span>
+                    <span className="text-sm">Execute Model</span>
                   </>
                 )}
               </button>
             </div>
           </div>
 
-          {/* Output Panel */}
-          <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.1)' }}>
-            <div className="flex items-center gap-2 px-4 py-3 border-b border-white/5 bg-dark-800/50">
-              <div className="w-3 h-3 rounded-full bg-red-500/80" />
-              <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
-              <div className="w-3 h-3 rounded-full bg-green-500/80" />
-              <span className="ml-2 text-xs font-mono text-slate-500">prediction_output.json</span>
+          {/* Output Panel (Terminal & Chart) */}
+          <div className="flex flex-col gap-6">
+            
+            {/* Live Terminal Stream */}
+            <div className="rounded-3xl overflow-hidden backdrop-blur-2xl shadow-[0_4px_24px_rgba(0,0,0,0.2)] border border-white/10 flex flex-col h-40"
+                 style={{ background: 'linear-gradient(135deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.7) 100%)' }}>
+              <div className="flex items-center justify-between px-5 py-3 border-b border-white/10 bg-white/5">
+                <div className="flex items-center gap-2">
+                  <CommandLineIcon className="w-4 h-4 text-slate-400" />
+                  <span className="text-xs font-mono text-slate-300">engine.log</span>
+                </div>
+              </div>
+              <div className="p-4 font-mono text-[11px] sm:text-xs flex-1 overflow-hidden relative flex flex-col justify-end">
+                {!isLoading && logs.length === 0 && !result && (
+                  <div className="absolute inset-0 p-4">
+                    <p className="text-slate-500">awaiting signal...</p>
+                  </div>
+                )}
+                <div className="space-y-1.5">
+                  {logs.map((log, i) => (
+                    <motion.div 
+                      key={i} 
+                      initial={{ opacity: 0, y: 5 }} 
+                      animate={{ opacity: 1, y: 0 }}
+                      className="text-emerald-400/90"
+                    >
+                      <span className="text-slate-500 mr-2">[{new Date().toISOString().substring(11, 23)}]</span>
+                      {log}
+                    </motion.div>
+                  ))}
+                </div>
+                {isLoading && (
+                  <div className="mt-1 text-emerald-400/50 animate-pulse">_</div>
+                )}
+              </div>
             </div>
 
-            <div className="p-6">
-              <h3 className="text-white font-semibold mb-6 flex items-center gap-2">
-                <CpuChipIcon className="w-5 h-5 text-brand-400" />
-                Prediction Results
-              </h3>
+            {/* Results Chart */}
+            <div className="rounded-3xl p-6 sm:p-8 flex-1 relative overflow-hidden backdrop-blur-2xl shadow-[0_4px_24px_rgba(0,0,0,0.2)] border border-white/10 flex flex-col"
+                 style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.01) 100%)' }}>
+              
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h3 className="text-xl font-semibold text-white tracking-tight">Prediction Matrix</h3>
+                </div>
+                {result && (
+                  <div className="text-right">
+                    <p className="text-[10px] font-mono text-slate-400 uppercase tracking-widest">Confidence</p>
+                    <p className="text-base font-bold text-emerald-400">{activeModel.baseAccuracy}%</p>
+                  </div>
+                )}
+              </div>
 
               {!result && !isLoading && (
-                <div className="flex flex-col items-center justify-center h-64 text-center">
-                  <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 opacity-50" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
-                    <CpuChipIcon className="w-8 h-8 text-slate-400" />
-                  </div>
-                  <p className="text-slate-500 font-mono text-sm">Enter parameters and run prediction</p>
-                  <p className="text-slate-600 font-mono text-xs mt-1">Results will appear here</p>
+                <div className="flex-1 flex flex-col items-center justify-center text-center opacity-40">
+                  <BeakerIcon className="w-12 h-12 text-slate-400 mb-3" />
+                  <p className="text-slate-300 text-sm font-medium">Awaiting Data</p>
                 </div>
               )}
 
               {isLoading && (
-                <div className="flex flex-col items-center justify-center h-64 gap-4">
-                  <div className="relative w-16 h-16">
-                    <div className="absolute inset-0 rounded-full border-2 border-brand-500/20 animate-spin" />
-                    <div className="absolute inset-2 rounded-full border-2 border-cyber-500/40 animate-spin" style={{ animationDirection: 'reverse', animationDuration: '0.8s' }} />
-                    <div className="absolute inset-4 rounded-full bg-brand-500/20 animate-pulse" />
-                  </div>
-                  <div className="text-center">
-                    <p className="text-cyber-400 font-mono text-sm">Processing data...</p>
-                    <p className="text-slate-600 font-mono text-xs mt-1">Running gradient boosting model</p>
-                  </div>
+                <div className="flex-1 flex flex-col items-center justify-center">
+                  <div className="w-10 h-10 border-2 border-blue-400/20 border-t-blue-400 rounded-full animate-spin" />
                 </div>
               )}
 
               {result && (
-                <div className="space-y-4">
-                  {/* Primary prediction */}
-                  <div
-                    className="rounded-xl p-4"
-                    style={{ background: `${result[0].color}10`, border: `1px solid ${result[0].color}30` }}
-                  >
-                    <p className="text-xs font-mono text-slate-500 mb-1">Most Likely Outcome</p>
-                    <p className="text-2xl font-bold" style={{ color: result[0].color }}>
-                      {result[0].label}
-                    </p>
-                    <p className="text-sm font-mono text-slate-400 mt-1">
-                      {result[0].value}% probability
-                    </p>
-                  </div>
-
-                  {/* Chart */}
-                  <div className="h-48">
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.4 }}
+                  className="flex-1 flex flex-col"
+                >
+                  <div className="h-48 md:h-full min-h-[180px]">
                     <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={result} margin={{ top: 5, right: 5, bottom: 5, left: -20 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                        <XAxis dataKey="label" tick={{ fill: '#94a3b8', fontSize: 10, fontFamily: 'JetBrains Mono' }} />
-                        <YAxis tick={{ fill: '#94a3b8', fontSize: 10, fontFamily: 'JetBrains Mono' }} />
+                      <BarChart data={result} margin={{ top: 5, right: 5, bottom: 0, left: -25 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+                        <XAxis dataKey="label" tick={{ fill: '#94a3b8', fontSize: 10 }} axisLine={false} tickLine={false} dy={5} />
+                        <YAxis tick={{ fill: '#64748b', fontSize: 10, fontFamily: 'JetBrains Mono' }} axisLine={false} tickLine={false} />
                         <Tooltip
+                          cursor={{ fill: 'rgba(255,255,255,0.02)' }}
                           contentStyle={{
-                            background: '#1e293b',
-                            border: '1px solid #334155',
+                            background: 'rgba(15,23,42,0.9)',
+                            backdropFilter: 'blur(10px)',
+                            border: '1px solid rgba(255,255,255,0.1)',
                             borderRadius: '8px',
-                            fontFamily: 'JetBrains Mono',
-                            fontSize: '12px',
+                            color: '#fff',
+                            fontSize: '12px'
                           }}
-                          formatter={(value: number) => [`${value}%`, 'Probability']}
+                          itemStyle={{ color: '#fff', fontWeight: 'bold' }}
+                          formatter={(value: number) => [`${value}%`, 'Prob.']}
                         />
-                        <Bar dataKey="value" radius={[4, 4, 0, 0]}>
+                        <Bar dataKey="value" radius={[4, 4, 0, 0]} barSize={30}>
                           {result.map((entry, index) => (
                             <Cell key={index} fill={entry.color} />
                           ))}
@@ -252,14 +317,23 @@ export default function AILabSection() {
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
-
-                  <p className="text-xs font-mono text-slate-600 text-center">
-                    * Simulated prediction for demo purposes
-                  </p>
-                </div>
+                  
+                  {/* Summary Callout */}
+                  <div className="mt-4 p-3.5 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between">
+                    <div>
+                      <p className="text-[10px] text-slate-400 font-mono uppercase tracking-wider mb-0.5">Primary Outcome</p>
+                      <p className="text-base font-bold text-white">{result[0].label}</p>
+                    </div>
+                    <div className="px-3 py-1.5 rounded-lg text-sm font-bold" 
+                         style={{ background: `${result[0].color}20`, color: result[0].color, border: `1px solid ${result[0].color}40` }}>
+                      {result[0].value}%
+                    </div>
+                  </div>
+                </motion.div>
               )}
             </div>
           </div>
+
         </div>
       </div>
     </section>

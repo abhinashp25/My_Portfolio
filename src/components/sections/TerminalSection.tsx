@@ -1,105 +1,110 @@
 'use client';
 
 import { useEffect, useRef, useState, KeyboardEvent } from 'react';
+import { motion } from 'framer-motion';
+import { CommandLineIcon, SparklesIcon } from '@heroicons/react/24/outline';
 
 interface TerminalLine {
-  type: 'input' | 'output' | 'error';
+  type: 'input' | 'output' | 'error' | 'system' | 'success';
   content: string;
 }
 
+const BOOT_SEQUENCE = [
+  "Initializing Kernel AbhinashOS v1.0.4...",
+  "Loading portfolio modules... [OK]",
+  "Mounting virtual filesystem... [OK]",
+  "Starting display server... [OK]",
+  "Establishing secure connection... [OK]",
+  "System ready."
+];
+
+const THEMES: Record<string, string> = {
+  default: 'text-green-400',
+  matrix: 'text-[#00FF41]',
+  neon: 'text-pink-400',
+  cyber: 'text-cyan-400',
+  hacker: 'text-amber-400',
+  light: 'text-slate-200'
+};
+
 const commands: Record<string, string[]> = {
   help: [
-    '╔══════════════════════════════════════╗',
-    '║         AVAILABLE COMMANDS           ║',
-    '╠══════════════════════════════════════╣',
-    '║  about     → About Abhinash          ║',
-    '║  skills    → Tech stack & expertise  ║',
-    '║  projects  → Portfolio projects      ║',
-    '║  contact   → Get in touch            ║',
-    '║  clear     → Clear terminal          ║',
-    '║  help      → Show this menu          ║',
-    '╚══════════════════════════════════════╝',
+    '╭───────────────────────────────────────────────────╮',
+    '│                 AVAILABLE COMMANDS                │',
+    '├───────────────────────────────────────────────────┤',
+    '│  about     → Display developer profile            │',
+    '│  skills    → List technical expertise             │',
+    '│  projects  → Show featured repositories           │',
+    '│  contact   → Display connection endpoints         │',
+    '│  theme     → Change UI color (e.g., theme neon)   │',
+    '│  analyze   → Run system diagnostics               │',
+    '│  gui       → Exit terminal mode                   │',
+    '│  clear     → Clear console output                 │',
+    '│  help      → Show this menu                       │',
+    '╰───────────────────────────────────────────────────╯',
   ],
   about: [
-    '> Loading profile...',
+    '> Fetching user profile...',
     '',
-    '  Name    : Abhinash Pradhan',
-    '  Role    : Full Stack Developer + AI/ML Enthusiast',
-    '  Location: India',
-    '  Status  : Available for opportunities',
+    '  IDENTITY: Abhinash Pradhan',
+    '  ROLE    : Full Stack Developer + AI/ML Enthusiast',
+    '  BASE    : India',
+    '  STATUS  : Ready for new challenges',
     '',
     '  Passionate about building intelligent web experiences',
     '  at the intersection of software engineering and AI.',
-    '',
-    '  Currently working on ML-powered web applications.',
   ],
   skills: [
-    '> Scanning tech stack...',
+    '> Scanning technical capabilities...',
     '',
-    '  ◆ Languages   : Java, Python, JavaScript',
-    '  ◆ Frontend    : React, Next.js, TailwindCSS',
-    '  ◆ Backend     : Node.js, Express.js, REST APIs',
-    '  ◆ ML/AI       : scikit-learn, TensorFlow, Pandas',
-    '  ◆ Databases   : MongoDB, MySQL',
-    '  ◆ Tools       : Git, Github, Streamlit, OCR',
+    '  [LANGUAGES] : Java, Python, JavaScript, TypeScript',
+    '  [FRONTEND]  : React, Next.js, TailwindCSS, Framer Motion',
+    '  [BACKEND]   : Node.js, Express.js, REST APIs',
+    '  [AI/ML]     : scikit-learn, TensorFlow, Pandas',
+    '  [DATABASES] : MongoDB, MySQL, Supabase',
     '',
-    '  Proficiency: ████████████████████ 85%',
+    '  SYSTEM PROFICIENCY: [██████████████████░░] 90%',
   ],
   projects: [
-    '> Fetching repositories...',
+    '> Accessing project database...',
     '',
-    '  [1] Career AI Platform',
-    '      → Full Stack | Next.js, Node.js, AI LLMs',
+    '  1. Career AI Platform       [Next.js, Node.js, LLMs]',
+    '  2. Aakash Weather App       [React 19, Three.js]',
+    '  3. Vigil System Chatbot     [React, Node.js, NLP]',
+    '  4. Invoice AI Predictor     [Python, XGBoost]',
+    '  5. TASKOPS Dashboard        [React, Supabase]',
+    '  6. Plant Disease Predictor  [TensorFlow, CNN]',
     '',
-    '  [2] Aakash Weather app',
-    '      → Frontend | React 19, Three.js, WebGL',
-    '',
-    '  [3] Event Management System',
-    '      → Full Stack | React, Node.js, MongoDB',
-    '',
-    '  [4] Vigil System Chatbot',
-    '      → Full Stack | React, Node.js, MongoDB',
-    '',
-    '  [5] Invoice Payment Prediction',
-    '      → Machine Learning | Python, XGBoost',
-    '',
-    '  [6] TASKOPS Dashboard',
-    '      → Full Stack | React, Supabase Realtime',
-    '',
-    '  [7] Real-time Chat Application',
-    '      → Full Stack | React, Socket.io, Node.js',
-    '',
-    '  [8] Plant Disease Prediction',
-    '      → Computer Vision | TensorFlow, CNN',
-    '',
-    '  Type `clear` to clean terminal.',
+    '  Type `clear` to return to clean workspace.',
   ],
   contact: [
-    '> Loading contact info...',
+    '> Establishing secure comms...',
     '',
-    '  ✉  Email   : abhinashpradhan7658@gmail.com',
-    '  ⚡ GitHub  : github.com/abhinashp25',
-    '  💼 LinkedIn: linkedin.com/in/abhinash-pradhan-74b389294',
+    '  [EMAIL]    abhinashpradhan7658@gmail.com',
+    '  [GITHUB]   github.com/abhinashp25',
+    '  [LINKEDIN] linkedin.com/in/abhinash-pradhan-74b389294',
     '',
-    '  Feel free to reach out for collaborations,',
-    '  job opportunities, or just to say hello!',
+    '  Awaiting transmission...',
   ],
+  gui: [
+    '> Initiating GUI Mode...',
+    '  Just kidding! You are already in the GUI.',
+    '  Scroll up or down to explore the rest of the portfolio.',
+  ]
 };
 
 export default function TerminalSection() {
-  const sectionRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
   const [visible, setVisible] = useState(false);
-  const [lines, setLines] = useState<TerminalLine[]>([
-    { type: 'output', content: '╔══════════════════════════════════════════╗' },
-    { type: 'output', content: '║   Abhinash Pradhan — Developer Console   ║' },
-    { type: 'output', content: '╚══════════════════════════════════════════╝' },
-    { type: 'output', content: '' },
-    { type: 'output', content: "Type 'help' to see available commands." },
-    { type: 'output', content: '' },
-  ]);
+  const [booting, setBooting] = useState(true);
+  const [theme, setTheme] = useState('default');
+  
+  const [lines, setLines] = useState<Array<TerminalLine>>([]);
   const [input, setInput] = useState('');
-  const [history, setHistory] = useState<string[]>([]);
+  const [history, setHistory] = useState<Array<string>>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  
   const terminalRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -113,25 +118,106 @@ export default function TerminalSection() {
   }, []);
 
   useEffect(() => {
+    if (visible && booting) {
+      let currentLine = 0;
+      setLines([]);
+      
+      const interval = setInterval(() => {
+        if (currentLine < BOOT_SEQUENCE.length) {
+          setLines(prev => [...prev, { type: 'system', content: BOOT_SEQUENCE[currentLine] }]);
+          currentLine++;
+        } else {
+          clearInterval(interval);
+          setTimeout(() => {
+            setLines([
+              { type: 'output', content: '╭───────────────────────────────────────────────╮' },
+              { type: 'output', content: '│      ABHINASH OS - DEVELOPER CONSOLE v2.0     │' },
+              { type: 'output', content: '╰───────────────────────────────────────────────╯' },
+              { type: 'output', content: '' },
+              { type: 'output', content: "Type 'help' to see available commands or 'theme' to change colors." },
+              { type: 'output', content: '' },
+            ]);
+            setBooting(false);
+          }, 500);
+        }
+      }, 150);
+      
+      return () => clearInterval(interval);
+    }
+  }, [visible, booting]);
+
+  useEffect(() => {
     if (terminalRef.current) {
       terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
     }
-  }, [lines]);
+  }, [lines, isAnalyzing]);
+
+  const handleAnalyze = async () => {
+    setIsAnalyzing(true);
+    setLines(prev => [...prev, { type: 'input', content: `$ analyze` }]);
+    
+    const steps = [
+      "Running memory diagnostics...",
+      "Analyzing DOM nodes...",
+      "Measuring render performance...",
+      "Calculating neural efficiency..."
+    ];
+    
+    for (const step of steps) {
+      setLines(prev => [...prev, { type: 'system', content: `> ${step}` }]);
+      await new Promise(r => setTimeout(r, 600));
+    }
+    
+    setLines(prev => [
+      ...prev,
+      { type: 'success', content: ' ' },
+      { type: 'success', content: 'DIAGNOSTICS COMPLETE [100%]' },
+      { type: 'output', content: '  Performance : Outstanding' },
+      { type: 'output', content: '  Security    : Optimal' },
+      { type: 'output', content: '  Creativity  : Maximum Capacity' },
+      { type: 'output', content: ' ' }
+    ]);
+    setIsAnalyzing(false);
+  };
 
   const handleCommand = (cmd: string) => {
+    if (isAnalyzing || booting) return;
+    
     const trimmed = cmd.trim().toLowerCase();
-    const newLines: TerminalLine[] = [
+    const args = trimmed.split(' ');
+    const baseCmd = args[0];
+
+    if (baseCmd === 'analyze') {
+      handleAnalyze();
+      setInput('');
+      setHistory(prev => [cmd, ...prev.slice(0, 19)]);
+      setHistoryIndex(-1);
+      return;
+    }
+
+    const newLines: Array<TerminalLine> = [
       ...lines,
       { type: 'input', content: `$ ${cmd}` },
     ];
 
-    if (trimmed === 'clear') {
+    if (baseCmd === 'clear') {
       setLines([
         { type: 'output', content: "Terminal cleared. Type 'help' for commands." },
         { type: 'output', content: '' },
       ]);
-    } else if (commands[trimmed]) {
-      commands[trimmed].forEach((line) => {
+    } else if (baseCmd === 'theme') {
+      const selected = args[1];
+      if (selected && THEMES[selected]) {
+        setTheme(selected);
+        newLines.push({ type: 'success', content: `> Theme updated to '${selected}'` });
+      } else {
+        newLines.push({ type: 'output', content: `Usage: theme <color>` });
+        newLines.push({ type: 'output', content: `Available: ${Object.keys(THEMES).join(', ')}` });
+      }
+      newLines.push({ type: 'output', content: '' });
+      setLines(newLines);
+    } else if (commands[baseCmd]) {
+      commands[baseCmd].forEach((line) => {
         newLines.push({ type: 'output', content: line });
       });
       newLines.push({ type: 'output', content: '' });
@@ -141,18 +227,25 @@ export default function TerminalSection() {
     } else {
       newLines.push({
         type: 'error',
-        content: `Command not found: '${trimmed}'. Type 'help' for available commands.`,
+        content: `Command not found: '${baseCmd}'. Type 'help' for available commands.`,
       });
       newLines.push({ type: 'output', content: '' });
       setLines(newLines);
     }
 
-    setHistory((prev) => [cmd, ...prev.slice(0, 19)]);
+    if (trimmed) {
+      setHistory((prev) => [cmd, ...prev.slice(0, 19)]);
+    }
     setHistoryIndex(-1);
     setInput('');
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (isAnalyzing || booting) {
+      e.preventDefault();
+      return;
+    }
+
     if (e.key === 'Enter') {
       handleCommand(input);
     } else if (e.key === 'ArrowUp') {
@@ -165,78 +258,134 @@ export default function TerminalSection() {
       const newIndex = Math.max(historyIndex - 1, -1);
       setHistoryIndex(newIndex);
       setInput(newIndex === -1 ? '' : history[newIndex]);
+    } else if (e.key === 'Tab') {
+      e.preventDefault();
+      const availableCommands = [...Object.keys(commands), 'theme', 'analyze'];
+      const currentInput = input.trim().toLowerCase();
+      
+      if (!currentInput) return;
+      
+      const matches = availableCommands.filter(c => c.startsWith(currentInput));
+      
+      if (matches.length === 1) {
+        setInput(matches[0] + ' ');
+      } else if (matches.length > 1) {
+        setLines(prev => [
+          ...prev,
+          { type: 'input', content: `$ ${input}` },
+          { type: 'output', content: matches.join('    ') },
+          { type: 'output', content: '' }
+        ]);
+      }
     }
   };
 
+  const textColorClass = THEMES[theme] || THEMES.default;
+
   return (
-    <section id="terminal" ref={sectionRef} className="relative py-24 px-6">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className={`mb-12 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-          <div className="flex items-center gap-3 mb-4">
-            <div className="h-px flex-1 max-w-12 bg-gradient-to-r from-transparent to-brand-500" />
-            <span className="text-brand-400 font-mono text-sm tracking-widest uppercase">Terminal Mode</span>
-          </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-white">
-            Developer{' '}
-            <span className="gradient-text-brand">Console</span>
-          </h2>
-          <p className="text-slate-400 mt-4 text-lg">
-            Interact with my portfolio like a developer. Try: <code className="text-cyber-400 font-mono text-sm bg-dark-800 px-2 py-0.5 rounded">about</code>, <code className="text-cyber-400 font-mono text-sm bg-dark-800 px-2 py-0.5 rounded">skills</code>, <code className="text-cyber-400 font-mono text-sm bg-dark-800 px-2 py-0.5 rounded">projects</code>
-          </p>
-        </div>
+    <section id="terminal" ref={sectionRef} className="relative py-24 px-6 overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none flex justify-center items-center opacity-30">
+        <div className="w-[600px] h-[400px] bg-indigo-500/20 rounded-full blur-[120px]" />
+      </div>
 
-        {/* Terminal window */}
-        <div
-          className={`rounded-2xl overflow-hidden transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-          style={{
-            background: '#0a0f1a',
-            border: '1px solid rgba(99, 102, 241, 0.2)',
-            boxShadow: '0 0 40px rgba(99, 102, 241, 0.1)',
-            transitionDelay: '200ms',
-          }}
+      <div className="max-w-4xl mx-auto relative z-10">
+        <motion.div 
+          className="mb-12 text-center"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
         >
-          {/* Title bar */}
-          <div className="flex items-center gap-2 px-4 py-3 border-b border-white/5" style={{ background: '#111827' }}>
-            <div className="w-3 h-3 rounded-full bg-red-500/90 hover:bg-red-400 transition-colors cursor-pointer" />
-            <div className="w-3 h-3 rounded-full bg-yellow-500/90 hover:bg-yellow-400 transition-colors cursor-pointer" />
-            <div className="w-3 h-3 rounded-full bg-green-500/90 hover:bg-green-400 transition-colors cursor-pointer" />
-            <span className="ml-3 text-xs font-mono text-slate-500">abhinash@portfolio:~</span>
+          <div className="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-full border border-white/10 bg-white/5 backdrop-blur-md shadow-lg cursor-pointer hover:bg-white/10 transition-colors"
+               onClick={() => inputRef.current?.focus()}>
+            <CommandLineIcon className="w-4 h-4 text-indigo-400" />
+            <span className="text-white/80 font-mono text-xs tracking-widest uppercase">
+              Interactive Shell
+            </span>
+          </div>
+          
+          <h2 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-indigo-200 to-white/60 drop-shadow-sm mb-4">
+            Developer Console
+          </h2>
+          <p className="text-slate-400 max-w-xl mx-auto text-base">
+            Execute commands to explore my technical footprint. Try <code className="text-indigo-300 bg-white/5 px-2 py-0.5 rounded font-mono text-sm border border-white/10">theme neon</code> or press <code className="text-indigo-300 bg-white/5 px-2 py-0.5 rounded font-mono text-sm border border-white/10">Tab</code> to autocomplete.
+          </p>
+        </motion.div>
+
+        <div
+          className={`rounded-[24px] overflow-hidden backdrop-blur-3xl transition-all duration-1000 ${visible ? 'opacity-100 translate-y-0 shadow-[0_20px_50px_rgba(0,0,0,0.5)]' : 'opacity-0 translate-y-12'}`}
+          style={{
+            background: 'linear-gradient(145deg, rgba(15,23,42,0.8) 0%, rgba(2,6,23,0.95) 100%)',
+            border: '1px solid rgba(255,255,255,0.15)',
+            boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.1), 0 20px 50px rgba(0,0,0,0.5)',
+            transitionDelay: '150ms',
+          }}
+          onClick={() => inputRef.current?.focus()}
+        >
+          <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-white/5">
+            <div className="flex gap-2.5">
+              <div className="w-3.5 h-3.5 rounded-full bg-[#ff5f56] border border-[#e0443e] shadow-inner" />
+              <div className="w-3.5 h-3.5 rounded-full bg-[#ffbd2e] border border-[#dea123] shadow-inner" />
+              <div className="w-3.5 h-3.5 rounded-full bg-[#27c93f] border border-[#1aab29] shadow-inner" />
+            </div>
+            
+            <div className="flex items-center gap-2 px-4 py-1.5 rounded-md bg-black/30 border border-white/5 shadow-inner">
+              <SparklesIcon className="w-3.5 h-3.5 text-slate-400" />
+              <span className="text-xs font-mono text-slate-300">abhinash@portfolio ~ -zsh</span>
+            </div>
+            
+            <div className="w-12" />
           </div>
 
-          {/* Terminal body */}
           <div
             ref={terminalRef}
-            className="p-6 h-80 overflow-y-auto font-mono text-sm"
-            onClick={() => inputRef.current?.focus()}
+            className="p-6 md:p-8 h-[450px] overflow-y-auto font-mono text-sm sm:text-base cursor-text scroll-smooth"
           >
             {lines.map((line, i) => (
-              <div
+              <motion.div
                 key={i}
-                className={`leading-relaxed whitespace-pre ${
-                  line.type === 'input' ?'text-cyber-400'
-                    : line.type === 'error' ?'text-red-400' :'text-green-400/80'
+                initial={{ opacity: 0, x: -5 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.2 }}
+                className={`leading-relaxed whitespace-pre font-medium mb-1 ${
+                  line.type === 'input' ? 'text-white'
+                  : line.type === 'error' ? 'text-red-400'
+                  : line.type === 'system' ? 'text-slate-400'
+                  : line.type === 'success' ? 'text-emerald-400'
+                  : textColorClass
                 }`}
               >
                 {line.content}
-              </div>
+              </motion.div>
             ))}
 
-            {/* Input line */}
-            <div className="flex items-center gap-2 mt-1">
-              <span className="text-cyber-400">$</span>
-              <input
-                ref={inputRef}
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                className="flex-1 bg-transparent text-green-400 outline-none font-mono text-sm caret-cyber-400"
-                autoComplete="off"
-                spellCheck={false}
-              />
-              <span className="w-2 h-4 bg-cyber-400 animate-blink" />
-            </div>
+            {!booting && (
+              <div className={`flex items-center gap-3 mt-2 ${isAnalyzing ? 'opacity-50' : 'opacity-100'}`}>
+                <span className="text-indigo-400 font-bold">➜</span>
+                <span className="text-cyan-400 font-bold">~</span>
+                <div className="flex-1 relative flex items-center">
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    disabled={isAnalyzing}
+                    className={`w-full bg-transparent outline-none font-mono text-white caret-transparent ${isAnalyzing ? 'cursor-not-allowed' : ''}`}
+                    autoComplete="off"
+                    spellCheck={false}
+                  />
+                  <span 
+                    className={`absolute h-5 bg-white mix-blend-difference pointer-events-none ${isAnalyzing ? '' : 'animate-blink'}`}
+                    style={{
+                      width: '10px',
+                      left: `${input.length}ch`,
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+            
           </div>
         </div>
       </div>

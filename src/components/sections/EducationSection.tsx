@@ -17,7 +17,7 @@ const education = [
     icon: BuildingLibraryIcon,
     highlights: ['Computer Science Core', 'AI & Machine Learning', 'Data Structures & Algorithms', 'Web Technologies'],
     statusColor: '#7dd3fc',
-    images: ['/Education_images/gift collage.webp'],
+    images: ['/Education_images/gift_college.webp'],
   },
   {
     level: 'Intermediate — Class XII',
@@ -32,8 +32,8 @@ const education = [
     highlights: ['Physics', 'Chemistry', 'Mathematics'],
     statusColor: '#a5b4fc',
     images: [
-      '/Education_images/Godavarish banpur.jpg',
-      '/Education_images/Godavarish collage banpur.jpg'
+      '/Education_images/godavarish_banpur.jpg',
+      '/Education_images/godavarish_college.jpg'
     ],
   },
   {
@@ -49,8 +49,8 @@ const education = [
     highlights: ['Science', 'Mathematics', 'English'],
     statusColor: '#c4b5fd',
     images: [
-      '/Education_images/10 th school.jpg',
-      '/Education_images/10th school.jpg'
+      '/Education_images/10th_school_1.jpg',
+      '/Education_images/10th_school_2.jpg'
     ],
   },
 ];
@@ -230,12 +230,7 @@ export default function EducationSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.7 }}
         >
-          <div className="inline-flex items-center gap-3 mb-6 px-5 py-2.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-md shadow-[0_0_20px_rgba(255,255,255,0.05)]">
-            <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse shadow-[0_0_10px_rgba(96,165,250,0.8)]" />
-            <span className="text-white/80 font-mono text-sm tracking-widest uppercase">
-              Academic Journey
-            </span>
-          </div>
+          
           <h2 className="text-4xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-100 to-white/60 drop-shadow-sm mb-6">
             Education & Qualifications
           </h2>
