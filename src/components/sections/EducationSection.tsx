@@ -1,7 +1,8 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { AcademicCapIcon, MapPinIcon, CalendarIcon, StarIcon, BuildingLibraryIcon } from '@heroicons/react/24/outline';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { AcademicCapIcon, MapPinIcon, CalendarIcon, BuildingLibraryIcon } from '@heroicons/react/24/outline';
 
 const education = [
   {
@@ -12,10 +13,11 @@ const education = [
     location: 'Bhubaneswar, Odisha',
     period: '2023 – 2027',
     status: 'Pursuing',
-    color: '#ffffff',
+    color: '#38bdf8',
     icon: BuildingLibraryIcon,
     highlights: ['Computer Science Core', 'AI & Machine Learning', 'Data Structures & Algorithms', 'Web Technologies'],
-    statusColor: '#cbd5e1',
+    statusColor: '#7dd3fc',
+    images: ['/Education_images/gift collage.webp'],
   },
   {
     level: 'Intermediate — Class XII',
@@ -25,10 +27,14 @@ const education = [
     location: 'Banpur, Odisha',
     period: '2021 – 2023',
     status: 'Completed',
-    color: '#e2e8f0',
+    color: '#818cf8',
     icon: AcademicCapIcon,
     highlights: ['Physics', 'Chemistry', 'Mathematics'],
-    statusColor: '#94a3b8',
+    statusColor: '#a5b4fc',
+    images: [
+      '/Education_images/Godavarish banpur.jpg',
+      '/Education_images/Godavarish collage banpur.jpg'
+    ],
   },
   {
     level: 'Matriculation — Class X',
@@ -38,144 +44,219 @@ const education = [
     location: 'Gambharimunda, Odisha',
     period: 'Completed 2021',
     status: 'Completed',
-    color: '#94a3b8',
+    color: '#a78bfa',
     icon: AcademicCapIcon,
     highlights: ['Science', 'Mathematics', 'English'],
-    statusColor: '#64748b',
+    statusColor: '#c4b5fd',
+    images: [
+      '/Education_images/10 th school.jpg',
+      '/Education_images/10th school.jpg'
+    ],
   },
 ];
 
+function EducationCard({ edu, index }: { edu: any; index: number }) {
+  const Icon = edu.icon;
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    if (!edu.images || edu.images.length <= 1) return;
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % edu.images.length);
+    }, 10000); // 10 seconds
+
+    return () => clearInterval(interval);
+  }, [edu.images]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.15 }}
+      transition={{ duration: 0.8, delay: index * 0.15, ease: [0.16, 1, 0.3, 1] }}
+      className="group relative"
+    >
+      <div
+        className="relative rounded-[2rem] overflow-hidden backdrop-blur-2xl transition-all duration-500 hover:-translate-y-2 flex flex-col md:flex-row"
+        style={{
+          background: 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%)',
+          border: `1px solid rgba(255,255,255,0.1)`,
+          boxShadow: '0 8px 32px 0 rgba(0,0,0,0.3)',
+        }}
+        onMouseEnter={(e) => {
+          (e.currentTarget as HTMLElement).style.boxShadow = `0 20px 60px -10px ${edu.color}30, 0 8px 32px 0 rgba(0,0,0,0.4)`;
+          (e.currentTarget as HTMLElement).style.borderColor = `${edu.color}50`;
+        }}
+        onMouseLeave={(e) => {
+          (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 32px 0 rgba(0,0,0,0.3)';
+          (e.currentTarget as HTMLElement).style.borderColor = `rgba(255,255,255,0.1)`;
+        }}
+      >
+        {/* Glow behind content */}
+        <div 
+          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"
+          style={{ background: `radial-gradient(circle at 50% 0%, ${edu.color}15, transparent 70%)` }} 
+        />
+
+        {/* Content Side */}
+        <div className="relative z-10 p-8 md:p-12 flex-1 flex flex-col justify-center">
+          <div className="flex items-center gap-4 mb-6">
+            <div
+              className="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg"
+              style={{
+                background: `linear-gradient(135deg, ${edu.color}20, transparent)`,
+                border: `1px solid ${edu.color}40`,
+                boxShadow: `inset 0 0 20px ${edu.color}10`
+              }}
+            >
+              <Icon className="w-7 h-7" style={{ color: edu.color }} />
+            </div>
+            <div>
+              <div className="flex flex-wrap items-center gap-2 mb-1.5">
+                <span
+                  className="text-xs font-bold tracking-wider uppercase px-3 py-1 rounded-full"
+                  style={{ background: `${edu.color}20`, color: edu.color, border: `1px solid ${edu.color}30` }}
+                >
+                  {edu.level}
+                </span>
+                <span
+                  className="text-xs font-bold tracking-wider uppercase px-3 py-1 rounded-full"
+                  style={{
+                    background: `${edu.statusColor}15`,
+                    color: edu.statusColor,
+                    border: `1px solid ${edu.statusColor}30`,
+                  }}
+                >
+                  {edu.status}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <h3 className="text-2xl md:text-3xl font-bold text-white mb-2 leading-tight tracking-tight">
+            {edu.degree}
+          </h3>
+          <p className="text-lg font-medium mb-1" style={{ color: edu.color }}>
+            {edu.institution}
+          </p>
+          <p className="text-slate-400 text-sm font-mono mb-6">
+            {edu.affiliation}
+          </p>
+
+          <div className="flex flex-wrap items-center gap-6 text-sm text-slate-300 mb-8">
+            <span className="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-lg border border-white/5 backdrop-blur-sm">
+              <MapPinIcon className="w-4 h-4" style={{ color: edu.color }} />
+              {edu.location}
+            </span>
+            <span className="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-lg border border-white/5 backdrop-blur-sm">
+              <CalendarIcon className="w-4 h-4" style={{ color: edu.color }} />
+              {edu.period}
+            </span>
+          </div>
+
+          {/* Highlights */}
+          <div className="flex flex-wrap gap-2 mt-auto">
+            {edu.highlights.map((h: string) => (
+              <span
+                key={h}
+                className="text-xs px-3 py-1.5 rounded-xl font-medium text-slate-300 transition-colors duration-300 hover:text-white"
+                style={{
+                  background: 'rgba(255,255,255,0.03)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.1)'
+                }}
+              >
+                {h}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* Image Side - Carousel */}
+        {edu.images && edu.images.length > 0 && (
+          <div className="relative w-full md:w-[45%] min-h-[250px] md:min-h-full overflow-hidden shrink-0 border-t md:border-t-0 md:border-l border-white/10">
+            <AnimatePresence mode="wait">
+              <motion.img
+                key={currentImageIndex}
+                src={edu.images[currentImageIndex]}
+                alt={`${edu.institution} image`}
+                initial={{ opacity: 0, scale: 1.05 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 1, ease: "easeInOut" }}
+                className="absolute inset-0 w-full h-full object-cover object-center"
+              />
+            </AnimatePresence>
+
+            {/* Seamless Glass Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a]/80 via-transparent to-transparent md:bg-gradient-to-l md:from-transparent md:via-[#0a0a0a]/20 md:to-[#0a0a0a]/90 pointer-events-none" />
+
+            {/* Image indicators */}
+            {edu.images.length > 1 && (
+              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-20 bg-black/40 px-4 py-2 rounded-full backdrop-blur-md border border-white/10 shadow-lg">
+                {edu.images.map((_: any, idx: number) => (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentImageIndex(idx)}
+                    className={`h-1.5 rounded-full transition-all duration-500 ${
+                      idx === currentImageIndex 
+                        ? 'bg-white w-6 shadow-[0_0_10px_rgba(255,255,255,0.8)]' 
+                        : 'bg-white/40 w-2 hover:bg-white/80'
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </motion.div>
+  );
+}
+
 export default function EducationSection() {
   return (
-    <section id="education" className="relative py-24 px-6">
+    <section id="education" className="relative py-32 px-6">
       {/* Background */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-0 w-[500px] h-[500px] rounded-full opacity-[0.03]"
-          style={{ background: 'radial-gradient(circle, #ffffff 0%, transparent 70%)' }} />
-        <div className="absolute bottom-0 right-0 w-[350px] h-[350px] rounded-full opacity-[0.03]"
-          style={{ background: 'radial-gradient(circle, #ffffff 0%, transparent 70%)' }} />
-        <div className="absolute inset-0 grid-pattern opacity-10" />
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div
+          className="absolute top-[10%] left-[-10%] w-[500px] h-[500px] rounded-full mix-blend-screen filter blur-[120px] opacity-20"
+          style={{ background: '#38bdf8' }}
+        />
+        <div
+          className="absolute bottom-[10%] right-[-10%] w-[600px] h-[600px] rounded-full mix-blend-screen filter blur-[120px] opacity-20"
+          style={{ background: '#a78bfa' }}
+        />
       </div>
 
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-6xl mx-auto relative z-10">
         {/* Header */}
-        <motion.div className="mb-16"
-          initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }} transition={{ duration: 0.7 }}>
-          <div className="flex items-center gap-3 mb-4">
-            <div className="h-px flex-1 max-w-12 bg-gradient-to-r from-transparent to-white/50" />
-            <span className="text-white/60 font-mono text-sm tracking-widest uppercase">Academic</span>
-          </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-white">
-            Education &{' '}
-            <span style={{
-              background: 'linear-gradient(135deg, #ffffff, #a1a1aa)',
-              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
-            }}>
-              Qualifications
+        <motion.div
+          className="mb-20 text-center"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
+        >
+          <div className="inline-flex items-center gap-3 mb-6 px-5 py-2.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-md shadow-[0_0_20px_rgba(255,255,255,0.05)]">
+            <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse shadow-[0_0_10px_rgba(96,165,250,0.8)]" />
+            <span className="text-white/80 font-mono text-sm tracking-widest uppercase">
+              Academic Journey
             </span>
+          </div>
+          <h2 className="text-4xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-100 to-white/60 drop-shadow-sm mb-6">
+            Education & Qualifications
           </h2>
-          <p className="text-slate-400 mt-4 max-w-xl text-lg">
-            Academic journey from school to engineering — building the foundations of technology and problem-solving.
+          <p className="text-slate-400 max-w-2xl mx-auto text-lg md:text-xl font-light leading-relaxed">
+            Building the foundations of technology, engineering, and problem-solving through continuous learning.
           </p>
         </motion.div>
 
-
-
         {/* Cards */}
-        <div className="space-y-6">
-          {education.map((edu, i) => {
-            const Icon = edu.icon;
-            return (
-              <motion.div
-                key={edu.institution}
-                initial={{ opacity: 0, x: i % 2 === 0 ? -40 : 40 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, amount: 0.2 }}
-                transition={{ duration: 0.7, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
-              >
-                <motion.div
-                  whileHover={{ y: -4 }}
-                  className="group relative rounded-2xl overflow-hidden"
-                  style={{
-                    background: 'rgba(255,255,255,0.02)',
-                    border: `1px solid ${edu.color}25`,
-                    transition: 'box-shadow 0.3s, border-color 0.3s',
-                  }}
-                  onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLElement).style.boxShadow = `0 0 40px ${edu.color}18, 0 20px 50px rgba(0,0,0,0.35)`;
-                    (e.currentTarget as HTMLElement).style.borderColor = `${edu.color}45`;
-                  }}
-                  onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLElement).style.boxShadow = 'none';
-                    (e.currentTarget as HTMLElement).style.borderColor = `${edu.color}25`;
-                  }}
-                >
-                  {/* Top accent */}
-                  <div className="absolute top-0 left-0 right-0 h-0.5"
-                    style={{ background: `linear-gradient(90deg, ${edu.color}, ${edu.color}30, transparent)` }} />
-
-                  {/* Hover glow */}
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                    style={{ background: `radial-gradient(ellipse at 0% 50%, ${edu.color}08, transparent 60%)` }} />
-
-                  <div className="relative z-10 p-6 md:p-8">
-                    <div className="flex flex-col md:flex-row md:items-start gap-5">
-
-                      {/* Icon */}
-                      <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
-                        style={{ background: `${edu.color}18`, border: `1px solid ${edu.color}35` }}>
-                        <Icon className="w-6 h-6" style={{ color: edu.color }} />
-                      </div>
-
-                      {/* Main content */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex flex-wrap items-center gap-2 mb-1">
-                          <span className="text-xs font-mono px-2 py-0.5 rounded-full"
-                            style={{ background: `${edu.color}15`, color: edu.color, border: `1px solid ${edu.color}30` }}>
-                            {edu.level}
-                          </span>
-                          <span className="text-xs font-mono px-2 py-0.5 rounded-full"
-                            style={{
-                              background: `${edu.statusColor}12`,
-                              color: edu.statusColor,
-                              border: `1px solid ${edu.statusColor}35`,
-                            }}>
-                            {edu.status}
-                          </span>
-                        </div>
-
-                        <h3 className="text-xl font-bold text-white mt-2 mb-0.5">{edu.degree}</h3>
-                        <p className="text-base font-semibold mb-0.5" style={{ color: edu.color }}>{edu.institution}</p>
-                        <p className="text-slate-500 text-sm font-mono mb-3">{edu.affiliation}</p>
-
-                        <div className="flex flex-wrap items-center gap-4 text-sm text-slate-400 mb-4">
-                          <span className="flex items-center gap-1.5">
-                            <MapPinIcon className="w-3.5 h-3.5" style={{ color: edu.color }} />
-                            {edu.location}
-                          </span>
-                          <span className="flex items-center gap-1.5">
-                            <CalendarIcon className="w-3.5 h-3.5" style={{ color: edu.color }} />
-                            {edu.period}
-                          </span>
-                        </div>
-
-                        {/* Subject highlights */}
-                        <div className="flex flex-wrap gap-2">
-                          {edu.highlights.map((h) => (
-                            <span key={h} className="text-xs px-2.5 py-1 rounded-lg font-mono text-slate-400"
-                              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
-                              {h}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              </motion.div>
-            );
-          })}
+        <div className="space-y-12">
+          {education.map((edu, i) => (
+            <EducationCard key={edu.institution} edu={edu} index={i} />
+          ))}
         </div>
       </div>
     </section>
