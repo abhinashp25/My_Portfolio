@@ -1,32 +1,24 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { EnvelopeIcon, CodeBracketIcon, UserIcon } from '@heroicons/react/24/outline';
+import { motion } from 'framer-motion';
+import Image from 'next/image';
+import { PaperAirplaneIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 import { supabase } from '@/lib/supabase';
 
 export default function ContactSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
   const [form, setForm] = useState({ name: '', email: '', message: '' });
   const [focused, setFocused] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
-      { threshold: 0.1 }
-    );
-    if (sectionRef.current) observer.observe(sectionRef.current);
-    return () => observer.disconnect();
-  }, []);
-
   const validate = () => {
     const newErrors: Record<string, string> = {};
     if (!form.name.trim()) newErrors.name = 'Name is required';
     if (!form.email.trim()) newErrors.email = 'Email is required';
-    else if (!/\S+@\S+\.\S+/.test(form.email)) newErrors.email = 'Invalid email format';
+    else if (!/\S+@\S+\.\S+/.test(form.email)) newErrors.email = 'Invalid email';
     if (!form.message.trim()) newErrors.message = 'Message is required';
     return newErrors;
   };
@@ -42,7 +34,6 @@ export default function ContactSection() {
     setIsSubmitting(true);
 
     try {
-      // Create 'contacts' table in your Supabase project with columns: id (uuid), name (text), email (text), message (text), created_at (timestamp)
       const { error } = await supabase
         .from('contacts')
         .insert([{ name: form.name, email: form.email, message: form.message }]);
@@ -53,7 +44,6 @@ export default function ContactSection() {
       setForm({ name: '', email: '', message: '' });
     } catch (err) {
       console.error('Error submitting form to Supabase:', err);
-      // Fallback to mailto just in case table not created
       const subject = encodeURIComponent('Portfolio Contact from ' + form.name);
       const body = encodeURIComponent('Hi Abhinash,\n\nName: ' + form.name + '\nEmail: ' + form.email + '\n\nMessage:\n' + form.message);
       window.open('mailto:abhinashpradhan7658@gmail.com?subject=' + subject + '&body=' + body, '_blank');
@@ -65,208 +55,209 @@ export default function ContactSection() {
   };
 
   const socialLinks = [
-    {
-      label: 'GitHub',
-      href: 'https://github.com/abhinashp25',
-      icon: CodeBracketIcon,
-      color: '#6366f1',
-      username: '@abhinashp25',
-    },
-    {
-      label: 'LinkedIn',
-      href: 'https://www.linkedin.com/in/abhinash-pradhan-74b389294/',
-      icon: UserIcon,
-      color: '#06b6d4',
-      username: 'Abhinash Pradhan',
-    },
-    {
-      label: 'Email',
-      href: 'mailto:abhinashpradhan7658@gmail.com',
-      icon: EnvelopeIcon,
-      color: '#f472b6',
-      username: 'abhinashpradhan7658@gmail.com',
-    },
+    { label: 'GitHub', href: 'https://github.com/abhinashp25', image: '/logos/github_logo.webp', color: 'from-indigo-400 to-cyan-400', username: '@abhinashp25' },
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/abhinash-pradhan-74b389294/', image: '/logos/Linkedin_logo.avif', color: 'from-sky-400 to-blue-500', username: 'Abhinash Pradhan' },
+    { label: 'Email', href: 'mailto:abhinashpradhan7658@gmail.com', image: '/logos/gmail_icon.webp', color: 'from-rose-400 to-pink-500', username: 'abhinash...7658@gmail.com' },
   ];
 
+  const InputField = ({ id, label, type = 'text', isTextArea = false }: any) => {
+    const isFocused = focused === id;
+    const hasValue = form[id as keyof typeof form].length > 0;
+    const error = errors[id];
+
+    return (
+      <div className="relative group">
+        <label
+          htmlFor={id}
+          className={`absolute left-4 transition-all duration-300 pointer-events-none z-10 ${
+            isFocused || hasValue
+              ? '-top-2.5 text-[10px] sm:text-xs font-semibold tracking-wider uppercase text-white/70 px-2 py-0.5 rounded backdrop-blur-md bg-dark-900/60 border border-white/5'
+              : 'top-4 text-sm text-white/40'
+          }`}
+        >
+          {label}
+        </label>
+        
+        {isTextArea ? (
+          <textarea
+            id={id}
+            rows={5}
+            value={form[id as keyof typeof form]}
+            onChange={(e) => setForm({ ...form, [id]: e.target.value })}
+            onFocus={() => setFocused(id)}
+            onBlur={() => setFocused(null)}
+            className={`w-full bg-white/[0.02] backdrop-blur-xl rounded-2xl px-4 py-4 text-white text-sm outline-none transition-all duration-300 resize-none
+              ${isFocused ? 'border-white/30 shadow-[0_0_30px_rgba(255,255,255,0.05)]' : 'border-white/10 hover:border-white/20'} 
+              ${error ? 'border-red-500/50' : 'border'}
+            `}
+          />
+        ) : (
+          <input
+            id={id}
+            type={type}
+            value={form[id as keyof typeof form]}
+            onChange={(e) => setForm({ ...form, [id]: e.target.value })}
+            onFocus={() => setFocused(id)}
+            onBlur={() => setFocused(null)}
+            className={`w-full bg-white/[0.02] backdrop-blur-xl rounded-2xl px-4 py-4 text-white text-sm outline-none transition-all duration-300
+              ${isFocused ? 'border-white/30 shadow-[0_0_30px_rgba(255,255,255,0.05)]' : 'border-white/10 hover:border-white/20'}
+              ${error ? 'border-red-500/50' : 'border'}
+            `}
+          />
+        )}
+        {error && <p className="absolute -bottom-5 left-2 text-red-400 text-[10px] uppercase tracking-wider">{error}</p>}
+      </div>
+    );
+  };
+
   return (
-    <section id="contact" ref={sectionRef} className="relative py-24 px-6">
-      <div className="absolute inset-0 grid-pattern opacity-20 pointer-events-none" />
+    <section id="contact" ref={sectionRef} className="relative py-32 px-6 overflow-hidden">
+      
+      {/* Liquid Glass Ambient Background Effects */}
+      <div className="absolute inset-0 pointer-events-none z-0 flex items-center justify-center opacity-30">
+        <div className="absolute top-1/4 left-1/4 w-[40vw] h-[40vw] bg-indigo-500/20 rounded-full blur-[120px] mix-blend-screen animate-pulse-glow" />
+        <div className="absolute bottom-1/4 right-1/4 w-[50vw] h-[50vw] bg-sky-500/10 rounded-full blur-[150px] mix-blend-screen" />
+      </div>
 
       <div className="max-w-6xl mx-auto relative z-10">
-        <div className={`mb-16 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-          <div className="flex items-center gap-3 mb-4">
-            <div className="h-px flex-1 max-w-12 bg-gradient-to-r from-transparent to-brand-500" />
-            <span className="text-brand-400 font-mono text-sm tracking-widest uppercase">Contact</span>
+        
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.8 }}
+          className="text-center max-w-2xl mx-auto mb-20"
+        >
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-6">
+            <span className="w-1.5 h-1.5 rounded-full bg-white opacity-70" />
+            <span className="text-[11px] font-medium text-white/70 tracking-widest uppercase">Contact</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-white">
-            Let's <span className="gradient-text">Connect</span>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-tight">
+            Let's build something <span className="text-transparent bg-clip-text bg-gradient-to-r from-white/40 to-white">together.</span>
           </h2>
-          <p className="text-slate-400 mt-4 max-w-xl text-lg">
-            If you are hiring for full stack or AI-enabled engineering roles, I would be glad to discuss how I can contribute.
-          </p>
-        </div>
+        </motion.div>
 
-        <div className="grid lg:grid-cols-5 gap-12">
-          <div
-            className={`lg:col-span-3 transition-all duration-700 ${visible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'}`}
-            style={{ transitionDelay: '200ms' }}
+        <div className="grid lg:grid-cols-5 gap-8 lg:gap-12 items-start">
+          
+          {/* Main Form Capsule */}
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="lg:col-span-3"
           >
-            {submitted ? (
-              <div className="h-full flex flex-col items-center justify-center text-center py-16 rounded-2xl glass neon-border">
-                <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 animate-pulse-glow"
-                  style={{ background: '#6366f120', border: '1px solid #6366f140' }}>
-                  <EnvelopeIcon className="w-8 h-8 text-brand-400" />
-                </div>
-                <h3 className="text-2xl font-bold text-white mb-2">Message Sent!</h3>
-                <p className="text-slate-400 text-sm max-w-xs">
-                  Your message has been successfully relayed to my database. I will contact you shortly!
-                </p>
-                <button
-                  onClick={() => setSubmitted(false)}
-                  className="mt-6 px-4 py-2 rounded-lg glass neon-border text-sm text-slate-300 hover:text-white transition-colors"
+            <div className="relative rounded-[2.5rem] p-6 sm:p-10 overflow-hidden bg-white/[0.01] border border-white/10 backdrop-blur-[40px] shadow-[0_30px_80px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.1)]">
+              {/* Internal Glass Sheen */}
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-50" />
+              
+              {submitted ? (
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="h-full min-h-[400px] flex flex-col items-center justify-center text-center py-12"
                 >
-                  Send another
-                </button>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="relative">
-                  <label
-                    className={`absolute left-4 transition-all duration-300 pointer-events-none font-mono text-sm ${
-                      focused === 'name' || form.name
-                        ? '-top-2.5 text-xs text-brand-400 bg-dark-900 px-1'
-                        : 'top-3.5 text-slate-500'
-                    }`}
+                  <div className="w-20 h-20 rounded-full flex items-center justify-center mb-6 bg-gradient-to-tr from-emerald-500/20 to-teal-500/20 border border-emerald-500/30 shadow-[0_0_40px_rgba(16,185,129,0.2)]">
+                    <CheckCircleIcon className="w-10 h-10 text-emerald-400" />
+                  </div>
+                  <h3 className="text-3xl font-bold text-white mb-3">Message Sent</h3>
+                  <p className="text-white/50 text-base max-w-sm">
+                    Thank you for reaching out. I'll get back to you as soon as possible.
+                  </p>
+                  <button
+                    onClick={() => setSubmitted(false)}
+                    className="mt-8 px-6 py-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-sm font-medium text-white transition-all duration-300"
                   >
-                    Your Name
-                  </label>
-                  <input
-                    type="text"
-                    value={form.name}
-                    onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    onFocus={() => setFocused('name')}
-                    onBlur={() => setFocused(null)}
-                    className={`w-full bg-dark-800 rounded-xl px-4 py-3.5 text-white font-mono text-sm outline-none transition-all duration-300 ${
-                      focused === 'name' ? 'border border-brand-500 shadow-glow'
-                        : errors.name ? 'border border-red-500/50'
-                        : 'border border-dark-700 hover:border-dark-600'
-                    }`}
-                  />
-                  {errors.name && <p className="text-red-400 text-xs font-mono mt-1 ml-1">{errors.name}</p>}
-                </div>
+                    Send another message
+                  </button>
+                </motion.div>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-8">
+                  <div className="grid sm:grid-cols-2 gap-8">
+                    <InputField id="name" label="Your Name" />
+                    <InputField id="email" label="Email Address" type="email" />
+                  </div>
+                  <InputField id="message" label="Your Message" isTextArea />
 
-                <div className="relative">
-                  <label
-                    className={`absolute left-4 transition-all duration-300 pointer-events-none font-mono text-sm ${
-                      focused === 'email' || form.email
-                        ? '-top-2.5 text-xs text-cyber-400 bg-dark-900 px-1'
-                        : 'top-3.5 text-slate-500'
-                    }`}
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="group relative w-full py-4 rounded-2xl font-semibold text-white transition-all duration-300 overflow-hidden disabled:opacity-50"
                   >
-                    Email Address
-                  </label>
-                  <input
-                    type="email"
-                    value={form.email}
-                    onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    onFocus={() => setFocused('email')}
-                    onBlur={() => setFocused(null)}
-                    className={`w-full bg-dark-800 rounded-xl px-4 py-3.5 text-white font-mono text-sm outline-none transition-all duration-300 ${
-                      focused === 'email' ? 'border border-cyber-500 shadow-glow-cyan'
-                        : errors.email ? 'border border-red-500/50'
-                        : 'border border-dark-700 hover:border-dark-600'
-                    }`}
-                  />
-                  {errors.email && <p className="text-red-400 text-xs font-mono mt-1 ml-1">{errors.email}</p>}
-                </div>
+                    {/* Glass Button Background */}
+                    <div className="absolute inset-0 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl transition-all duration-300 group-hover:bg-white/15" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    
+                    <div className="relative z-10 flex items-center justify-center gap-2">
+                      {isSubmitting ? (
+                        <>
+                          <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          <span>Sending securely...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>Transmit Message</span>
+                          <PaperAirplaneIcon className="w-4 h-4 group-hover:-translate-y-1 group-hover:translate-x-1 transition-transform duration-300" />
+                        </>
+                      )}
+                    </div>
+                  </button>
+                </form>
+              )}
+            </div>
+          </motion.div>
 
-                <div className="relative">
-                  <label
-                    className={`absolute left-4 transition-all duration-300 pointer-events-none font-mono text-sm ${
-                      focused === 'message' || form.message
-                        ? '-top-2.5 text-xs text-neon-400 bg-dark-900 px-1'
-                        : 'top-3.5 text-slate-500'
-                    }`}
-                  >
-                    Your Message
-                  </label>
-                  <textarea
-                    value={form.message}
-                    onChange={(e) => setForm({ ...form, message: e.target.value })}
-                    onFocus={() => setFocused('message')}
-                    onBlur={() => setFocused(null)}
-                    rows={5}
-                    className={`w-full bg-dark-800 rounded-xl px-4 py-3.5 text-white font-mono text-sm outline-none transition-all duration-300 resize-none ${
-                      focused === 'message' ? 'border border-neon-500 shadow-glow-pink'
-                        : errors.message ? 'border border-red-500/50'
-                        : 'border border-dark-700 hover:border-dark-600'
-                    }`}
-                  />
-                  {errors.message && <p className="text-red-400 text-xs font-mono mt-1 ml-1">{errors.message}</p>}
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full py-4 rounded-xl font-semibold text-white transition-all duration-300 hover:shadow-glow-lg hover:scale-[1.02] disabled:opacity-50 flex items-center justify-center gap-2"
-                  style={{ background: 'linear-gradient(135deg, #6366f1, #4f46e5)' }}
-                >
-                  {isSubmitting ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      Sending...
-                    </>
-                  ) : (
-                    <>
-                      <EnvelopeIcon className="w-4 h-4" />
-                      Send Message
-                    </>
-                  )}
-                </button>
-              </form>
-            )}
-          </div>
-
-          <div
-            className={`lg:col-span-2 space-y-6 transition-all duration-700 ${visible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'}`}
-            style={{ transitionDelay: '300ms' }}
+          {/* Social Links Sidebar */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="lg:col-span-2 flex flex-col gap-4 sm:gap-6"
           >
-            <div className="rounded-2xl glass neon-border p-6">
-              <h3 className="text-white font-semibold mb-2">Open to Opportunities</h3>
-              <p className="text-slate-400 text-sm leading-relaxed">
-                Open to full-time opportunities in full stack engineering, AI product development, and data-driven application teams.
+            <div className="rounded-[2rem] p-8 bg-white/[0.01] border border-white/10 backdrop-blur-2xl shadow-[0_20px_40px_rgba(0,0,0,0.3)]">
+              <h3 className="text-white text-lg font-medium mb-3 flex items-center gap-2">
+                <span className="relative flex w-2.5 h-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60"></span>
+                  <span className="relative inline-flex rounded-full w-2.5 h-2.5 bg-emerald-500"></span>
+                </span>
+                Available for Roles
+              </h3>
+              <p className="text-white/50 text-sm leading-relaxed font-light">
+                I am actively exploring opportunities in full stack engineering and AI product development. Let's discuss how my skills align with your goals.
               </p>
-              <div className="flex items-center gap-2 mt-4">
-                <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                <span className="text-green-400 text-xs font-mono">Available for hire</span>
-              </div>
             </div>
 
-            {socialLinks.map((link) => {
-              const Icon = link.icon;
+            {socialLinks.map((link, i) => {
               return (
                 <a
                   key={link.label}
                   href={link.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-4 p-4 rounded-xl glass group transition-all duration-300 hover:-translate-y-1"
-                  style={{ border: `1px solid ${link.color}20` }}
+                  className="group relative flex items-center gap-5 p-5 rounded-[2rem] bg-white/[0.01] border border-white/5 backdrop-blur-md overflow-hidden transition-all duration-500 hover:-translate-y-1 hover:border-white/20"
                 >
-                  <div
-                    className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:shadow-glow transition-all duration-300"
-                    style={{ background: `${link.color}20`, border: `1px solid ${link.color}40` }}
-                  >
-                    <Icon className="w-5 h-5" style={{ color: link.color }} />
+                  {/* Subtle hover gradient sheen */}
+                  <div className={`absolute inset-0 bg-gradient-to-r ${link.color} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
+                  
+                  <div className="relative w-10 h-10 flex-shrink-0 flex items-center justify-center group-hover:scale-110 transition-transform duration-500 rounded-xl overflow-hidden shadow-[0_4px_12px_rgba(0,0,0,0.4)] group-hover:shadow-[0_0_15px_rgba(255,255,255,0.2)]">
+                    <Image 
+                      src={link.image} 
+                      alt={link.label} 
+                      fill 
+                      sizes="40px"
+                      className="object-cover" 
+                    />
                   </div>
                   <div>
-                    <p className="text-white text-sm font-semibold">{link.label}</p>
-                    <p className="text-slate-500 text-xs font-mono">{link.username}</p>
+                    <p className="text-white font-medium text-base">{link.label}</p>
+                    <p className="text-white/50 text-[11px] font-mono mt-1 group-hover:text-white/80 transition-colors">{link.username}</p>
                   </div>
                 </a>
               );
             })}
-          </div>
+          </motion.div>
+
         </div>
       </div>
     </section>

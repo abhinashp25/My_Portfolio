@@ -138,7 +138,7 @@ function useTilt() {
     const x = (e.clientX - rect.left) / rect.width - 0.5;
     const y = (e.clientY - rect.top) / rect.height - 0.5;
     ref.current.style.transition = 'transform 0.1s ease';
-    ref.current.style.transform = `perspective(900px) rotateX(${-y * 10}deg) rotateY(${x * 10}deg) translateZ(8px) scale(1.025)`;
+    ref.current.style.transform = `perspective(1000px) rotateX(${-y * 6}deg) rotateY(${x * 6}deg) translateZ(4px) scale(1.02)`;
   };
 
   const onLeave = () => {
@@ -165,10 +165,10 @@ function ProjectCard({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 50 }}
+      initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.15 }}
-      transition={{ duration: 0.6, delay: index * 0.08, ease: [0.16, 1, 0.3, 1] }}
+      viewport={{ once: true, margin: "0px 0px -50px 0px" }}
+      transition={{ duration: 0.4, delay: (index % 3) * 0.05, ease: 'easeOut' }}
     >
       <div
         ref={ref}
@@ -177,14 +177,19 @@ function ProjectCard({
         onMouseEnter={() => setHovered(true)}
         onMouseOut={() => setHovered(false)}
         onClick={onClick}
-        className="group relative h-full rounded-2xl overflow-hidden flex flex-col backdrop-blur-xl bg-white/5 border shadow-[inset_0_0_20px_rgba(255,255,255,0.02),0_8px_32px_0_rgba(0,0,0,0.3)] transition-all duration-300 cursor-pointer"
+        className="group relative h-full rounded-2xl overflow-hidden flex flex-col bg-dark-900/40 backdrop-blur-md border transition-transform duration-300 cursor-pointer"
         style={{
-          borderColor: hovered ? `${project.color}50` : 'rgba(255,255,255,0.1)',
-          boxShadow: hovered
-            ? `inset 0 0 20px rgba(255,255,255,0.02), 0 0 40px ${project.color}20, 0 20px 60px rgba(0,0,0,0.4)`
-            : 'inset 0 0 20px rgba(255,255,255,0.02), 0 8px 32px 0 rgba(0,0,0,0.3)',
+          borderColor: hovered ? `${project.color}40` : 'rgba(255,255,255,0.05)',
         }}
       >
+        {/* Hardware-accelerated hover glow layer to prevent box-shadow lag */}
+        <div 
+          className="absolute inset-0 z-0 pointer-events-none transition-opacity duration-300"
+          style={{
+            opacity: hovered ? 1 : 0,
+            boxShadow: `inset 0 0 20px rgba(255,255,255,0.02), 0 0 40px ${project.color}15`,
+          }}
+        />
         {/* Media Header */}
         <div className="relative w-full h-48 sm:h-52 overflow-hidden bg-[#0a0a0a] shrink-0 border-b border-white/10">
           {project.video ? (
@@ -253,7 +258,7 @@ function ProjectCard({
           </div>
         </div>
 
-        <div className="relative z-10 p-6 flex flex-col flex-1">
+        <div className="relative z-10 p-5 sm:p-6 flex flex-col flex-1 bg-dark-900/60">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-lg font-bold text-white leading-tight">{project.title}</h3>
             {project.stats && (
