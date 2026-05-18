@@ -53,14 +53,14 @@ export default function HeroSection() {
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_20%,transparent_100%)] opacity-50" />
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 w-full flex flex-col lg:flex-row items-center justify-between gap-12 pt-20">
+      <div className="relative z-10 max-w-7xl mx-auto px-6 w-full flex flex-col lg:flex-row items-center justify-center lg:justify-between gap-12 lg:gap-16 pt-32 lg:pt-20 pb-16 lg:pb-0 min-h-screen">
         
         {/* Left: Typography Focus */}
         <motion.div
           variants={container}
           initial="hidden"
           animate="show"
-          className="flex-1 space-y-8 max-w-2xl"
+          className="relative z-20 flex flex-col items-center text-center lg:items-start lg:text-left space-y-6 sm:space-y-8 max-w-2xl w-full order-2 lg:order-1"
         >
           {/* Subtle Availability Badge */}
           <motion.div variants={item}>
@@ -86,15 +86,15 @@ export default function HeroSection() {
           </motion.div>
 
           {/* Refined Bio */}
-          <motion.p variants={item} className="text-white/50 text-lg md:text-xl leading-relaxed max-w-[500px] font-light">
+          <motion.p variants={item} className="text-white/50 text-base sm:text-lg md:text-xl leading-relaxed max-w-[500px] font-light mx-auto lg:mx-0">
             I engineer production-grade applications that merge modern full-stack development with applied machine learning to solve complex problems and deliver exceptional user experiences.
           </motion.p>
 
           {/* Polished Call to action */}
-          <motion.div variants={item} className="pt-4 flex items-center gap-6">
+          <motion.div variants={item} className="pt-4 flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
             <button
               onClick={() => scrollTo('projects')}
-              className="group relative px-6 py-3 rounded-full bg-white text-dark-900 font-medium text-sm overflow-hidden transition-transform hover:scale-[1.02] active:scale-[0.98]"
+              className="group relative px-6 py-3 rounded-full bg-white text-dark-900 font-medium text-sm overflow-hidden transition-transform hover:scale-[1.02] active:scale-[0.98] w-full sm:w-auto flex justify-center"
             >
               <span className="relative z-10 flex items-center gap-2">
                 Explore Work
@@ -105,7 +105,7 @@ export default function HeroSection() {
             <a
               href="/resume.pdf"
               download="Abhinash_Pradhan_Resume.pdf"
-              className="group relative px-6 py-3 rounded-full border border-white/20 bg-transparent text-white font-medium text-sm transition-all hover:bg-white/10 hover:border-white/40 active:scale-[0.98] flex items-center gap-2"
+              className="group relative px-6 py-3 rounded-full border border-white/20 bg-transparent text-white font-medium text-sm transition-all hover:bg-white/10 hover:border-white/40 active:scale-[0.98] flex items-center justify-center gap-2 w-full sm:w-auto"
             >
               <svg className="w-4 h-4 text-white/70 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
@@ -115,17 +115,17 @@ export default function HeroSection() {
           </motion.div>
         </motion.div>
 
-        {/* Right: Clean, un-cluttered Profile/3D Element */}
+        {/* Right: Premium Glass Profile Photo */}
         <motion.div
-          className="hidden lg:flex flex-1 justify-end opacity-90"
+          className="flex flex-1 justify-center lg:justify-end w-full lg:w-auto relative z-20 order-1 lg:order-2 mb-8 lg:mb-0"
           initial={{ opacity: 0, scale: 0.95, filter: 'blur(20px)' }}
-          animate={{ opacity: 0.9, scale: 1, filter: 'blur(0px)' }}
-          transition={{ duration: 1.5, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+          transition={{ duration: 1.2, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
         >
-          <div className="relative w-[450px] h-[450px] rounded-full flex items-center justify-center">
+          <div className="relative w-full lg:h-full flex items-center justify-center lg:justify-end lg:pr-10">
             {/* Extremely subtle backdrop glow for the profile */}
-            <div className="absolute inset-0 rounded-full bg-white/5 blur-[80px]" />
-            <div className="relative z-10 w-full h-full">
+            <div className="absolute inset-0 bg-indigo-500/10 blur-[100px] rounded-full" />
+            <div className="relative z-10 w-full flex items-center justify-center">
                <ProfilePhoto />
             </div>
           </div>
