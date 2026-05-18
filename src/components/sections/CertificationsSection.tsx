@@ -29,8 +29,8 @@ const certs = [
     verified: true,
     credentialUrl: '/Affective Computing.pdf',
     totalCertified: '4,768',
-    image: '/certificates/Affective Computing.png',
-    issuerLogo: '/logos/NPTEL logo.png',
+    image: '/certificates/affective_computing.png',
+    issuerLogo: '/logos/nptel_logo.png',
   },
   {
     title: 'Introduction to Industry 4.0 and Industrial Internet of Things',
@@ -59,8 +59,8 @@ const certs = [
       '/introduction to industry 4.0 and industrial internet of things certificate.pdf',
     totalCertified: '15,725',
     image:
-      '/certificates/introduction to industry 4.0 and industrial internet of things certificate.png',
-    issuerLogo: '/logos/NPTEL logo.png',
+      '/certificates/industry_4_0.png',
+    issuerLogo: '/logos/nptel_logo.png',
   },
   {
     title: 'Computer Networks and Internet Protocol',
@@ -87,8 +87,8 @@ const certs = [
     verified: true,
     credentialUrl: '/Computer Networks And Internet Protocol.pdf',
     totalCertified: '6,290',
-    image: '/certificates/Computer Networks And Internet Protocol.png',
-    issuerLogo: '/logos/NPTEL logo.png',
+    image: '/certificates/computer_networks.png',
+    issuerLogo: '/logos/nptel_logo.png',
   },
   {
     title: 'Programming with Python',
@@ -109,8 +109,8 @@ const certs = [
     verified: true,
     credentialUrl: '/Moniba Technology.pdf',
     totalCertified: null,
-    image: '/certificates/Moniba Technology.png',
-    issuerLogo: '/logos/python logo.webp',
+    image: '/certificates/moniba_technology.png',
+    issuerLogo: '/logos/python_logo.webp',
   },
   {
     title: 'Data Analytics Job Simulation',
@@ -137,8 +137,8 @@ const certs = [
     verified: true,
     credentialUrl: '/Data Analytics Job Simulation certificate.pdf',
     totalCertified: null,
-    image: '/certificates/Data Analytics Job Simulation certificate.png',
-    issuerLogo: '/logos/deloitte logo copy.png',
+    image: '/certificates/data_analytics.png',
+    issuerLogo: '/logos/deloitte_logo.png',
   },
   {
     title: 'AI / ML Internship Certification',
@@ -159,8 +159,8 @@ const certs = [
     verified: true,
     credentialUrl: '/ai internship certificate.jpeg',
     totalCertified: null,
-    image: '/certificates/ai internship certificate.jpeg',
-    issuerLogo: '/logos/OCAC logo.jpeg',
+    image: '/certificates/ai_internship.jpeg',
+    issuerLogo: '/logos/ocac_logo.jpeg',
   },
   {
     title: 'Cyber Security Job Simulation',
@@ -181,8 +181,8 @@ const certs = [
     verified: true,
     credentialUrl: '/Cyber job Deloitte certificate.pdf',
     totalCertified: null,
-    image: '/certificates/cyber job simulation.png',
-    issuerLogo: '/logos/deloitte logo copy.png',
+    image: '/certificates/cyber_job.png',
+    issuerLogo: '/logos/deloitte_logo.png',
   },
   {
     title: 'Technology Job Simulation',
@@ -203,8 +203,8 @@ const certs = [
     verified: true,
     credentialUrl: '/Technology Job certificate.pdf',
     totalCertified: null,
-    image: '/certificates/Technology job simulation.png',
-    issuerLogo: '/logos/deloitte logo copy.png',
+    image: '/certificates/technology_job.png',
+    issuerLogo: '/logos/deloitte_logo.png',
   },
 ];
 

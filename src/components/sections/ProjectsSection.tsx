@@ -111,7 +111,7 @@ const projects: Project[] = [
     demo: 'https://invoice-payment-prediction.vercel.app',
     category: 'Machine Learning',
     featured: true,
-    image: '/project_images/Invoice Payment Prediction.png',
+    image: '/project_images/invoice_payment_prediction.png',
   },
   {
     title: 'Plant Disease Prediction',
@@ -122,7 +122,7 @@ const projects: Project[] = [
     color: '#84cc16',
     github: 'https://github.com/abhinashp25/Plant_Disease_Prediction',
     category: 'Computer Vision',
-    image: '/project_images/Plant Disease Prediction.png',
+    image: '/project_images/plant_disease_prediction.png',
   },
 ];
 
