@@ -403,38 +403,74 @@ export default function ProjectsSection() {
       <AnimatePresence>
         {selectedProject && (
           <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: 0.4 }}
             onClick={() => setSelectedProject(null)}
           >
-            <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm" />
+            <div className="absolute inset-0 bg-[#020617]/60 backdrop-blur-md" />
             <motion.div
-              className="relative z-10 max-w-lg w-full rounded-2xl overflow-hidden"
+              className="relative z-10 max-w-2xl w-full rounded-3xl overflow-hidden flex flex-col max-h-[90vh]"
               style={{
-                background: 'rgba(15,23,42,0.98)',
-                border: `1px solid ${selectedProject.color}30`,
-                boxShadow: `0 0 80px ${selectedProject.color}20, 0 40px 80px rgba(0,0,0,0.6)`,
-                backdropFilter: 'blur(20px)',
+                background: 'rgba(255, 255, 255, 0.03)',
+                border: `1px solid rgba(255, 255, 255, 0.1)`,
+                boxShadow: `inset 0 0 32px rgba(255,255,255,0.02), 0 0 80px ${selectedProject.color}15, 0 32px 64px rgba(0,0,0,0.6)`,
+                backdropFilter: 'blur(40px)',
+                WebkitBackdropFilter: 'blur(40px)',
               }}
-              initial={{ scale: 0.85, y: 40 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.85, y: 40 }}
-              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+              initial={{ scale: 0.95, y: 30, opacity: 0, filter: 'blur(10px)' }}
+              animate={{ scale: 1, y: 0, opacity: 1, filter: 'blur(0px)' }}
+              exit={{ scale: 0.95, y: 20, opacity: 0, filter: 'blur(10px)' }}
+              transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
               onClick={(e) => e.stopPropagation()}
             >
-              <div
-                className="h-1"
-                style={{
-                  background: `linear-gradient(90deg, ${selectedProject.color}, transparent)`,
-                }}
-              />
-              <div className="p-8">
-                <div className="flex items-start justify-between mb-6">
-                  <div>
+              {/* Modal Hero Image/Video */}
+              <div className="relative w-full h-48 sm:h-72 shrink-0 bg-[#0a0a0a] border-b border-white/5">
+                {selectedProject.video ? (
+                  <video
+                    src={selectedProject.video}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="w-full h-full object-cover opacity-90"
+                  />
+                ) : selectedProject.image ? (
+                  <img
+                    src={selectedProject.image}
+                    alt={selectedProject.title}
+                    className="w-full h-full object-cover opacity-90"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-slate-900" />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent opacity-80 pointer-events-none" />
+
+                <button
+                  onClick={() => setSelectedProject(null)}
+                  className="absolute top-4 right-4 p-2 rounded-full backdrop-blur-xl bg-black/40 text-white hover:bg-black/60 hover:scale-110 transition-all border border-white/10 z-20"
+                >
+                  <XMarkIcon className="w-5 h-5" />
+                </button>
+
+                {/* Top accent line over media */}
+                <div
+                  className="absolute top-0 left-0 right-0 h-[2px]"
+                  style={{
+                    background: `linear-gradient(90deg, transparent, ${selectedProject.color}, transparent)`,
+                    opacity: 0.8,
+                  }}
+                />
+              </div>
+
+              {/* Modal Content Scrollable Area */}
+              <div className="p-6 sm:p-8 overflow-y-auto">
+                <div className="mb-6">
+                  <div className="flex items-center gap-3 mb-3">
                     <span
-                      className="text-xs font-mono px-2 py-1 rounded-full mb-3 inline-block"
+                      className="text-[10px] font-mono px-2.5 py-1 rounded-full"
                       style={{
                         background: `${selectedProject.color}15`,
                         color: selectedProject.color,
@@ -443,47 +479,41 @@ export default function ProjectsSection() {
                     >
                       {selectedProject.category}
                     </span>
-                    <h3 className="text-2xl font-bold text-white">{selectedProject.title}</h3>
                     {selectedProject.stats && (
-                      <div className="flex items-center gap-1.5 mt-2">
-                        <StarIcon
-                          className="w-3.5 h-3.5"
-                          style={{ color: selectedProject.color }}
-                        />
-                        <span
-                          className="text-xs font-mono"
-                          style={{ color: selectedProject.color }}
-                        >
-                          {selectedProject.stats}
-                        </span>
-                      </div>
+                      <span className="text-xs font-mono text-slate-400 flex items-center gap-1">
+                        <StarIcon className="w-3 h-3" style={{ color: selectedProject.color }} />
+                        {selectedProject.stats}
+                      </span>
                     )}
                   </div>
-                  <button
-                    onClick={() => setSelectedProject(null)}
-                    className="p-2 rounded-lg hover:bg-white/10 transition-colors"
-                  >
-                    <XMarkIcon className="w-5 h-5 text-slate-400" />
-                  </button>
+                  <h3 className="text-3xl font-bold text-white tracking-tight">
+                    {selectedProject.title}
+                  </h3>
                 </div>
 
-                <p className="text-slate-300 leading-relaxed mb-6">
-                  {selectedProject.longDescription}
-                </p>
-
-                <div className="mb-6">
-                  <p className="text-xs font-mono text-slate-500 uppercase tracking-widest mb-3">
-                    Tech Stack
+                <div className="mb-8">
+                  <h4 className="text-sm font-mono text-slate-400 uppercase tracking-widest mb-3">
+                    About Project
+                  </h4>
+                  <p className="text-slate-300 leading-relaxed text-[15px]">
+                    {selectedProject.longDescription}
                   </p>
+                </div>
+
+                <div className="mb-8">
+                  <h4 className="text-sm font-mono text-slate-400 uppercase tracking-widest mb-3">
+                    Core Technologies
+                  </h4>
                   <div className="flex flex-wrap gap-2">
                     {selectedProject.tech.map((t) => (
                       <span
                         key={t}
-                        className="text-sm px-3 py-1 rounded-lg font-mono"
+                        className="text-xs px-3 py-1.5 rounded-lg font-mono"
                         style={{
-                          background: `${selectedProject.color}15`,
-                          color: selectedProject.color,
-                          border: `1px solid ${selectedProject.color}30`,
+                          background: 'rgba(255,255,255,0.03)',
+                          color: '#e2e8f0',
+                          border: '1px solid rgba(255,255,255,0.1)',
+                          boxShadow: 'inset 0 0 10px rgba(255,255,255,0.02)',
                         }}
                       >
                         {t}
@@ -492,36 +522,38 @@ export default function ProjectsSection() {
                   </div>
                 </div>
 
-                <div className="flex gap-3">
+                <div className="flex gap-4 pt-4 border-t border-white/5">
                   <motion.a
                     href={selectedProject.github}
                     target="_blank"
                     rel="noopener noreferrer"
-                    whileHover={{ scale: 1.04 }}
-                    whileTap={{ scale: 0.97 }}
-                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium text-white transition-all"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium text-white transition-all shadow-lg"
                     style={{
-                      background: `linear-gradient(135deg, ${selectedProject.color}30, ${selectedProject.color}15)`,
-                      border: `1px solid ${selectedProject.color}40`,
+                      background: `linear-gradient(135deg, ${selectedProject.color}40, ${selectedProject.color}20)`,
+                      border: `1px solid ${selectedProject.color}50`,
+                      boxShadow: `0 10px 30px ${selectedProject.color}20`,
                     }}
                   >
                     <CodeBracketIcon className="w-4 h-4" />
-                    View on GitHub
+                    Source Code
                   </motion.a>
                   {selectedProject.demo && (
                     <motion.a
                       href={selectedProject.demo}
                       target="_blank"
                       rel="noopener noreferrer"
-                      whileHover={{ scale: 1.04 }}
-                      className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium text-white transition-all"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium text-white transition-all backdrop-blur-md"
                       style={{
-                        background: 'rgba(255,255,255,0.06)',
-                        border: '1px solid rgba(255,255,255,0.15)',
+                        background: 'rgba(255,255,255,0.05)',
+                        border: '1px solid rgba(255,255,255,0.1)',
                       }}
                     >
                       <PlayIcon className="w-4 h-4" />
-                      Live Demo
+                      Live Project
                     </motion.a>
                   )}
                 </div>
