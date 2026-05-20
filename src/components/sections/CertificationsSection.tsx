@@ -229,7 +229,7 @@ export default function CertificationsSection() {
           className="mb-16"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: false }}
           transition={{ duration: 0.7 }}
         >
           <div className="flex items-center gap-3 mb-4">
@@ -256,7 +256,7 @@ export default function CertificationsSection() {
               key={cert.title}
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.15 }}
+              viewport={{ once: false, amount: 0.15 }}
               transition={{ duration: 0.7, delay: i * 0.12, ease: [0.16, 1, 0.3, 1] }}
             >
               <motion.div
@@ -418,7 +418,7 @@ export default function CertificationsSection() {
           className="mt-8 text-center"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
+          viewport={{ once: false }}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
           <p className="text-xs font-mono text-slate-600">

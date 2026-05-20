@@ -96,7 +96,7 @@ export default function AILabSection() {
           className="mb-12 text-center"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: false, amount: 0.1 }}
           transition={{ duration: 0.7 }}
         >
           <h2 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white tracking-tight drop-shadow-sm mb-4">

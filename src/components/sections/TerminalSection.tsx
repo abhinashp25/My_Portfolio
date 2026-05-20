@@ -293,7 +293,7 @@ export default function TerminalSection() {
           className="mb-12 text-center"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: false, amount: 0.1 }}
           transition={{ duration: 0.7 }}
         >
           <div className="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-full border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 backdrop-blur-md shadow-lg cursor-pointer hover:bg-black/10 dark:bg-white/10 transition-colors"

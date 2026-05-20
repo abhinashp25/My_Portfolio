@@ -83,10 +83,10 @@ export default function ExperienceSection() {
         {/* Header */}
         <motion.div 
           className="mb-24 text-center max-w-2xl mx-auto"
-          initial={{ opacity: 0, y: 30, filter: 'blur(10px)' }} 
-          whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-          viewport={{ once: true, margin: "-100px" }} 
-          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+          initial={{ opacity: 0, y: 20 }} 
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false, amount: 0.2 }} 
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         >
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 backdrop-blur-md mb-6">
             <span className="w-1.5 h-1.5 rounded-full bg-white opacity-70" />
@@ -126,11 +126,11 @@ export default function ExperienceSection() {
                   {/* Card Section */}
                   <div className={`flex-1 flex ${isLeft ? 'md:justify-end' : 'md:justify-start'}`}>
                     <motion.div
-                      initial={{ opacity: 0, y: 40, filter: 'blur(10px)' }}
-                      whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                      viewport={{ once: true, margin: "-100px" }}
-                      transition={{ duration: 1, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-                      className="group relative w-full md:max-w-lg rounded-[2rem] p-6 sm:p-8 bg-white/[0.01] border border-black/10 dark:border-white/10 backdrop-blur-[40px] shadow-[0_20px_40px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.1)] hover:border-black/20 dark:border-white/20 transition-all duration-500 overflow-hidden"
+                      initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                      viewport={{ once: false, amount: 0.15 }}
+                      transition={{ duration: 0.5, delay: 0.05, ease: 'easeOut' }}
+                      className="group relative w-full md:max-w-lg rounded-[2rem] p-6 sm:p-8 bg-white/[0.01] border border-black/10 dark:border-white/10 backdrop-blur-3xl shadow-[0_20px_40px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.1)] hover:border-black/20 dark:border-white/20 transition-all duration-500 overflow-hidden will-change-transform"
                     >
                       {/* Ambient hover glow inside card */}
                       <div 
@@ -201,8 +201,8 @@ export default function ExperienceSection() {
                     <motion.div
                       initial={{ scale: 0, opacity: 0 }}
                       whileInView={{ scale: 1, opacity: 1 }}
-                      viewport={{ once: true, margin: "-100px" }}
-                      transition={{ duration: 0.5, delay: 0.3, type: 'spring' }}
+                      viewport={{ once: false, amount: 0.5 }}
+                      transition={{ duration: 0.4, delay: 0.1, type: 'spring', stiffness: 200, damping: 15 }}
                       className="w-4 h-4 rounded-full border-2 bg-slate-50 dark:bg-dark-900"
                       style={{
                         borderColor: item.color,

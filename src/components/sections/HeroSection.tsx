@@ -17,9 +17,9 @@ const container = {
 };
 
 const item = {
-  hidden: { opacity: 0, y: 20, filter: 'blur(10px)' },
+  hidden: { opacity: 0, y: 20 },
   show: {
-    opacity: 1, y: 0, filter: 'blur(0px)',
+    opacity: 1, y: 0,
     transition: { duration: 1, ease: [0.16, 1, 0.3, 1] },
   },
 };
@@ -118,8 +118,8 @@ export default function HeroSection() {
         {/* Right: Premium Glass Profile Photo */}
         <motion.div
           className="flex flex-1 justify-center lg:justify-end w-full lg:w-auto relative z-20 order-1 lg:order-2 mb-8 lg:mb-0"
-          initial={{ opacity: 0, scale: 0.95, filter: 'blur(20px)' }}
-          animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1.2, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
         >
           <div className="relative w-full lg:h-full flex items-center justify-center lg:justify-end lg:pr-10">

@@ -86,7 +86,7 @@ export default function SkillsSection() {
         {/* Header */}
         <motion.div className="mb-10"
           initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }} transition={{ duration: 0.7 }}>
+          viewport={{ once: false, amount: 0.1 }} transition={{ duration: 0.7 }}>
           <div className="flex items-center gap-3 mb-4">
             <div className="h-px flex-1 max-w-12 bg-gradient-to-r from-transparent to-cyan-500" />
             <span className="text-cyan-400 font-mono text-sm tracking-widest uppercase">Skills Galaxy</span>
@@ -103,7 +103,7 @@ export default function SkillsSection() {
         {/* Category filters */}
         <motion.div className="flex flex-wrap gap-2 mb-8"
           initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.1 }}>
+          viewport={{ once: false, amount: 0.1 }} transition={{ duration: 0.6, delay: 0.1 }}>
           <motion.button
             onClick={() => setActiveCategory(null)}
             whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}
@@ -142,7 +142,7 @@ export default function SkillsSection() {
           }}
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
+          viewport={{ once: false, amount: 0.1 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         >
           <div className="absolute inset-0 bg-gradient-to-br from-slate-100 via-white to-slate-100 dark:from-slate-900 dark:via-dark-900 dark:to-slate-900" />
@@ -229,7 +229,7 @@ export default function SkillsSection() {
         <motion.div
           className="mt-10 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4"
           initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.2 }}>
+          viewport={{ once: false, amount: 0.1 }} transition={{ duration: 0.6, delay: 0.2 }}>
           {skillCategories.map((cat) => (
             <motion.div
               key={cat.label}

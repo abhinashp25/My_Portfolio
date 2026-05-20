@@ -93,7 +93,7 @@ export default function AboutSection() {
           className="mb-12"
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.3 }}
+          viewport={{ once: false, amount: 0.3 }}
           variants={fadeUp}
         >
           <div className="flex items-center gap-3 mb-4">
@@ -111,7 +111,7 @@ export default function AboutSection() {
           className="mb-12 p-6 rounded-2xl glass neon-border"
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.3 }}
+          viewport={{ once: false, amount: 0.3 }}
           variants={{ hidden: { opacity: 0, x: -30 }, visible: { opacity: 1, x: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } } }}
         >
           <div className="flex items-center gap-2 mb-4">
@@ -148,7 +148,7 @@ export default function AboutSection() {
                 style={{ borderColor: `${item.color}30` }}
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.2 }}
+                viewport={{ once: false, amount: 0.2 }}
                 transition={{ duration: 0.6, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
                 whileHover={{ y: -4 }}
                 onClick={() => setExpanded(isExpanded ? null : i)}
@@ -202,7 +202,7 @@ export default function AboutSection() {
             className="col-span-1 row-span-1 rounded-2xl glass neon-border p-6 flex flex-col justify-between"
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: false }}
             transition={{ duration: 0.6, delay: 0.4 }}
           >
             <p className="text-slate-500 text-xs font-mono uppercase tracking-widest">Stats</p>
@@ -224,7 +224,7 @@ export default function AboutSection() {
           className="mt-16 w-full"
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
+          viewport={{ once: false, amount: 0.2 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         >
           <GithubHeatmap />
