@@ -79,8 +79,7 @@ export function useChat(configs: ChatConfig[], streaming: boolean = true) {
 
         } else {
           try {
-            // Race standard JSON completions
-            const result = await Promise.any(
+            const result: any = await Promise.any(
               configs.map(c => getChatCompletion(c.provider, c.model, messages, parameters))
             );
             if (activeRequestRef.current === requestId) {

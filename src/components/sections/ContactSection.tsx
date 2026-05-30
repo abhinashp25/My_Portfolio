@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
+import { SectionHeading } from '../ui/SectionHeading';
 import Image from 'next/image';
 import { PaperAirplaneIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 import { supabase } from '@/lib/supabase';
@@ -120,24 +121,14 @@ export default function ContactSection() {
       </div>
 
       <div className="max-w-6xl mx-auto relative z-10">
-        
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, margin: "-100px" }}
-          transition={{ duration: 0.8 }}
-          className="text-center max-w-2xl mx-auto mb-20"
-        >
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 backdrop-blur-md mb-6">
-            <span className="w-1.5 h-1.5 rounded-full bg-white opacity-70" />
-            <span className="text-[11px] font-medium text-slate-900 dark:text-white/70 tracking-widest uppercase">Contact</span>
-          </div>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 dark:text-white tracking-tight leading-tight">
-            Let's build something <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500 dark:from-indigo-400 dark:to-purple-400">together.</span>
-          </h2>
-        </motion.div>
+        <SectionHeading 
+          title="Let's build something" 
+          highlight="together." 
+          badge="Contact" 
+          align="center"
+        />
 
-        <div className="grid lg:grid-cols-5 gap-8 lg:gap-12 items-start">
+        <div className="grid lg:grid-cols-5 gap-8 lg:gap-12 items-start mt-8">
           
           {/* Main Form Capsule */}
           <motion.div

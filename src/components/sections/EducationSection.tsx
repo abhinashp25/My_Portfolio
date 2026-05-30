@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AcademicCapIcon, MapPinIcon, CalendarIcon, BuildingLibraryIcon } from '@heroicons/react/24/outline';
+import { SectionHeading } from '../ui/SectionHeading';
 
 const education = [
   {
@@ -232,16 +233,18 @@ export default function EducationSection() {
 
       <div className="max-w-6xl mx-auto relative z-10">
         {/* Header */}
+        <SectionHeading 
+          title="Education &" 
+          highlight="Qualifications" 
+          align="center"
+        />
         <motion.div
-          className="mb-20 text-center"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false }}
-          transition={{ duration: 0.7 }}
+           className="mb-20 text-center -mt-6"
+           initial={{ opacity: 0, y: 30 }}
+           whileInView={{ opacity: 1, y: 0 }}
+           viewport={{ once: false }}
+           transition={{ duration: 0.7, delay: 0.2 }}
         >
-          <h2 className="text-4xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-sky-500 via-blue-400 to-violet-500 drop-shadow-sm mb-6">
-            Education &amp; Qualifications
-          </h2>
           <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto text-lg md:text-xl font-light leading-relaxed">
             Building the foundations of technology, engineering, and problem-solving through continuous learning.
           </p>

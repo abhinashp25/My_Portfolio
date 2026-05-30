@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useChat, ChatConfig } from '@/lib/hooks/useChat';
 import { XMarkIcon, PaperAirplaneIcon, SparklesIcon, BoltIcon } from '@heroicons/react/24/outline';
 
@@ -41,8 +41,7 @@ Reply in plain text. Be warm, concise (under 100 words unless asked for detail).
 
 // Stable configs — defined outside component to keep useMemo dep stable
 const CHAT_CONFIGS: ChatConfig[] = [
-  { provider: 'GROQ',   model: 'llama-3.3-70b-versatile' },
-  { provider: 'GEMINI', model: 'gemini-2.0-flash' },
+  { provider: 'GROQ', model: 'llama-3.3-70b-versatile' }
 ];
 
 export default function ChatBot() {
@@ -83,7 +82,7 @@ export default function ChatBot() {
 
   // Finalize message once loading completes
   useEffect(() => {
-    if (!isLoading && streamingMsgRef.current) {
+    if (!isLoading && streamingMsgRef.current && !error) {
       streamingMsgRef.current = false;
       setMessages(prev => {
         const last = prev[prev.length - 1];
@@ -93,7 +92,7 @@ export default function ChatBot() {
         return prev;
       });
     }
-  }, [isLoading]);
+  }, [isLoading, error]);
 
   // Handle offline / error fallback
   useEffect(() => {
@@ -101,7 +100,7 @@ export default function ChatBot() {
     streamingMsgRef.current = false;
     setMessages(prev => {
       const last = prev[prev.length - 1];
-      if (last?.role === 'assistant' && !last.content.trim()) {
+      if (last?.role === 'assistant' && (!last.content.trim() || last.content === 'I could not generate a response. Please try again.')) {
         return [...prev.slice(0, -1), {
           ...last,
           content: "I'm currently in offline mode. Abhinash is a Full Stack Developer & AI/ML engineer. Check the portfolio sections or use the Contact form to reach him directly!",
@@ -177,7 +176,7 @@ export default function ChatBot() {
             <div className="flex items-center gap-1.5 mt-1">
               <span className={`w-1.5 h-1.5 rounded-full ${isLoading ? 'bg-amber-400 animate-pulse' : 'bg-emerald-400'}`} />
               <p className="text-white/35 text-[10px] font-mono uppercase tracking-widest">
-                {isLoading ? 'Generating…' : 'Groq · Gemini'}
+                {isLoading ? 'Generating…' : 'Groq LLaMA 3'}
               </p>
             </div>
           </div>

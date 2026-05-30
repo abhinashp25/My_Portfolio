@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import Image from 'next/image';
+import { SectionHeading } from '../ui/SectionHeading';
 
 const timelineItems = [
   {
@@ -81,21 +82,20 @@ export default function ExperienceSection() {
       <div className="max-w-6xl mx-auto relative z-10">
         
         {/* Header */}
+        <SectionHeading 
+          title="Experience &" 
+          highlight="Timeline" 
+          badge="Career Journey" 
+          align="center"
+        />
         <motion.div 
-          className="mb-24 text-center max-w-2xl mx-auto"
+          className="mb-24 text-center max-w-2xl mx-auto -mt-4"
           initial={{ opacity: 0, y: 20 }} 
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false, amount: 0.2 }} 
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 backdrop-blur-md mb-6">
-            <span className="w-1.5 h-1.5 rounded-full bg-white opacity-70" />
-            <span className="text-[11px] font-medium text-slate-900 dark:text-white/70 tracking-widest uppercase">Career Journey</span>
-          </div>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 dark:text-white tracking-tight leading-tight">
-            Experience & <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-indigo-400">Timeline</span>
-          </h2>
-          <p className="text-slate-900 dark:text-white/50 mt-6 text-lg leading-relaxed font-light">
+          <p className="text-slate-900 dark:text-white/50 text-lg leading-relaxed font-light">
             A vertical journey through internships, specialized projects, and full stack milestones.
           </p>
         </motion.div>

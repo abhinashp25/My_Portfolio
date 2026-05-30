@@ -6,6 +6,7 @@ const GROQ_API_KEY    = process.env.GROQ_API_KEY ?? '';
 const GEMINI_API_KEY  = process.env.GEMINI_API_KEY ?? '';
 const NVIDIA_API_KEY  = process.env.NVIDIA_API_KEY ?? '';
 const OPENAI_API_KEY  = process.env.OPENAI_API_KEY ?? '';
+const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY ?? '';
 
 // ─── Fallback message ─────────────────────────────────────────────────────────
 const FALLBACK = `I'm in offline mode right now, but here's a quick overview:
@@ -23,8 +24,8 @@ function buildClient(provider: string): { client: OpenAI; apiKey: string } | nul
         client: new OpenAI({
           apiKey: GROQ_API_KEY,
           baseURL: 'https://api.groq.com/openai/v1',
-          timeout: 15_000,
-          maxRetries: 0,
+          timeout: 45_000,
+          maxRetries: 1,
         }),
       };
 
@@ -57,6 +58,18 @@ function buildClient(provider: string): { client: OpenAI; apiKey: string } | nul
       return {
         apiKey: OPENAI_API_KEY,
         client: new OpenAI({ apiKey: OPENAI_API_KEY, timeout: 30_000, maxRetries: 0 }),
+      };
+
+    case 'DEEPSEEK':
+      if (!DEEPSEEK_API_KEY) return null;
+      return {
+        apiKey: DEEPSEEK_API_KEY,
+        client: new OpenAI({
+          apiKey: DEEPSEEK_API_KEY,
+          baseURL: 'https://api.deepseek.com/v1',
+          timeout: 30_000,
+          maxRetries: 0,
+        }),
       };
 
     default:
@@ -150,7 +163,7 @@ export async function POST(req: NextRequest) {
     } catch (err: unknown) {
       const errorMsg = err instanceof Error ? err.message : String(err);
       console.error(`[${P}] Stream setup failed:`, errorMsg);
-      return fallbackStream();
+      return NextResponse.json({ error: errorMsg }, { status: 500 });
     }
 
     const readable = new ReadableStream({
@@ -182,13 +195,6 @@ export async function POST(req: NextRequest) {
   } catch (err: unknown) {
     const errorMsg = err instanceof Error ? err.message : String(err);
     console.error(`[${P}] Non-stream error:`, errorMsg);
-    return NextResponse.json(
-      {
-        choices: [{
-          message: { role: 'assistant', content: FALLBACK },
-          finish_reason: 'stop',
-        }],
-      }
-    );
+    return NextResponse.json({ error: errorMsg }, { status: 500 });
   }
 }

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, KeyboardEvent } from 'react';
 import { motion } from 'framer-motion';
 import { CommandLineIcon, SparklesIcon } from '@heroicons/react/24/outline';
+import { SectionHeading } from '../ui/SectionHeading';
 
 interface TerminalLine {
   type: 'input' | 'output' | 'error' | 'system' | 'success';
@@ -289,24 +290,19 @@ export default function TerminalSection() {
       </div>
 
       <div className="max-w-4xl mx-auto relative z-10">
+        <SectionHeading 
+          title="Developer" 
+          highlight="Console" 
+          badge="Interactive Shell" 
+          align="center"
+        />
         <motion.div 
-          className="mb-12 text-center"
+          className="mb-12 text-center -mt-4"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false, amount: 0.1 }}
-          transition={{ duration: 0.7 }}
+          transition={{ duration: 0.7, delay: 0.2 }}
         >
-          <div className="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-full border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 backdrop-blur-md shadow-lg cursor-pointer hover:bg-black/10 dark:bg-white/10 transition-colors"
-               onClick={() => inputRef.current?.focus()}>
-            <CommandLineIcon className="w-4 h-4 text-indigo-400" />
-            <span className="text-slate-900 dark:text-white/80 font-mono text-xs tracking-widest uppercase">
-              Interactive Shell
-            </span>
-          </div>
-          
-          <h2 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-400 to-cyan-500 drop-shadow-sm mb-4">
-            Developer Console
-          </h2>
           <p className="text-slate-600 dark:text-slate-400 max-w-xl mx-auto text-base">
             Execute commands to explore my technical footprint. Try <code className="text-indigo-300 bg-black/5 dark:bg-white/5 px-2 py-0.5 rounded font-mono text-sm border border-black/10 dark:border-white/10">theme neon</code> or press <code className="text-indigo-300 bg-black/5 dark:bg-white/5 px-2 py-0.5 rounded font-mono text-sm border border-black/10 dark:border-white/10">Tab</code> to autocomplete.
           </p>

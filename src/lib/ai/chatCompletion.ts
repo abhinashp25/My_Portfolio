@@ -47,7 +47,12 @@ export async function getStreamingChatCompletion(
       console.error(`Stream attempt ${attempt}/${MAX_RETRIES} failed:`, lastError.message);
 
       const isAbort = error instanceof Error && error.name === 'AbortError';
-      const isServerError = error instanceof Error && (error.message.includes('500') || error.message.includes('HTTP'));
+      const isServerError = error instanceof Error && (
+        error.message.includes('500') || 
+        error.message.includes('HTTP') ||
+        error.message.toLowerCase().includes('timeout') ||
+        error.message.toLowerCase().includes('time out')
+      );
 
       // Retry on abort (timeout) or server errors, but not on final attempt
       if ((isAbort || isServerError) && attempt < MAX_RETRIES) {

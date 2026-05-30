@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { BeakerIcon, CpuChipIcon, CommandLineIcon, AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
 import { motion } from 'framer-motion';
+import { SectionHeading } from '../ui/SectionHeading';
 
 const MODELS = [
   { id: 'dnn', name: 'Deep Neural Network', time: 2000, baseAccuracy: 94 },
@@ -92,16 +93,19 @@ export default function AILabSection() {
 
       <div className="max-w-5xl mx-auto relative z-10">
         {/* Header */}
+        <SectionHeading 
+          title="Developer" 
+          highlight="Laboratory" 
+          badge="AI Lab" 
+          align="center"
+        />
         <motion.div 
-          className="mb-12 text-center"
+          className="mb-12 text-center -mt-4"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false, amount: 0.1 }}
-          transition={{ duration: 0.7 }}
+          transition={{ duration: 0.7, delay: 0.2 }}
         >
-          <h2 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white tracking-tight drop-shadow-sm mb-4">
-            Developer Laboratory
-          </h2>
           <p className="text-slate-600 dark:text-slate-400 max-w-xl mx-auto text-sm md:text-base">
             Interactive AI Engine. Configure parameters, select a model architecture, and stream real-time prediction logits.
           </p>

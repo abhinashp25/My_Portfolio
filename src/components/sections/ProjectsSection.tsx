@@ -2,6 +2,7 @@
 
 import { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { SectionHeading } from '../ui/SectionHeading';
 import {
   ArrowTopRightOnSquareIcon,
   CodeBracketIcon,
@@ -278,25 +279,18 @@ export default function ProjectsSection() {
 
       <div className="max-w-6xl mx-auto">
         {/* Header */}
+        <SectionHeading 
+          title="Impact-Focused" 
+          highlight="Case Studies" 
+          badge="Selected Work" 
+        />
         <motion.div
-          className="mb-10"
+          className="mb-10 -mt-4"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false }}
-          transition={{ duration: 0.7 }}
+          transition={{ duration: 0.7, delay: 0.2 }}
         >
-          <div className="flex items-center gap-3 mb-4">
-            <div className="h-px flex-1 max-w-12 bg-gradient-to-r from-transparent to-white/50" />
-            <span className="text-slate-900 dark:text-white/60 font-mono text-sm tracking-widest uppercase">
-              Selected Work
-            </span>
-          </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white">
-            Impact-Focused{' '}
-            <span className="text-slate-900 dark:text-white drop-shadow-md dark:drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]">
-              Case Studies
-            </span>
-          </h2>
           <p className="text-slate-600 dark:text-slate-400 mt-4 max-w-xl text-lg">
             A curated set of engineering and AI projects with measurable outcomes, architecture
             decisions, and delivery focus.

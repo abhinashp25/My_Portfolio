@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { SectionHeading } from '../ui/SectionHeading';
 import {
   AcademicCapIcon,
   CheckBadgeIcon,
@@ -224,26 +225,19 @@ export default function CertificationsSection() {
       </div>
 
       <div className="max-w-6xl mx-auto">
+        <SectionHeading 
+          title="Certifications &" 
+          highlight="Achievements" 
+          badge="Credentials" 
+        />
         {/* Header */}
         <motion.div
-          className="mb-16"
+          className="mb-16 -mt-6"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false }}
-          transition={{ duration: 0.7 }}
+          transition={{ duration: 0.7, delay: 0.2 }}
         >
-          <div className="flex items-center gap-3 mb-4">
-            <div className="h-px flex-1 max-w-12 bg-gradient-to-r from-transparent to-cyber-500" />
-            <span className="text-cyber-400 font-mono text-sm tracking-widest uppercase">
-              Credentials
-            </span>
-          </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white">
-            Certifications &{' '}
-            <span style={{ color: '#06b6d4', textShadow: '0 0 20px rgba(6,182,212,0.5)' }}>
-              Achievements
-            </span>
-          </h2>
           <p className="text-slate-600 dark:text-slate-400 mt-4 max-w-xl text-lg">
             NPTEL certifications from IIT Kharagpur and professional internship credentials.
           </p>

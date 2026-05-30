@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { CodeBracketIcon, CpuChipIcon, ChartBarIcon, AcademicCapIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import dynamic from 'next/dynamic';
+import { SectionHeading } from '../ui/SectionHeading';
 
 const GithubHeatmap = dynamic(() => import('@/components/ui/GithubHeatmap'), { ssr: false });
 
@@ -89,22 +90,11 @@ export default function AboutSection() {
       <div className="max-w-6xl mx-auto">
 
         {/* Header */}
-        <motion.div
-          className="mb-12"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: false, amount: 0.3 }}
-          variants={fadeUp}
-        >
-          <div className="flex items-center gap-3 mb-4">
-            <div className="h-px flex-1 max-w-12 bg-gradient-to-r from-transparent to-brand-500" />
-            <span className="text-brand-400 font-mono text-sm tracking-widest uppercase">About Me</span>
-          </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white">
-            Developer{' '}
-            <span className="gradient-text">Journey</span>
-          </h2>
-        </motion.div>
+        <SectionHeading 
+          title="Developer" 
+          highlight="Journey" 
+          badge="About Me" 
+        />
 
         {/* Bio — the human story */}
         <motion.div

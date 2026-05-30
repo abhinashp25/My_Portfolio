@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { SectionHeading } from '../ui/SectionHeading';
 
 const skillsData = [
   { name: 'Python', description: 'Primary language for ML & automation', color: '#6366f1', size: 80 },
@@ -84,17 +85,14 @@ export default function SkillsSection() {
 
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <motion.div className="mb-10"
+        <SectionHeading 
+          title="Technology" 
+          highlight="Universe" 
+          badge="Skills Galaxy" 
+        />
+        <motion.div className="mb-10 -mt-4 text-lg"
           initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, amount: 0.1 }} transition={{ duration: 0.7 }}>
-          <div className="flex items-center gap-3 mb-4">
-            <div className="h-px flex-1 max-w-12 bg-gradient-to-r from-transparent to-cyan-500" />
-            <span className="text-cyan-400 font-mono text-sm tracking-widest uppercase">Skills Galaxy</span>
-          </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white">
-            Technology{' '}
-            <span style={{ color: '#06b6d4', textShadow: '0 0 20px rgba(6,182,212,0.6)' }}>Universe</span>
-          </h2>
+          viewport={{ once: false, amount: 0.1 }} transition={{ duration: 0.7, delay: 0.2 }}>
           <p className="text-slate-600 dark:text-slate-400 mt-4 max-w-xl text-lg">
             Hover over each skill orb to explore. Filter by category below.
           </p>
