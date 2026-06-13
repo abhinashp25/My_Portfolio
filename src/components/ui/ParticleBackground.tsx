@@ -47,9 +47,9 @@ export default function ParticleBackground() {
       };
 
       group = new THREE.Group();
-      group.add(createLayer(700, 0x6366f1, 120, 0.12)); // indigo
-      group.add(createLayer(450, 0x06b6d4, 150, 0.09)); // cyan
-      group.add(createLayer(250, 0xf472b6, 90, 0.10));  // pink
+      group.add(createLayer(350, 0x6366f1, 120, 0.13)); // indigo
+      group.add(createLayer(200, 0x06b6d4, 150, 0.10)); // cyan
+      group.add(createLayer(100, 0xf472b6, 90,  0.11)); // pink
 
       scene.add(group);
 

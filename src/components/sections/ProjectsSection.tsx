@@ -97,7 +97,7 @@ const projects: Project[] = [
     tech: ['React', 'Socket.io', 'Node.js', 'Express', 'MongoDB'],
     color: '#10b981',
     github: 'https://github.com/abhinashp25/Real-time-Chat-App',
-    demo: 'https://chatify-zeta-steel.vercel.app',
+    demo: 'https://real-time-chat-app-t40f.onrender.com/',
     category: 'Full Stack',
     video: '/project_videos/Real-time Chat App.mp4',
   },
@@ -142,18 +142,29 @@ function ProjectCard({
 }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: false, margin: '0px 0px -40px 0px' }}
-      transition={{ duration: 0.35, delay: (index % 3) * 0.04, ease: 'easeOut' }}
-      className="h-full"
+      initial={{ opacity: 0, y: 32, filter: 'blur(6px)', scale: 0.97 }}
+      whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)', scale: 1 }}
+      viewport={{ once: false, margin: '-50px' }}
+      whileHover={{
+        y: -8,
+        scale: 1.015,
+        boxShadow: '0 20px 40px rgba(0,0,0,0.16)',
+        transition: { type: 'spring', stiffness: 280, damping: 20 },
+      }}
+      transition={{
+        duration: 0.65,
+        delay: (index % 4) * 0.06,
+        ease: [0.16, 1, 0.3, 1],
+      }}
+      style={{ willChange: 'transform, opacity, filter' }}
+      className="h-full rounded-2xl overflow-hidden"
     >
       <div
         onClick={onClick}
-        className="group relative h-full rounded-2xl overflow-hidden flex flex-col bg-white dark:bg-dark-900/50 border border-black/10 dark:border-white/8 hover:border-black/20 dark:hover:border-white/20 transition-all duration-300 cursor-pointer hover:-translate-y-1 hover:shadow-xl dark:hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)] will-change-transform"
+        className="group relative h-full rounded-2xl overflow-hidden flex flex-col bg-white/80 dark:bg-white/[0.02] border border-slate-200/80 dark:border-white/[0.07] hover:border-transparent transition-all duration-300 cursor-pointer will-change-transform"
       >
         {/* Accent top line */}
-        <div className="absolute top-0 left-0 right-0 h-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10"
+        <div className="absolute top-0 left-0 right-0 h-[2.5px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10"
           style={{ background: `linear-gradient(90deg, transparent, ${project.color}, transparent)` }} />
 
         {/* Media Header — fixed height for uniform cards */}
@@ -233,7 +244,7 @@ function ProjectCard({
           </div>
 
           {/* Description — fixed min height so all cards align */}
-          <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed flex-1 line-clamp-3">
+          <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed flex-1 line-clamp-3 font-light">
             {project.description}
           </p>
 
@@ -286,10 +297,10 @@ export default function ProjectsSection() {
         />
         <motion.div
           className="mb-10 -mt-4"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false }}
-          transition={{ duration: 0.7, delay: 0.2 }}
+          initial={{ opacity: 0, y: 20, filter: 'blur(6px)' }}
+          whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          viewport={{ once: false, margin: '-40px' }}
+          transition={{ duration: 0.65, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
         >
           <p className="text-slate-600 dark:text-slate-400 mt-4 max-w-xl text-lg">
             A curated set of engineering and AI projects with measurable outcomes, architecture
@@ -300,10 +311,10 @@ export default function ProjectsSection() {
         {/* Filters */}
         <motion.div
           className="flex flex-wrap gap-2 mb-10"
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false }}
-          transition={{ duration: 0.4, delay: 0.1 }}
+          initial={{ opacity: 0, y: 14, filter: 'blur(4px)' }}
+          whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          viewport={{ once: false, margin: '-40px' }}
+          transition={{ duration: 0.55, delay: 0.22, ease: [0.16, 1, 0.3, 1] }}
         >
           {categories.map((cat) => (
             <button
@@ -335,10 +346,10 @@ export default function ProjectsSection() {
         {/* Stats bar */}
         <motion.div
           className="mt-12 grid grid-cols-3 gap-4"
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false }}
-          transition={{ duration: 0.4, delay: 0.2 }}
+          initial={{ opacity: 0, y: 20, filter: 'blur(6px)' }}
+          whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          viewport={{ once: false, margin: '-40px' }}
+          transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
         >
           {[
             { label: 'Shipped Applications', value: '5+', color: '#6366f1' },

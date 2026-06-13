@@ -78,8 +78,8 @@ function CountUp({ to, suffix }: { to: number; suffix: string }) {
 }
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 40 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } },
+  hidden: { opacity: 0, y: 36, filter: 'blur(8px)' },
+  visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.75, ease: [0.16, 1, 0.3, 1] } },
 };
 
 export default function AboutSection() {
@@ -101,8 +101,9 @@ export default function AboutSection() {
           className="mb-12 p-6 rounded-2xl glass neon-border"
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: false, amount: 0.3 }}
-          variants={{ hidden: { opacity: 0, x: -30 }, visible: { opacity: 1, x: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } } }}
+          viewport={{ once: false, margin: '-50px' }}
+          variants={{ hidden: { opacity: 0, x: -30, filter: 'blur(8px)' }, visible: { opacity: 1, x: 0, filter: 'blur(0px)', transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } } }}
+          style={{ willChange: 'transform, opacity, filter' }}
         >
           <div className="flex items-center gap-2 mb-4">
             <SparklesIcon className="w-5 h-5 text-brand-400" />
@@ -135,12 +136,12 @@ export default function AboutSection() {
               <motion.div
                 key={i}
                 className={`${item.size} relative rounded-2xl glass neon-border overflow-hidden cursor-pointer group`}
-                style={{ borderColor: `${item.color}30` }}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false, amount: 0.2 }}
-                transition={{ duration: 0.6, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
-                whileHover={{ y: -4 }}
+                initial={{ opacity: 0, y: 36, filter: 'blur(8px)', scale: 0.97 }}
+                whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)', scale: 1 }}
+                viewport={{ once: false, margin: '-50px' }}
+                transition={{ duration: 0.7, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+                whileHover={{ y: -5, transition: { duration: 0.22, ease: 'easeOut' } }}
+                style={{ borderColor: `${item.color}30`, willChange: 'transform, opacity, filter' }}
                 onClick={() => setExpanded(isExpanded ? null : i)}
               >
                 <div
@@ -190,10 +191,11 @@ export default function AboutSection() {
           {/* Stats card */}
           <motion.div
             className="col-span-1 row-span-1 rounded-2xl glass neon-border p-6 flex flex-col justify-between"
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false }}
-            transition={{ duration: 0.6, delay: 0.4 }}
+            initial={{ opacity: 0, y: 36, filter: 'blur(6px)' }}
+            whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            viewport={{ once: false, margin: '-50px' }}
+            transition={{ duration: 0.65, delay: 0.32, ease: [0.16, 1, 0.3, 1] }}
+            style={{ willChange: 'transform, opacity, filter' }}
           >
             <p className="text-slate-500 text-xs font-mono uppercase tracking-widest">Stats</p>
             <div className="space-y-3">

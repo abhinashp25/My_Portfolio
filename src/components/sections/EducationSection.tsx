@@ -73,11 +73,12 @@ function EducationCard({ edu, index }: { edu: any; index: number }) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: false, amount: 0.15 }}
-      transition={{ duration: 0.8, delay: index * 0.15, ease: [0.16, 1, 0.3, 1] }}
-      className="group relative w-full h-[280px] sm:h-[320px] md:h-[350px] rounded-[2rem] overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-transform duration-1000 hover:-translate-y-2 border border-black/10 dark:border-white/10 hover:border-black/20 dark:border-white/20"
+      initial={{ opacity: 0, y: 40, filter: 'blur(8px)', scale: 0.98 }}
+      whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)', scale: 1 }}
+      viewport={{ once: false, margin: '-60px' }}
+      transition={{ duration: 0.8, delay: index * 0.12, ease: [0.16, 1, 0.3, 1] }}
+      style={{ willChange: 'transform, opacity, filter' }}
+      className="group relative w-full h-[280px] sm:h-[320px] md:h-[350px] rounded-[2rem] overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-transform duration-700 hover:-translate-y-2 border border-black/10 dark:border-white/10 hover:border-black/20 dark:border-white/20"
     >
       {/* Background Image Carousel */}
       {edu.images && edu.images.length > 0 ? (
@@ -225,10 +226,12 @@ function EducationCard({ edu, index }: { edu: any; index: number }) {
 export default function EducationSection() {
   return (
     <section id="education" className="relative py-32 px-6">
-      {/* Background */}
+      {/* Background — lightweight radial gradients (no mix-blend-screen/blur) */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[10%] left-[-10%] w-[500px] h-[500px] rounded-full mix-blend-screen filter blur-[120px] opacity-20" style={{ background: '#38bdf8' }} />
-        <div className="absolute bottom-[10%] right-[-10%] w-[600px] h-[600px] rounded-full mix-blend-screen filter blur-[120px] opacity-20" style={{ background: '#a78bfa' }} />
+        <div className="absolute top-[10%] left-[-10%] w-[400px] h-[400px] rounded-full opacity-[0.08]"
+          style={{ background: 'radial-gradient(circle, #38bdf8 0%, transparent 70%)' }} />
+        <div className="absolute bottom-[10%] right-[-10%] w-[500px] h-[500px] rounded-full opacity-[0.06]"
+          style={{ background: 'radial-gradient(circle, #a78bfa 0%, transparent 70%)' }} />
       </div>
 
       <div className="max-w-6xl mx-auto relative z-10">
@@ -240,10 +243,10 @@ export default function EducationSection() {
         />
         <motion.div
            className="mb-20 text-center -mt-6"
-           initial={{ opacity: 0, y: 30 }}
-           whileInView={{ opacity: 1, y: 0 }}
-           viewport={{ once: false }}
-           transition={{ duration: 0.7, delay: 0.2 }}
+           initial={{ opacity: 0, y: 20, filter: 'blur(6px)' }}
+           whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+           viewport={{ once: false, margin: '-40px' }}
+           transition={{ duration: 0.65, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
         >
           <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto text-lg md:text-xl font-light leading-relaxed">
             Building the foundations of technology, engineering, and problem-solving through continuous learning.
