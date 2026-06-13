@@ -3,10 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { CodeBracketIcon, CpuChipIcon, ChartBarIcon, AcademicCapIcon, SparklesIcon } from '@heroicons/react/24/outline';
-import dynamic from 'next/dynamic';
 import { SectionHeading } from '../ui/SectionHeading';
-
-const GithubHeatmap = dynamic(() => import('@/components/ui/GithubHeatmap'), { ssr: false });
 
 const journey = [
   {
@@ -77,11 +74,6 @@ function CountUp({ to, suffix }: { to: number; suffix: string }) {
   return <>{count}{suffix}</>;
 }
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 36, filter: 'blur(8px)' },
-  visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.75, ease: [0.16, 1, 0.3, 1] } },
-};
-
 export default function AboutSection() {
   const [expanded, setExpanded] = useState<number | null>(null);
 
@@ -90,13 +82,13 @@ export default function AboutSection() {
       <div className="max-w-6xl mx-auto">
 
         {/* Header */}
-        <SectionHeading 
-          title="Developer" 
-          highlight="Journey" 
-          badge="About Me" 
+        <SectionHeading
+          title="Developer"
+          highlight="Journey"
+          badge="About Me"
         />
 
-        {/* Bio — the human story */}
+        {/* Bio */}
         <motion.div
           className="mb-12 p-6 rounded-2xl glass neon-border"
           initial="hidden"
@@ -210,17 +202,6 @@ export default function AboutSection() {
             </div>
           </motion.div>
         </div>
-
-        {/* GitHub Heatmap Premium Feature */}
-        <motion.div
-          className="mt-16 w-full"
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, amount: 0.2 }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <GithubHeatmap />
-        </motion.div>
       </div>
     </section>
   );

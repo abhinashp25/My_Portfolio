@@ -1,12 +1,99 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { SectionHeading } from '../ui/SectionHeading';
 import Image from 'next/image';
-import { PaperAirplaneIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
+import { PaperAirplaneIcon, CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
 import { supabase } from '@/lib/supabase';
 
+// ─── InputField defined OUTSIDE the parent component ─────────────────────────
+// This is critical: if defined inside, it remounts on every state change and
+// destroys focus — that was the typing bug.
+interface InputFieldProps {
+  id: string;
+  label: string;
+  type?: string;
+  isTextArea?: boolean;
+  form: { name: string; email: string; message: string };
+  focused: string | null;
+  errors: Record<string, string>;
+  onFocus: (id: string) => void;
+  onBlur: () => void;
+  onChange: (id: string, value: string) => void;
+}
+
+function InputField({
+  id,
+  label,
+  type = 'text',
+  isTextArea = false,
+  form,
+  focused,
+  errors,
+  onFocus,
+  onBlur,
+  onChange,
+}: InputFieldProps) {
+  const isFocused = focused === id;
+  const hasValue = form[id as keyof typeof form].length > 0;
+  const error = errors[id];
+
+  const floatClass =
+    isFocused || hasValue
+      ? '-top-2.5 text-[10px] sm:text-xs font-semibold tracking-wider uppercase px-2 py-0.5 rounded backdrop-blur-md bg-slate-50 dark:bg-[#090912]/80 border border-white/5 text-slate-700 dark:text-white/70'
+      : 'top-4 text-sm text-slate-500 dark:text-white/40';
+
+  const borderClass = error
+    ? 'border-red-500/60'
+    : isFocused
+    ? 'border-indigo-400/70 shadow-[0_0_20px_rgba(99,102,241,0.12)]'
+    : 'border-black/10 dark:border-white/8 hover:border-black/20 dark:hover:border-white/18';
+
+  const shared = `w-full bg-slate-100/70 dark:bg-white/[0.025] backdrop-blur-xl rounded-2xl px-4 py-4 text-slate-900 dark:text-white text-sm outline-none transition-all duration-300 border ${borderClass}`;
+
+  return (
+    <div className="relative group">
+      <label
+        htmlFor={id}
+        className={`absolute left-4 transition-all duration-300 pointer-events-none z-10 ${floatClass}`}
+      >
+        {label}
+      </label>
+
+      {isTextArea ? (
+        <textarea
+          id={id}
+          rows={5}
+          value={form[id as keyof typeof form]}
+          onChange={(e) => onChange(id, e.target.value)}
+          onFocus={() => onFocus(id)}
+          onBlur={onBlur}
+          className={`${shared} resize-none`}
+        />
+      ) : (
+        <input
+          id={id}
+          type={type}
+          value={form[id as keyof typeof form]}
+          onChange={(e) => onChange(id, e.target.value)}
+          onFocus={() => onFocus(id)}
+          onBlur={onBlur}
+          className={shared}
+        />
+      )}
+
+      {error && (
+        <p className="absolute -bottom-5 left-2 text-red-400 text-[10px] uppercase tracking-wider flex items-center gap-1">
+          <ExclamationCircleIcon className="w-3 h-3" />
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}
+
+// ─── Main Component ────────────────────────────────────────────────────────────
 export default function ContactSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [form, setForm] = useState({ name: '', email: '', message: '' });
@@ -14,6 +101,7 @@ export default function ContactSection() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
@@ -24,6 +112,11 @@ export default function ContactSection() {
     return newErrors;
   };
 
+  const handleChange = (id: string, value: string) => {
+    setForm((prev) => ({ ...prev, [id]: value }));
+    if (errors[id]) setErrors((prev) => { const e = { ...prev }; delete e[id]; return e; });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors = validate();
@@ -32,22 +125,37 @@ export default function ContactSection() {
       return;
     }
     setErrors({});
+    setSubmitError(null);
     setIsSubmitting(true);
 
     try {
-      const { error } = await supabase
-        .from('contacts')
-        .insert([{ name: form.name, email: form.email, message: form.message }]);
+      // 1. Send email via Resend API
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: form.name, email: form.email, message: form.message }),
+      });
 
-      if (error) throw error;
-      
+      const json = await res.json();
+
+      if (!res.ok) {
+        throw new Error(json.error || 'Email send failed');
+      }
+
+      // 2. Also save to Supabase as backup (non-blocking, ignore errors)
+      supabase
+        .from('contacts')
+        .insert([{ name: form.name, email: form.email, message: form.message }])
+        .then(({ error }) => { if (error) console.warn('Supabase backup failed:', error); });
+
       setSubmitted(true);
       setForm({ name: '', email: '', message: '' });
     } catch (err) {
-      console.error('Error submitting form to Supabase:', err);
-      const subject = encodeURIComponent('Portfolio Contact from ' + form.name);
-      const body = encodeURIComponent('Hi Abhinash,\n\nName: ' + form.name + '\nEmail: ' + form.email + '\n\nMessage:\n' + form.message);
-      window.open('mailto:abhinashpradhan7658@gmail.com?subject=' + subject + '&body=' + body, '_blank');
+      console.error('Submit error:', err);
+      // Graceful fallback: open mailto
+      const subject = encodeURIComponent(`Portfolio Contact from ${form.name}`);
+      const body = encodeURIComponent(`Hi Abhinash,\n\nName: ${form.name}\nEmail: ${form.email}\n\nMessage:\n${form.message}`);
+      window.open(`mailto:abhinashpradhan7658@gmail.com?subject=${subject}&body=${body}`, '_blank');
       setSubmitted(true);
       setForm({ name: '', email: '', message: '' });
     } finally {
@@ -56,199 +164,208 @@ export default function ContactSection() {
   };
 
   const socialLinks = [
-    { label: 'GitHub', href: 'https://github.com/abhinashp25', image: '/logos/github_logo.webp', color: 'from-indigo-400 to-cyan-400', username: '@abhinashp25' },
-    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/abhinash-pradhan-74b389294/', image: '/logos/Linkedin_logo.avif', color: 'from-sky-400 to-blue-500', username: 'Abhinash Pradhan' },
-    { label: 'Email', href: 'mailto:abhinashpradhan7658@gmail.com', image: '/logos/gmail_icon.webp', color: 'from-rose-400 to-pink-500', username: 'abhinash...7658@gmail.com' },
+    {
+      label: 'GitHub',
+      href: 'https://github.com/abhinashp25',
+      image: '/logos/github_logo.webp',
+      color: 'from-indigo-400 to-cyan-400',
+      username: '@abhinashp25',
+    },
+    {
+      label: 'LinkedIn',
+      href: 'https://www.linkedin.com/in/abhinash-pradhan-74b389294/',
+      image: '/logos/Linkedin_logo.avif',
+      color: 'from-sky-400 to-blue-500',
+      username: 'Abhinash Pradhan',
+    },
+    {
+      label: 'Email',
+      href: 'mailto:abhinashpradhan7658@gmail.com',
+      image: '/logos/gmail_icon.webp',
+      color: 'from-rose-400 to-pink-500',
+      username: 'abhinashpradhan7658@gmail.com',
+    },
   ];
-
-  const InputField = ({ id, label, type = 'text', isTextArea = false }: any) => {
-    const isFocused = focused === id;
-    const hasValue = form[id as keyof typeof form].length > 0;
-    const error = errors[id];
-
-    return (
-      <div className="relative group">
-        <label
-          htmlFor={id}
-          className={`absolute left-4 transition-all duration-300 pointer-events-none z-10 ${
-            isFocused || hasValue
-              ? '-top-2.5 text-[10px] sm:text-xs font-semibold tracking-wider uppercase text-slate-900 dark:text-white/70 px-2 py-0.5 rounded backdrop-blur-md bg-slate-50 dark:bg-dark-900/60 border border-white/5'
-              : 'top-4 text-sm text-slate-900 dark:text-white/40'
-          }`}
-        >
-          {label}
-        </label>
-        
-        {isTextArea ? (
-          <textarea
-            id={id}
-            rows={5}
-            value={form[id as keyof typeof form]}
-            onChange={(e) => setForm({ ...form, [id]: e.target.value })}
-            onFocus={() => setFocused(id)}
-            onBlur={() => setFocused(null)}
-            className={`w-full bg-slate-100/80 dark:bg-white/[0.02] backdrop-blur-xl rounded-2xl px-4 py-4 text-slate-900 dark:text-white text-sm outline-none transition-all duration-300 resize-none
-              ${isFocused ? 'border-indigo-400/60 shadow-[0_0_20px_rgba(99,102,241,0.1)]' : 'border-black/10 dark:border-white/10 hover:border-black/20 dark:border-white/20'} 
-              ${error ? 'border-red-500/50' : 'border'}
-            `}
-          />
-        ) : (
-          <input
-            id={id}
-            type={type}
-            value={form[id as keyof typeof form]}
-            onChange={(e) => setForm({ ...form, [id]: e.target.value })}
-            onFocus={() => setFocused(id)}
-            onBlur={() => setFocused(null)}
-            className={`w-full bg-slate-100/80 dark:bg-white/[0.02] backdrop-blur-xl rounded-2xl px-4 py-4 text-slate-900 dark:text-white text-sm outline-none transition-all duration-300
-              ${isFocused ? 'border-indigo-400/60 shadow-[0_0_20px_rgba(99,102,241,0.1)]' : 'border-black/10 dark:border-white/10 hover:border-black/20 dark:border-white/20'}
-              ${error ? 'border-red-500/50' : 'border'}
-            `}
-          />
-        )}
-        {error && <p className="absolute -bottom-5 left-2 text-red-400 text-[10px] uppercase tracking-wider">{error}</p>}
-      </div>
-    );
-  };
 
   return (
     <section id="contact" ref={sectionRef} className="relative py-32 px-6 overflow-hidden">
-      
-      {/* Liquid Glass Ambient Background Effects */}
-      <div className="absolute inset-0 pointer-events-none z-0 flex items-center justify-center opacity-30">
-        <div className="absolute top-1/4 left-1/4 w-[40vw] h-[40vw] bg-indigo-500/20 rounded-full blur-[120px] mix-blend-screen animate-pulse-glow" />
-        <div className="absolute bottom-1/4 right-1/4 w-[50vw] h-[50vw] bg-sky-500/10 rounded-full blur-[150px] mix-blend-screen" />
+
+      {/* Background */}
+      <div className="absolute inset-0 pointer-events-none z-0">
+        <div className="absolute top-1/4 left-1/4 w-[40vw] h-[40vw] bg-indigo-500/15 rounded-full blur-[120px] mix-blend-screen opacity-40" />
+        <div className="absolute bottom-1/4 right-1/4 w-[50vw] h-[50vw] bg-sky-500/10 rounded-full blur-[150px] mix-blend-screen opacity-30" />
       </div>
 
       <div className="max-w-6xl mx-auto relative z-10">
-        <SectionHeading 
-          title="Let's build something" 
-          highlight="together." 
-          badge="Contact" 
+        <SectionHeading
+          title="Let's build something"
+          highlight="together."
+          badge="Contact"
           align="center"
         />
 
         <div className="grid lg:grid-cols-5 gap-8 lg:gap-12 items-start mt-8">
-          
-          {/* Main Form Capsule */}
+
+          {/* Form */}
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: false, margin: "-100px" }}
-            transition={{ duration: 0.8, delay: 0.2 }}
+            initial={{ opacity: 0, x: -30, filter: 'blur(8px)' }}
+            whileInView={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+            viewport={{ once: false, margin: '-100px' }}
+            transition={{ duration: 0.75, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
             className="lg:col-span-3"
           >
-            <div className="relative rounded-[2.5rem] p-6 sm:p-10 overflow-hidden bg-white/80 dark:bg-white/[0.01] border border-black/10 dark:border-white/10 backdrop-blur-[40px] shadow-[0_8px_32px_rgba(0,0,0,0.08)] dark:shadow-[0_30px_80px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.1)]">
-              {/* Internal Glass Sheen */}
+            <div className="relative rounded-[2.5rem] p-6 sm:p-10 overflow-hidden bg-white/80 dark:bg-white/[0.012] border border-black/10 dark:border-white/10 backdrop-blur-[40px] shadow-[0_8px_32px_rgba(0,0,0,0.08)] dark:shadow-[0_30px_80px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.06)]">
+              {/* Glass sheen */}
               <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-50" />
-              
+
               {submitted ? (
-                <motion.div 
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  transition={{ type: 'spring', stiffness: 200, damping: 22 }}
                   className="h-full min-h-[400px] flex flex-col items-center justify-center text-center py-12"
                 >
-                  <div className="w-20 h-20 rounded-full flex items-center justify-center mb-6 bg-gradient-to-tr from-emerald-500/20 to-teal-500/20 border border-emerald-500/30 shadow-[0_0_40px_rgba(16,185,129,0.2)]">
+                  <motion.div
+                    className="w-20 h-20 rounded-full flex items-center justify-center mb-6 bg-gradient-to-tr from-emerald-500/20 to-teal-500/20 border border-emerald-500/30"
+                    animate={{ boxShadow: ['0 0 0px rgba(16,185,129,0)', '0 0 40px rgba(16,185,129,0.25)', '0 0 0px rgba(16,185,129,0)'] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  >
                     <CheckCircleIcon className="w-10 h-10 text-emerald-400" />
-                  </div>
-                  <h3 className="text-3xl font-bold text-slate-900 dark:text-white mb-3">Message Sent</h3>
-                  <p className="text-slate-900 dark:text-white/50 text-base max-w-sm">
-                    Thank you for reaching out. I'll get back to you as soon as possible.
+                  </motion.div>
+                  <h3 className="text-3xl font-bold text-slate-900 dark:text-white mb-3">Message Sent! 🎉</h3>
+                  <p className="text-slate-500 dark:text-white/50 text-base max-w-sm">
+                    Your message is on its way to Abhinash. Expect a reply within 24 hours.
                   </p>
                   <button
                     onClick={() => setSubmitted(false)}
-                    className="mt-8 px-6 py-3 rounded-full bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:bg-white/10 border border-black/10 dark:border-white/10 text-sm font-medium text-slate-900 dark:text-white transition-all duration-300"
+                    className="mt-8 px-6 py-3 rounded-full bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 border border-black/10 dark:border-white/10 text-sm font-medium text-slate-900 dark:text-white transition-all duration-300"
                   >
                     Send another message
                   </button>
                 </motion.div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-8">
+                <form onSubmit={handleSubmit} className="space-y-8" noValidate>
                   <div className="grid sm:grid-cols-2 gap-8">
-                    <InputField id="name" label="Your Name" />
-                    <InputField id="email" label="Email Address" type="email" />
+                    <InputField
+                      id="name"
+                      label="Your Name"
+                      form={form}
+                      focused={focused}
+                      errors={errors}
+                      onFocus={setFocused}
+                      onBlur={() => setFocused(null)}
+                      onChange={handleChange}
+                    />
+                    <InputField
+                      id="email"
+                      label="Email Address"
+                      type="email"
+                      form={form}
+                      focused={focused}
+                      errors={errors}
+                      onFocus={setFocused}
+                      onBlur={() => setFocused(null)}
+                      onChange={handleChange}
+                    />
                   </div>
-                  <InputField id="message" label="Your Message" isTextArea />
+                  <InputField
+                    id="message"
+                    label="Your Message"
+                    isTextArea
+                    form={form}
+                    focused={focused}
+                    errors={errors}
+                    onFocus={setFocused}
+                    onBlur={() => setFocused(null)}
+                    onChange={handleChange}
+                  />
 
-                  <button
+                  {submitError && (
+                    <p className="text-red-400 text-sm text-center font-mono">{submitError}</p>
+                  )}
+
+                  <motion.button
                     type="submit"
                     disabled={isSubmitting}
-                    className="group relative w-full py-4 rounded-2xl font-semibold text-slate-900 dark:text-white transition-all duration-300 overflow-hidden disabled:opacity-50"
+                    whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.99 }}
+                    className="group relative w-full py-4 rounded-2xl font-semibold text-slate-900 dark:text-white transition-all duration-300 overflow-hidden disabled:opacity-60 disabled:cursor-not-allowed"
                   >
-                    {/* Glass Button Background */}
-                    <div className="absolute inset-0 bg-black/10 dark:bg-white/10 backdrop-blur-md border border-black/20 dark:border-white/20 rounded-2xl transition-all duration-300 group-hover:bg-white/15" />
-                    <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                    
+                    <div className="absolute inset-0 bg-black/10 dark:bg-white/8 backdrop-blur-md border border-black/20 dark:border-white/15 rounded-2xl transition-all duration-300 group-hover:bg-white/12" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl" />
+
                     <div className="relative z-10 flex items-center justify-center gap-2">
                       {isSubmitting ? (
                         <>
-                          <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                          <span>Sending securely...</span>
+                          <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin opacity-60" />
+                          <span>Sending…</span>
                         </>
                       ) : (
                         <>
-                          <span>Transmit Message</span>
+                          <span>Send Message</span>
                           <PaperAirplaneIcon className="w-4 h-4 group-hover:-translate-y-1 group-hover:translate-x-1 transition-transform duration-300" />
                         </>
                       )}
                     </div>
-                  </button>
+                  </motion.button>
                 </form>
               )}
             </div>
           </motion.div>
 
-          {/* Social Links Sidebar */}
+          {/* Sidebar */}
           <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: false, margin: "-100px" }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="lg:col-span-2 flex flex-col gap-4 sm:gap-6"
+            initial={{ opacity: 0, x: 30, filter: 'blur(8px)' }}
+            whileInView={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+            viewport={{ once: false, margin: '-100px' }}
+            transition={{ duration: 0.75, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            className="lg:col-span-2 flex flex-col gap-4 sm:gap-5"
           >
-            <div className="rounded-[2rem] p-8 bg-slate-100/80 dark:bg-white/[0.01] border border-black/10 dark:border-white/10 backdrop-blur-2xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] dark:shadow-[0_20px_40px_rgba(0,0,0,0.3)]">
-              <h3 className="text-slate-900 dark:text-white text-lg font-medium mb-3 flex items-center gap-2">
+            {/* Available card */}
+            <div className="rounded-[2rem] p-7 bg-slate-100/80 dark:bg-white/[0.012] border border-black/10 dark:border-white/8 backdrop-blur-2xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] dark:shadow-[0_20px_40px_rgba(0,0,0,0.25)]">
+              <h3 className="text-slate-900 dark:text-white text-base font-semibold mb-3 flex items-center gap-2.5">
                 <span className="relative flex w-2.5 h-2.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60"></span>
-                  <span className="relative inline-flex rounded-full w-2.5 h-2.5 bg-emerald-500"></span>
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60" />
+                  <span className="relative inline-flex rounded-full w-2.5 h-2.5 bg-emerald-500" />
                 </span>
                 Available for Roles
               </h3>
-              <p className="text-slate-900 dark:text-white/50 text-sm leading-relaxed font-light">
-                I am actively exploring opportunities in full stack engineering and AI product development. Let's discuss how my skills align with your goals.
+              <p className="text-slate-500 dark:text-white/50 text-sm leading-relaxed font-light">
+                I am actively exploring opportunities in full stack engineering and AI product development.
+                Let's discuss how my skills align with your goals.
               </p>
             </div>
 
-            {socialLinks.map((link, i) => {
-              return (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group relative flex items-center gap-5 p-5 rounded-[2rem] bg-slate-100/80 dark:bg-white/[0.01] border border-black/10 dark:border-white/5 backdrop-blur-md overflow-hidden transition-all duration-500 hover:-translate-y-1 hover:border-black/20 dark:hover:border-white/20"
-                >
-                  {/* Subtle hover gradient sheen */}
-                  <div className={`absolute inset-0 bg-gradient-to-r ${link.color} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
-                  
-                  <div className="relative w-10 h-10 flex-shrink-0 flex items-center justify-center group-hover:scale-110 transition-transform duration-500 rounded-xl overflow-hidden shadow-[0_4px_12px_rgba(0,0,0,0.4)] group-hover:shadow-[0_0_15px_rgba(255,255,255,0.2)]">
-                    <Image 
-                      src={link.image} 
-                      alt={link.label} 
-                      fill 
-                      sizes="40px"
-                      className="object-cover" 
-                    />
-                  </div>
-                  <div>
-                    <p className="text-slate-900 dark:text-white font-medium text-base">{link.label}</p>
-                    <p className="text-slate-900 dark:text-white/50 text-[11px] font-mono mt-1 group-hover:text-slate-900 dark:text-white/80 transition-colors">{link.username}</p>
-                  </div>
-                </a>
-              );
-            })}
+            {/* Social links */}
+            {socialLinks.map((link, i) => (
+              <motion.a
+                key={link.label}
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: false }}
+                transition={{ type: 'spring', stiffness: 180, damping: 20, delay: i * 0.07 + 0.2 }}
+                whileHover={{
+                  y: -4,
+                  transition: { type: 'spring', stiffness: 400, damping: 22 },
+                }}
+                className="group relative flex items-center gap-4 p-5 rounded-[2rem] bg-slate-100/80 dark:bg-white/[0.012] border border-black/10 dark:border-white/5 backdrop-blur-md overflow-hidden transition-colors duration-300 hover:border-black/20 dark:hover:border-white/15"
+              >
+                <div className={`absolute inset-0 bg-gradient-to-r ${link.color} opacity-0 group-hover:opacity-[0.06] transition-opacity duration-400`} />
+                <div className="relative w-10 h-10 flex-shrink-0 flex items-center justify-center group-hover:scale-110 transition-transform duration-400 rounded-xl overflow-hidden shadow-[0_4px_12px_rgba(0,0,0,0.35)]">
+                  <Image src={link.image} alt={link.label} fill sizes="40px" className="object-cover" />
+                </div>
+                <div>
+                  <p className="text-slate-900 dark:text-white font-semibold text-sm">{link.label}</p>
+                  <p className="text-slate-500 dark:text-white/45 text-[11px] font-mono mt-0.5 group-hover:text-slate-700 dark:group-hover:text-white/70 transition-colors">
+                    {link.username}
+                  </p>
+                </div>
+              </motion.a>
+            ))}
           </motion.div>
-
         </div>
       </div>
     </section>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SectionHeading } from '../ui/SectionHeading';
 import {
@@ -9,6 +9,9 @@ import {
   XMarkIcon,
   StarIcon,
   PlayIcon,
+  PauseIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
 } from '@heroicons/react/24/outline';
 
 interface Project {
@@ -24,9 +27,172 @@ interface Project {
   stats?: string;
   video?: string;
   image?: string;
+  images?: string[]; // multi-image slideshow
 }
 
+// ─── Image Slideshow (looks like video) ───────────────────────────────────────
+function ImageSlideshow({
+  images,
+  alt,
+  color,
+  autoPlay = true,
+  interval = 2800,
+  className = '',
+}: {
+  images: string[];
+  alt: string;
+  color: string;
+  autoPlay?: boolean;
+  interval?: number;
+  className?: string;
+}) {
+  const [current, setCurrent] = useState(0);
+  const [playing, setPlaying] = useState(autoPlay);
+  const [progress, setProgress] = useState(0);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const progressRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const goTo = useCallback(
+    (idx: number) => {
+      setCurrent((idx + images.length) % images.length);
+      setProgress(0);
+    },
+    [images.length]
+  );
+
+  const startTimer = useCallback(() => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    if (progressRef.current) clearInterval(progressRef.current);
+
+    setProgress(0);
+    const tickMs = 40;
+    const steps = interval / tickMs;
+    let tick = 0;
+
+    progressRef.current = setInterval(() => {
+      tick++;
+      setProgress(Math.min((tick / steps) * 100, 100));
+    }, tickMs);
+
+    timerRef.current = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % images.length);
+      setProgress(0);
+      tick = 0;
+    }, interval);
+  }, [images.length, interval]);
+
+  const stopTimer = useCallback(() => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    if (progressRef.current) clearInterval(progressRef.current);
+  }, []);
+
+  useEffect(() => {
+    if (playing) startTimer();
+    else stopTimer();
+    return () => stopTimer();
+  }, [playing, startTimer, stopTimer, current]);
+
+  return (
+    <div className={`relative w-full h-full group/slide overflow-hidden ${className}`}>
+      {/* Images with crossfade */}
+      <AnimatePresence mode="wait">
+        <motion.img
+          key={current}
+          src={images[current]}
+          alt={`${alt} ${current + 1}`}
+          className="absolute inset-0 w-full h-full object-cover"
+          initial={{ opacity: 0, scale: 1.04 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.97 }}
+          transition={{ duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] }}
+        />
+      </AnimatePresence>
+
+      {/* Dark overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent pointer-events-none z-10" />
+
+      {/* Play/Pause + Prev/Next controls */}
+      <div className="absolute inset-0 z-20 flex items-center justify-between px-3 opacity-0 group-hover/slide:opacity-100 transition-opacity duration-300">
+        <button
+          onClick={(e) => { e.stopPropagation(); goTo(current - 1); }}
+          className="w-7 h-7 rounded-full flex items-center justify-center backdrop-blur-md bg-black/40 text-white border border-white/20 hover:bg-black/60 transition-all hover:scale-110"
+        >
+          <ChevronLeftIcon className="w-3.5 h-3.5" />
+        </button>
+        <button
+          onClick={(e) => { e.stopPropagation(); setPlaying((p) => !p); }}
+          className="w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-md bg-black/50 text-white border border-white/25 hover:bg-black/70 transition-all hover:scale-110 shadow-lg"
+        >
+          {playing ? <PauseIcon className="w-3.5 h-3.5" /> : <PlayIcon className="w-3.5 h-3.5" />}
+        </button>
+        <button
+          onClick={(e) => { e.stopPropagation(); goTo(current + 1); }}
+          className="w-7 h-7 rounded-full flex items-center justify-center backdrop-blur-md bg-black/40 text-white border border-white/20 hover:bg-black/60 transition-all hover:scale-110"
+        >
+          <ChevronRightIcon className="w-3.5 h-3.5" />
+        </button>
+      </div>
+
+      {/* Dot indicators */}
+      <div className="absolute bottom-7 left-1/2 -translate-x-1/2 flex gap-1.5 z-20">
+        {images.map((_, i) => (
+          <button
+            key={i}
+            onClick={(e) => { e.stopPropagation(); goTo(i); setPlaying(true); }}
+            className="transition-all duration-300"
+            style={{
+              width: i === current ? 18 : 6,
+              height: 6,
+              borderRadius: 3,
+              background: i === current ? color : 'rgba(255,255,255,0.4)',
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Progress bar */}
+      <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-white/10 z-20">
+        <motion.div
+          className="h-full"
+          style={{ width: `${progress}%`, background: `linear-gradient(90deg, ${color}, ${color}cc)` }}
+          transition={{ ease: 'linear' }}
+        />
+      </div>
+
+      {/* Playing indicator badge */}
+      <div className="absolute top-3 right-3 z-20 flex items-center gap-1.5 px-2 py-1 rounded-full backdrop-blur-md bg-black/40 border border-white/15">
+        <span className="relative flex w-1.5 h-1.5">
+          {playing && <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />}
+          <span className={`relative inline-flex rounded-full w-1.5 h-1.5 ${playing ? 'bg-red-500' : 'bg-gray-400'}`} />
+        </span>
+        <span className="text-[9px] font-mono text-white/80 tracking-wider uppercase">
+          {playing ? 'Live' : 'Paused'}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+// ─── Data ─────────────────────────────────────────────────────────────────────
 const projects: Project[] = [
+  {
+    title: 'AI Resume Analyzer',
+    description: 'An AI-powered resume analysis platform that matches resumes to job descriptions with intelligent scoring.',
+    longDescription:
+      'ResuMatch is an intelligent resume analysis platform I built to help job seekers understand how well their resume matches a target job description. It leverages advanced NLP and AI to parse resumes, extract key skills, and score alignment with JD requirements. The platform provides actionable feedback, keyword gap analysis, and improvement suggestions — all wrapped in a clean, responsive UI deployed on Render.',
+    tech: ['Python', 'FastAPI', 'NLP', 'React', 'AI/ML'],
+    color: '#a855f7',
+    github: 'https://github.com/abhinashp25/ResuMatch',
+    demo: 'https://resumatch-app.onrender.com/',
+    category: 'AI / Full Stack',
+    featured: true,
+    images: [
+      '/project_images/ResuMatch_1.png',
+      '/project_images/ResuMatch_2.png',
+      '/project_images/ResuMatch_3.png',
+      '/project_images/ResuMatch_4.png',
+    ],
+  },
   {
     title: 'Career AI Platform',
     description: 'An AI-powered application for career mapping and intelligent roadmap generation.',
@@ -99,7 +265,12 @@ const projects: Project[] = [
     github: 'https://github.com/abhinashp25/Real-time-Chat-App',
     demo: 'https://real-time-chat-app-t40f.onrender.com/',
     category: 'Full Stack',
-    video: '/project_videos/Real-time Chat App.mp4',
+    images: [
+      '/project_images/Chat_app_1.png',
+      '/project_images/Chat_app_2.png',
+      '/project_images/Chat_app_3.png',
+      '/project_images/Chat_app_4.png',
+    ],
   },
   {
     title: 'Invoice Payment Prediction',
@@ -127,10 +298,9 @@ const projects: Project[] = [
   },
 ];
 
-const categories = ['All', 'Machine Learning', 'Computer Vision', 'Full Stack', 'Frontend'];
+const categories = ['All', 'AI / Full Stack', 'Machine Learning', 'Computer Vision', 'Full Stack', 'Frontend'];
 
-// Removed 3D tilt for performance - using CSS hover instead
-
+// ─── Project Card ─────────────────────────────────────────────────────────────
 function ProjectCard({
   project,
   index,
@@ -169,7 +339,14 @@ function ProjectCard({
 
         {/* Media Header — fixed height for uniform cards */}
         <div className="relative w-full h-48 overflow-hidden bg-[#0a0a0a] shrink-0">
-          {project.video ? (
+          {project.images ? (
+            <ImageSlideshow
+              images={project.images}
+              alt={project.title}
+              color={project.color}
+              interval={2800}
+            />
+          ) : project.video ? (
             <video
               src={project.video}
               autoPlay
@@ -190,11 +367,13 @@ function ProjectCard({
             <div className="w-full h-full" style={{ background: `linear-gradient(135deg, ${project.color}20 0%, rgba(0,0,0,0.8) 100%)` }} />
           )}
 
-          {/* Dark overlay for readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent pointer-events-none" />
+          {/* Dark overlay for readability — only on non-slideshow */}
+          {!project.images && (
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent pointer-events-none" />
+          )}
 
           {/* Category Badge */}
-          <div className="absolute top-3 left-3 z-10">
+          <div className="absolute top-3 left-3 z-30">
             <span
               className="text-[10px] font-semibold font-mono px-2.5 py-1 rounded-full backdrop-blur-md tracking-wide"
               style={{ background: `${project.color}30`, color: '#fff', border: `1px solid ${project.color}60` }}
@@ -203,34 +382,36 @@ function ProjectCard({
             </span>
           </div>
 
-          {/* Action Buttons (hover) */}
-          <div className="absolute bottom-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-1 group-hover:translate-y-0 z-20">
-            <a
-              href={project.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={(e) => e.stopPropagation()}
-              className="flex items-center justify-center w-8 h-8 rounded-full backdrop-blur-md text-white hover:scale-110 transition-transform"
-              style={{ background: `${project.color}50`, border: `1px solid ${project.color}70` }}
-            >
-              <CodeBracketIcon className="w-4 h-4" />
-            </a>
-            {project.demo && (
+          {/* Action Buttons (hover) — only on non-slideshow */}
+          {!project.images && (
+            <div className="absolute bottom-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-1 group-hover:translate-y-0 z-20">
               <a
-                href={project.demo}
+                href={project.github}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
                 className="flex items-center justify-center w-8 h-8 rounded-full backdrop-blur-md text-white hover:scale-110 transition-transform"
-                style={{ background: 'rgba(255,255,255,0.25)', border: '1px solid rgba(255,255,255,0.4)' }}
+                style={{ background: `${project.color}50`, border: `1px solid ${project.color}70` }}
               >
-                <PlayIcon className="w-4 h-4" />
+                <CodeBracketIcon className="w-4 h-4" />
               </a>
-            )}
-          </div>
+              {project.demo && (
+                <a
+                  href={project.demo}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  className="flex items-center justify-center w-8 h-8 rounded-full backdrop-blur-md text-white hover:scale-110 transition-transform"
+                  style={{ background: 'rgba(255,255,255,0.25)', border: '1px solid rgba(255,255,255,0.4)' }}
+                >
+                  <PlayIcon className="w-4 h-4" />
+                </a>
+              )}
+            </div>
+          )}
         </div>
 
-        {/* Card Body — flex-1 ensures all cards fill equal height */}
+        {/* Card Body */}
         <div className="flex flex-col flex-1 p-5">
           {/* Title row */}
           <div className="flex items-start justify-between gap-2 mb-2">
@@ -243,12 +424,10 @@ function ProjectCard({
             )}
           </div>
 
-          {/* Description — fixed min height so all cards align */}
           <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed flex-1 line-clamp-3 font-light">
             {project.description}
           </p>
 
-          {/* Divider */}
           <div className="h-px bg-black/5 dark:bg-white/5 my-4" />
 
           {/* Tech Stack */}
@@ -273,6 +452,48 @@ function ProjectCard({
   );
 }
 
+// ─── Modal Slideshow ───────────────────────────────────────────────────────────
+function ModalMedia({ project }: { project: Project }) {
+  if (project.images) {
+    return (
+      <div className="relative w-full h-48 sm:h-72 shrink-0 bg-[#0a0a0a] border-b border-white/5 overflow-hidden">
+        <ImageSlideshow
+          images={project.images}
+          alt={project.title}
+          color={project.color}
+          interval={3000}
+        />
+        <div
+          className="absolute top-0 left-0 right-0 h-[2px]"
+          style={{ background: `linear-gradient(90deg, transparent, ${project.color}, transparent)`, opacity: 0.8 }}
+        />
+      </div>
+    );
+  }
+  if (project.video) {
+    return (
+      <div className="relative w-full h-48 sm:h-72 shrink-0 bg-[#0a0a0a] border-b border-white/5">
+        <video src={project.video} autoPlay loop muted playsInline className="w-full h-full object-cover opacity-90" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent opacity-80 pointer-events-none" />
+        <div className="absolute top-0 left-0 right-0 h-[2px]"
+          style={{ background: `linear-gradient(90deg, transparent, ${project.color}, transparent)`, opacity: 0.8 }} />
+      </div>
+    );
+  }
+  if (project.image) {
+    return (
+      <div className="relative w-full h-48 sm:h-72 shrink-0 bg-[#0a0a0a] border-b border-white/5">
+        <img src={project.image} alt={project.title} className="w-full h-full object-cover opacity-90" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent opacity-80 pointer-events-none" />
+        <div className="absolute top-0 left-0 right-0 h-[2px]"
+          style={{ background: `linear-gradient(90deg, transparent, ${project.color}, transparent)`, opacity: 0.8 }} />
+      </div>
+    );
+  }
+  return <div className="relative w-full h-48 sm:h-72 shrink-0 bg-slate-900 border-b border-white/5" />;
+}
+
+// ─── Main Section ─────────────────────────────────────────────────────────────
 export default function ProjectsSection() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [filter, setFilter] = useState('All');
@@ -290,10 +511,10 @@ export default function ProjectsSection() {
 
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <SectionHeading 
-          title="Impact-Focused" 
-          highlight="Case Studies" 
-          badge="Selected Work" 
+        <SectionHeading
+          title="Impact-Focused"
+          highlight="Case Studies"
+          badge="Selected Work"
         />
         <motion.div
           className="mb-10 -mt-4"
@@ -331,7 +552,7 @@ export default function ProjectsSection() {
           ))}
         </motion.div>
 
-        {/* Grid — auto-rows ensures all cards same height */}
+        {/* Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 auto-rows-fr">
           {filtered.map((project, i) => (
             <ProjectCard
@@ -352,7 +573,7 @@ export default function ProjectsSection() {
           transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
         >
           {[
-            { label: 'Shipped Applications', value: '5+', color: '#6366f1' },
+            { label: 'Shipped Applications', value: '6+', color: '#6366f1' },
             { label: 'Peak ML Accuracy', value: '98%', color: '#3b82f6' },
             { label: 'Real-Time Latency', value: '<100ms', color: '#8b5cf6' },
           ].map((s) => (
@@ -395,46 +616,18 @@ export default function ProjectsSection() {
               transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Modal Hero Image/Video */}
-              <div className="relative w-full h-48 sm:h-72 shrink-0 bg-[#0a0a0a] border-b border-white/5">
-                {selectedProject.video ? (
-                  <video
-                    src={selectedProject.video}
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    className="w-full h-full object-cover opacity-90"
-                  />
-                ) : selectedProject.image ? (
-                  <img
-                    src={selectedProject.image}
-                    alt={selectedProject.title}
-                    className="w-full h-full object-cover opacity-90"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-slate-900" />
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent opacity-80 pointer-events-none" />
-
+              {/* Modal Hero */}
+              <div className="relative">
+                <ModalMedia project={selectedProject} />
                 <button
                   onClick={() => setSelectedProject(null)}
-                  className="absolute top-4 right-4 p-2 rounded-full backdrop-blur-xl bg-black/40 text-white hover:bg-black/60 hover:scale-110 transition-all border border-white/20 z-20"
+                  className="absolute top-4 right-4 p-2 rounded-full backdrop-blur-xl bg-black/40 text-white hover:bg-black/60 hover:scale-110 transition-all border border-white/20 z-30"
                 >
                   <XMarkIcon className="w-5 h-5" />
                 </button>
-
-                {/* Top accent line over media */}
-                <div
-                  className="absolute top-0 left-0 right-0 h-[2px]"
-                  style={{
-                    background: `linear-gradient(90deg, transparent, ${selectedProject.color}, transparent)`,
-                    opacity: 0.8,
-                  }}
-                />
               </div>
 
-              {/* Modal Content Scrollable Area */}
+              {/* Modal Content */}
               <div className="p-6 sm:p-8 overflow-y-auto">
                 <div className="mb-6">
                   <div className="flex items-center gap-3 mb-3">
@@ -519,7 +712,7 @@ export default function ProjectsSection() {
                         border: '1px solid rgba(255,255,255,0.1)',
                       }}
                     >
-                      <PlayIcon className="w-4 h-4" />
+                      <ArrowTopRightOnSquareIcon className="w-4 h-4" />
                       Live Project
                     </motion.a>
                   )}
