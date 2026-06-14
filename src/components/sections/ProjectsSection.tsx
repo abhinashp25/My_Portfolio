@@ -9,9 +9,6 @@ import {
   XMarkIcon,
   StarIcon,
   PlayIcon,
-  PauseIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
 } from '@heroicons/react/24/outline';
 
 interface Project {
