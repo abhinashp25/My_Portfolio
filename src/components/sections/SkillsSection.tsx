@@ -92,7 +92,7 @@ export default function SkillsSection() {
         />
         <motion.div className="mb-10 -mt-4 text-lg"
           initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, amount: 0.1 }} transition={{ duration: 0.7, delay: 0.2 }}>
+          viewport={{ once: true, amount: 0.1 }} transition={{ duration: 0.7, delay: 0.2 }}>
           <p className="text-slate-600 dark:text-slate-400 mt-4 max-w-xl text-lg">
             Hover over each skill orb to explore. Filter by category below.
           </p>
@@ -101,7 +101,7 @@ export default function SkillsSection() {
         {/* Category filters */}
         <motion.div className="flex flex-wrap gap-2 mb-8"
           initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, amount: 0.1 }} transition={{ duration: 0.6, delay: 0.1 }}>
+          viewport={{ once: true, amount: 0.1 }} transition={{ duration: 0.6, delay: 0.1 }}>
           <motion.button
             onClick={() => setActiveCategory(null)}
             whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}
@@ -140,7 +140,7 @@ export default function SkillsSection() {
           }}
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: false, amount: 0.1 }}
+          viewport={{ once: true, amount: 0.1 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         >
           <div className="absolute inset-0 bg-gradient-to-br from-slate-100 via-white to-slate-100 dark:from-slate-900 dark:via-dark-900 dark:to-slate-900" />
@@ -227,7 +227,7 @@ export default function SkillsSection() {
         <motion.div
           className="mt-10 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4"
           initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, amount: 0.1 }} transition={{ duration: 0.6, delay: 0.2 }}>
+          viewport={{ once: true, amount: 0.1 }} transition={{ duration: 0.6, delay: 0.2 }}>
           {skillCategories.map((cat) => (
             <motion.div
               key={cat.label}

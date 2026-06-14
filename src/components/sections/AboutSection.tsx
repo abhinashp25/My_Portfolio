@@ -93,7 +93,7 @@ export default function AboutSection() {
           className="mb-12 p-6 rounded-2xl glass neon-border"
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: false, margin: '-50px' }}
+          viewport={{ once: true, margin: '-50px' }}
           variants={{ hidden: { opacity: 0, x: -30, filter: 'blur(8px)' }, visible: { opacity: 1, x: 0, filter: 'blur(0px)', transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } } }}
           style={{ willChange: 'transform, opacity, filter' }}
         >
@@ -130,7 +130,7 @@ export default function AboutSection() {
                 className={`${item.size} relative rounded-2xl glass neon-border overflow-hidden cursor-pointer group`}
                 initial={{ opacity: 0, y: 36, filter: 'blur(8px)', scale: 0.97 }}
                 whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)', scale: 1 }}
-                viewport={{ once: false, margin: '-50px' }}
+                viewport={{ once: true, margin: '-50px' }}
                 transition={{ duration: 0.7, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
                 whileHover={{ y: -5, transition: { duration: 0.22, ease: 'easeOut' } }}
                 style={{ borderColor: `${item.color}30`, willChange: 'transform, opacity, filter' }}
@@ -185,7 +185,7 @@ export default function AboutSection() {
             className="col-span-1 row-span-1 rounded-2xl glass neon-border p-6 flex flex-col justify-between"
             initial={{ opacity: 0, y: 36, filter: 'blur(6px)' }}
             whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-            viewport={{ once: false, margin: '-50px' }}
+            viewport={{ once: true, margin: '-50px' }}
             transition={{ duration: 0.65, delay: 0.32, ease: [0.16, 1, 0.3, 1] }}
             style={{ willChange: 'transform, opacity, filter' }}
           >

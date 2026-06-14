@@ -34,141 +34,36 @@ interface Project {
 function ImageSlideshow({
   images,
   alt,
-  color,
-  autoPlay = true,
-  interval = 2800,
   className = '',
 }: {
   images: string[];
   alt: string;
-  color: string;
-  autoPlay?: boolean;
-  interval?: number;
   className?: string;
 }) {
   const [current, setCurrent] = useState(0);
-  const [playing, setPlaying] = useState(autoPlay);
-  const [progress, setProgress] = useState(0);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const progressRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  const goTo = useCallback(
-    (idx: number) => {
-      setCurrent((idx + images.length) % images.length);
-      setProgress(0);
-    },
-    [images.length]
-  );
-
-  const startTimer = useCallback(() => {
-    if (timerRef.current) clearInterval(timerRef.current);
-    if (progressRef.current) clearInterval(progressRef.current);
-
-    setProgress(0);
-    const tickMs = 40;
-    const steps = interval / tickMs;
-    let tick = 0;
-
-    progressRef.current = setInterval(() => {
-      tick++;
-      setProgress(Math.min((tick / steps) * 100, 100));
-    }, tickMs);
-
-    timerRef.current = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % images.length);
-      setProgress(0);
-      tick = 0;
-    }, interval);
-  }, [images.length, interval]);
-
-  const stopTimer = useCallback(() => {
-    if (timerRef.current) clearInterval(timerRef.current);
-    if (progressRef.current) clearInterval(progressRef.current);
-  }, []);
 
   useEffect(() => {
-    if (playing) startTimer();
-    else stopTimer();
-    return () => stopTimer();
-  }, [playing, startTimer, stopTimer, current]);
+    const timer = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % images.length);
+    }, 3200);
+    return () => clearInterval(timer);
+  }, [images.length]);
 
   return (
-    <div className={`relative w-full h-full group/slide overflow-hidden ${className}`}>
-      {/* Images with crossfade */}
+    <div className={`relative w-full h-full overflow-hidden ${className}`}>
       <AnimatePresence mode="wait">
         <motion.img
           key={current}
           src={images[current]}
           alt={`${alt} ${current + 1}`}
           className="absolute inset-0 w-full h-full object-cover"
-          initial={{ opacity: 0, scale: 1.04 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.97 }}
-          transition={{ duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] }}
+          initial={{ opacity: 0, scale: 1.05 }}
+          animate={{ opacity: 0.85, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.95 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         />
       </AnimatePresence>
-
-      {/* Dark overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent pointer-events-none z-10" />
-
-      {/* Play/Pause + Prev/Next controls */}
-      <div className="absolute inset-0 z-20 flex items-center justify-between px-3 opacity-0 group-hover/slide:opacity-100 transition-opacity duration-300">
-        <button
-          onClick={(e) => { e.stopPropagation(); goTo(current - 1); }}
-          className="w-7 h-7 rounded-full flex items-center justify-center backdrop-blur-md bg-black/40 text-white border border-white/20 hover:bg-black/60 transition-all hover:scale-110"
-        >
-          <ChevronLeftIcon className="w-3.5 h-3.5" />
-        </button>
-        <button
-          onClick={(e) => { e.stopPropagation(); setPlaying((p) => !p); }}
-          className="w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-md bg-black/50 text-white border border-white/25 hover:bg-black/70 transition-all hover:scale-110 shadow-lg"
-        >
-          {playing ? <PauseIcon className="w-3.5 h-3.5" /> : <PlayIcon className="w-3.5 h-3.5" />}
-        </button>
-        <button
-          onClick={(e) => { e.stopPropagation(); goTo(current + 1); }}
-          className="w-7 h-7 rounded-full flex items-center justify-center backdrop-blur-md bg-black/40 text-white border border-white/20 hover:bg-black/60 transition-all hover:scale-110"
-        >
-          <ChevronRightIcon className="w-3.5 h-3.5" />
-        </button>
-      </div>
-
-      {/* Dot indicators */}
-      <div className="absolute bottom-7 left-1/2 -translate-x-1/2 flex gap-1.5 z-20">
-        {images.map((_, i) => (
-          <button
-            key={i}
-            onClick={(e) => { e.stopPropagation(); goTo(i); setPlaying(true); }}
-            className="transition-all duration-300"
-            style={{
-              width: i === current ? 18 : 6,
-              height: 6,
-              borderRadius: 3,
-              background: i === current ? color : 'rgba(255,255,255,0.4)',
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Progress bar */}
-      <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-white/10 z-20">
-        <motion.div
-          className="h-full"
-          style={{ width: `${progress}%`, background: `linear-gradient(90deg, ${color}, ${color}cc)` }}
-          transition={{ ease: 'linear' }}
-        />
-      </div>
-
-      {/* Playing indicator badge */}
-      <div className="absolute top-3 right-3 z-20 flex items-center gap-1.5 px-2 py-1 rounded-full backdrop-blur-md bg-black/40 border border-white/15">
-        <span className="relative flex w-1.5 h-1.5">
-          {playing && <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />}
-          <span className={`relative inline-flex rounded-full w-1.5 h-1.5 ${playing ? 'bg-red-500' : 'bg-gray-400'}`} />
-        </span>
-        <span className="text-[9px] font-mono text-white/80 tracking-wider uppercase">
-          {playing ? 'Live' : 'Paused'}
-        </span>
-      </div>
+      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent pointer-events-none z-10" />
     </div>
   );
 }
@@ -312,39 +207,33 @@ function ProjectCard({
 }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 32, filter: 'blur(6px)', scale: 0.97 }}
-      whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)', scale: 1 }}
-      viewport={{ once: false, margin: '-50px' }}
+      initial={{ opacity: 0, y: 15 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-40px' }}
       whileHover={{
-        y: -8,
-        scale: 1.015,
-        boxShadow: '0 20px 40px rgba(0,0,0,0.16)',
-        transition: { type: 'spring', stiffness: 280, damping: 20 },
+        y: -4,
+        transition: { type: 'spring', stiffness: 200, damping: 22 },
       }}
       transition={{
-        duration: 0.65,
-        delay: (index % 4) * 0.06,
-        ease: [0.16, 1, 0.3, 1],
+        duration: 0.5,
+        delay: (index % 3) * 0.05,
       }}
-      style={{ willChange: 'transform, opacity, filter' }}
-      className="h-full rounded-2xl overflow-hidden"
+      className="h-full rounded-3xl overflow-hidden"
     >
       <div
         onClick={onClick}
-        className="group relative h-full rounded-2xl overflow-hidden flex flex-col bg-white/80 dark:bg-white/[0.02] border border-slate-200/80 dark:border-white/[0.07] hover:border-transparent transition-all duration-300 cursor-pointer will-change-transform"
+        className="group relative h-full rounded-3xl overflow-hidden flex flex-col bg-white/40 dark:bg-white/[0.02] border border-slate-200/80 dark:border-white/[0.08] hover:border-indigo-500/30 dark:hover:border-indigo-400/30 shadow-[inset_0_1px_1px_rgba(255,255,255,0.3)] dark:shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] shadow-sm backdrop-blur-xl hover:shadow-lg transition-all duration-300 cursor-pointer"
       >
         {/* Accent top line */}
         <div className="absolute top-0 left-0 right-0 h-[2.5px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10"
           style={{ background: `linear-gradient(90deg, transparent, ${project.color}, transparent)` }} />
 
         {/* Media Header — fixed height for uniform cards */}
-        <div className="relative w-full h-48 overflow-hidden bg-[#0a0a0a] shrink-0">
+        <div className="relative w-full h-48 overflow-hidden bg-[#0a0a0a] shrink-0 border-b border-slate-200/40 dark:border-white/5">
           {project.images ? (
             <ImageSlideshow
               images={project.images}
               alt={project.title}
-              color={project.color}
-              interval={2800}
             />
           ) : project.video ? (
             <video
@@ -354,94 +243,91 @@ function ProjectCard({
               muted
               playsInline
               preload="none"
-              className="w-full h-full object-cover opacity-75 group-hover:opacity-100 group-hover:scale-[1.03] transition-all duration-500 ease-out"
+              className="w-full h-full object-cover opacity-75 group-hover:opacity-90 transition-all duration-500 ease-out"
             />
           ) : project.image ? (
             <img
               src={project.image}
               alt={project.title}
               loading="lazy"
-              className="w-full h-full object-cover opacity-75 group-hover:opacity-100 group-hover:scale-[1.03] transition-all duration-500 ease-out"
+              className="w-full h-full object-cover opacity-75 group-hover:opacity-90 transition-all duration-500 ease-out"
             />
           ) : (
             <div className="w-full h-full" style={{ background: `linear-gradient(135deg, ${project.color}20 0%, rgba(0,0,0,0.8) 100%)` }} />
           )}
 
-          {/* Dark overlay for readability — only on non-slideshow */}
-          {!project.images && (
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent pointer-events-none" />
-          )}
+          {/* Dark overlay for readability */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent pointer-events-none" />
 
           {/* Category Badge */}
           <div className="absolute top-3 left-3 z-30">
             <span
-              className="text-[10px] font-semibold font-mono px-2.5 py-1 rounded-full backdrop-blur-md tracking-wide"
-              style={{ background: `${project.color}30`, color: '#fff', border: `1px solid ${project.color}60` }}
+              className="text-[9px] font-semibold font-mono px-2.5 py-1 rounded-full backdrop-blur-md tracking-wider uppercase"
+              style={{ background: 'rgba(0,0,0,0.4)', color: '#fff', border: `1px solid rgba(255,255,255,0.15)` }}
             >
               {project.category}
             </span>
           </div>
 
-          {/* Action Buttons (hover) — only on non-slideshow */}
-          {!project.images && (
-            <div className="absolute bottom-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-1 group-hover:translate-y-0 z-20">
+          {/* Action Buttons (hover) — restored to original glass styles */}
+          <div className="absolute bottom-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-1 group-hover:translate-y-0 z-30">
+            <a
+              href={project.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="flex items-center justify-center w-8 h-8 rounded-full backdrop-blur-md text-white hover:scale-110 transition-transform"
+              style={{ background: `${project.color}45`, border: `1px solid ${project.color}65` }}
+            >
+              <CodeBracketIcon className="w-4 h-4" />
+            </a>
+            {project.demo && (
               <a
-                href={project.github}
+                href={project.demo}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
                 className="flex items-center justify-center w-8 h-8 rounded-full backdrop-blur-md text-white hover:scale-110 transition-transform"
-                style={{ background: `${project.color}50`, border: `1px solid ${project.color}70` }}
+                style={{ background: 'rgba(255,255,255,0.22)', border: '1px solid rgba(255,255,255,0.38)' }}
               >
-                <CodeBracketIcon className="w-4 h-4" />
+                <PlayIcon className="w-4 h-4" />
               </a>
-              {project.demo && (
-                <a
-                  href={project.demo}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e) => e.stopPropagation()}
-                  className="flex items-center justify-center w-8 h-8 rounded-full backdrop-blur-md text-white hover:scale-110 transition-transform"
-                  style={{ background: 'rgba(255,255,255,0.25)', border: '1px solid rgba(255,255,255,0.4)' }}
-                >
-                  <PlayIcon className="w-4 h-4" />
-                </a>
-              )}
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
         {/* Card Body */}
-        <div className="flex flex-col flex-1 p-5">
+        <div className="flex flex-col flex-1 p-5 relative z-10">
           {/* Title row */}
           <div className="flex items-start justify-between gap-2 mb-2">
-            <h3 className="text-base font-bold text-slate-900 dark:text-white leading-snug">{project.title}</h3>
+            <h3 className="text-base font-bold text-slate-800 dark:text-white leading-snug group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors duration-200">
+              {project.title}
+            </h3>
             {project.featured && (
-              <span className="shrink-0 text-[9px] font-bold px-1.5 py-0.5 rounded font-mono tracking-widest uppercase"
-                style={{ background: `${project.color}15`, color: project.color, border: `1px solid ${project.color}30` }}>
+              <span className="shrink-0 text-[8px] font-bold px-1.5 py-0.5 rounded-full font-mono tracking-wider uppercase bg-indigo-500/10 border border-indigo-500/20 text-indigo-600 dark:text-indigo-400">
                 Featured
               </span>
             )}
           </div>
 
-          <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed flex-1 line-clamp-3 font-light">
+          <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm leading-relaxed flex-1 line-clamp-3 font-normal">
             {project.description}
           </p>
 
-          <div className="h-px bg-black/5 dark:bg-white/5 my-4" />
+          <div className="h-px bg-slate-200/50 dark:bg-white/5 my-4" />
 
           {/* Tech Stack */}
           <div className="flex flex-wrap gap-1.5">
             {project.tech.slice(0, 4).map((t) => (
               <span
                 key={t}
-                className="text-[10px] px-2 py-0.5 rounded-md font-mono font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-white/5 border border-black/8 dark:border-white/10"
+                className="text-[9px] px-2.5 py-1 rounded-lg font-mono font-medium text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-white/[0.04] border border-slate-200/60 dark:border-white/[0.06]"
               >
                 {t}
               </span>
             ))}
             {project.tech.length > 4 && (
-              <span className="text-[10px] px-2 py-0.5 rounded-md font-mono text-slate-400 bg-slate-100 dark:bg-white/5 border border-black/8 dark:border-white/10">
+              <span className="text-[9px] px-2 py-1 rounded-lg font-mono text-slate-400 bg-slate-100 dark:bg-white/[0.04] border border-slate-200/60 dark:border-white/[0.06]">
                 +{project.tech.length - 4}
               </span>
             )}
@@ -460,8 +346,6 @@ function ModalMedia({ project }: { project: Project }) {
         <ImageSlideshow
           images={project.images}
           alt={project.title}
-          color={project.color}
-          interval={3000}
         />
         <div
           className="absolute top-0 left-0 right-0 h-[2px]"
@@ -520,7 +404,7 @@ export default function ProjectsSection() {
           className="mb-10 -mt-4"
           initial={{ opacity: 0, y: 20, filter: 'blur(6px)' }}
           whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-          viewport={{ once: false, margin: '-40px' }}
+          viewport={{ once: true, margin: '-40px' }}
           transition={{ duration: 0.65, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
         >
           <p className="text-slate-600 dark:text-slate-400 mt-4 max-w-xl text-lg">
@@ -534,7 +418,7 @@ export default function ProjectsSection() {
           className="flex flex-wrap gap-2 mb-10"
           initial={{ opacity: 0, y: 14, filter: 'blur(4px)' }}
           whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-          viewport={{ once: false, margin: '-40px' }}
+          viewport={{ once: true, margin: '-40px' }}
           transition={{ duration: 0.55, delay: 0.22, ease: [0.16, 1, 0.3, 1] }}
         >
           {categories.map((cat) => (
@@ -569,7 +453,7 @@ export default function ProjectsSection() {
           className="mt-12 grid grid-cols-3 gap-4"
           initial={{ opacity: 0, y: 20, filter: 'blur(6px)' }}
           whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-          viewport={{ once: false, margin: '-40px' }}
+          viewport={{ once: true, margin: '-40px' }}
           transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
         >
           {[

@@ -300,7 +300,7 @@ export default function TerminalSection() {
           className="mb-12 text-center -mt-4"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, amount: 0.1 }}
+          viewport={{ once: true, amount: 0.1 }}
           transition={{ duration: 0.7, delay: 0.2 }}
         >
           <p className="text-slate-600 dark:text-slate-400 max-w-xl mx-auto text-base">
