@@ -202,44 +202,67 @@ function ProjectCard({
   index: number;
   onClick: () => void;
 }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isHovered, setIsHovered] = useState(false);
+
+  useEffect(() => {
+    if (!videoRef.current) return;
+    if (isHovered) {
+      videoRef.current.play().catch(() => {});
+    } else {
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+    }
+  }, [isHovered]);
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 15 }}
+      initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-40px' }}
       whileHover={{
-        y: -4,
-        transition: { type: 'spring', stiffness: 200, damping: 22 },
+        y: -6,
+        transition: { type: 'spring', stiffness: 280, damping: 24 },
       }}
+      onHoverStart={() => setIsHovered(true)}
+      onHoverEnd={() => setIsHovered(false)}
       transition={{
-        duration: 0.5,
-        delay: (index % 3) * 0.05,
+        duration: 0.55,
+        delay: (index % 3) * 0.06,
+        ease: [0.16, 1, 0.3, 1],
       }}
-      className="h-full rounded-3xl overflow-hidden"
+      className="h-full rounded-[1.75rem] overflow-hidden"
     >
       <div
         onClick={onClick}
-        className="group relative h-full rounded-3xl overflow-hidden flex flex-col bg-white/40 dark:bg-white/[0.02] border border-slate-200/80 dark:border-white/[0.08] hover:border-indigo-500/30 dark:hover:border-indigo-400/30 shadow-[inset_0_1px_1px_rgba(255,255,255,0.3)] dark:shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] shadow-sm backdrop-blur-xl hover:shadow-lg transition-all duration-300 cursor-pointer"
+        className="project-card-glass group relative h-full rounded-[1.75rem] overflow-hidden flex flex-col cursor-pointer transition-all duration-500"
       >
-        {/* Accent top line */}
-        <div className="absolute top-0 left-0 right-0 h-[2.5px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10"
-          style={{ background: `linear-gradient(90deg, transparent, ${project.color}, transparent)` }} />
+        {/* Top accent line on hover */}
+        <div
+          className="absolute top-0 left-0 right-0 h-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10"
+          style={{ background: `linear-gradient(90deg, transparent, ${project.color}, transparent)` }}
+        />
 
-        {/* Media Header — fixed height for uniform cards */}
-        <div className="relative w-full h-48 overflow-hidden bg-[#0a0a0a] shrink-0 border-b border-slate-200/40 dark:border-white/5">
+        {/* Color tinted glow on hover */}
+        <div
+          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-0"
+          style={{ background: `radial-gradient(ellipse at 50% 0%, ${project.color}12 0%, transparent 65%)` }}
+        />
+
+
+        {/* Specular top-edge highlight */}
+        <div className="absolute top-0 left-[8%] right-[8%] h-px bg-gradient-to-r from-transparent via-white/90 to-transparent z-20 pointer-events-none" />
+
+        {/* Media — fixed height */}
+        <div className="relative w-full h-48 overflow-hidden shrink-0 border-b border-black/[0.07] dark:border-white/[0.06]"
+          style={{ background: '#0a0a0a' }}>
           {project.images ? (
-            <ImageSlideshow
-              images={project.images}
-              alt={project.title}
-            />
+            <ImageSlideshow images={project.images} alt={project.title} />
           ) : project.video ? (
             <video
+              ref={videoRef}
               src={project.video}
-              autoPlay
-              loop
-              muted
-              playsInline
-              preload="none"
+              loop muted playsInline preload="metadata"
               className="w-full h-full object-cover opacity-75 group-hover:opacity-90 transition-all duration-500 ease-out"
             />
           ) : project.image ? (
@@ -250,42 +273,38 @@ function ProjectCard({
               className="w-full h-full object-cover opacity-75 group-hover:opacity-90 transition-all duration-500 ease-out"
             />
           ) : (
-            <div className="w-full h-full" style={{ background: `linear-gradient(135deg, ${project.color}20 0%, rgba(0,0,0,0.8) 100%)` }} />
+            <div className="w-full h-full" style={{ background: `linear-gradient(135deg, ${project.color}20, rgba(0,0,0,0.8))` }} />
           )}
 
-          {/* Dark overlay for readability */}
+          {/* Dark overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent pointer-events-none" />
 
-          {/* Category Badge */}
+          {/* Category badge */}
           <div className="absolute top-3 left-3 z-30">
             <span
               className="text-[9px] font-semibold font-mono px-2.5 py-1 rounded-full backdrop-blur-md tracking-wider uppercase"
-              style={{ background: 'rgba(0,0,0,0.4)', color: '#fff', border: `1px solid rgba(255,255,255,0.15)` }}
+              style={{ background: 'rgba(0,0,0,0.42)', color: '#fff', border: '1px solid rgba(255,255,255,0.15)' }}
             >
               {project.category}
             </span>
           </div>
 
-          {/* Action Buttons (hover) — restored to original glass styles */}
-          <div className="absolute bottom-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-1 group-hover:translate-y-0 z-30">
+          {/* Action buttons on hover */}
+          <div className="absolute bottom-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-1.5 group-hover:translate-y-0 z-30">
             <a
-              href={project.github}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={project.github} target="_blank" rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="flex items-center justify-center w-8 h-8 rounded-full backdrop-blur-md text-white hover:scale-110 transition-transform"
-              style={{ background: `${project.color}45`, border: `1px solid ${project.color}65` }}
+              className="flex items-center justify-center w-8 h-8 rounded-full backdrop-blur-md text-white hover:scale-110 active:scale-95 transition-transform duration-200"
+              style={{ background: `${project.color}50`, border: `1px solid ${project.color}70` }}
             >
               <CodeBracketIcon className="w-4 h-4" />
             </a>
             {project.demo && (
               <a
-                href={project.demo}
-                target="_blank"
-                rel="noopener noreferrer"
+                href={project.demo} target="_blank" rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="flex items-center justify-center w-8 h-8 rounded-full backdrop-blur-md text-white hover:scale-110 transition-transform"
-                style={{ background: 'rgba(255,255,255,0.22)', border: '1px solid rgba(255,255,255,0.38)' }}
+                className="flex items-center justify-center w-8 h-8 rounded-full backdrop-blur-md text-white hover:scale-110 active:scale-95 transition-transform duration-200"
+                style={{ background: 'rgba(255,255,255,0.25)', border: '1px solid rgba(255,255,255,0.4)' }}
               >
                 <PlayIcon className="w-4 h-4" />
               </a>
@@ -293,7 +312,7 @@ function ProjectCard({
           </div>
         </div>
 
-        {/* Card Body */}
+        {/* Card body */}
         <div className="flex flex-col flex-1 p-5 relative z-10">
           {/* Title row */}
           <div className="flex items-start justify-between gap-2 mb-2">
@@ -301,7 +320,7 @@ function ProjectCard({
               {project.title}
             </h3>
             {project.featured && (
-              <span className="shrink-0 text-[8px] font-bold px-1.5 py-0.5 rounded-full font-mono tracking-wider uppercase bg-indigo-500/10 border border-indigo-500/20 text-indigo-600 dark:text-indigo-400">
+              <span className="shrink-0 text-[8px] font-bold px-1.5 py-0.5 rounded-full font-mono tracking-wider uppercase bg-indigo-500/10 border border-indigo-500/25 text-indigo-600 dark:text-indigo-400">
                 Featured
               </span>
             )}
@@ -311,20 +330,20 @@ function ProjectCard({
             {project.description}
           </p>
 
-          <div className="h-px bg-slate-200/50 dark:bg-white/5 my-4" />
+          <div className="h-px bg-black/[0.06] dark:bg-white/[0.06] my-4" />
 
-          {/* Tech Stack */}
+          {/* Tech stack */}
           <div className="flex flex-wrap gap-1.5">
             {project.tech.slice(0, 4).map((t) => (
               <span
                 key={t}
-                className="text-[9px] px-2.5 py-1 rounded-lg font-mono font-medium text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-white/[0.04] border border-slate-200/60 dark:border-white/[0.06]"
+                className="text-[9px] px-2.5 py-1 rounded-lg font-mono font-medium text-slate-600 dark:text-slate-300 bg-black/[0.05] dark:bg-white/[0.05] border border-black/[0.07] dark:border-white/[0.07]"
               >
                 {t}
               </span>
             ))}
             {project.tech.length > 4 && (
-              <span className="text-[9px] px-2 py-1 rounded-lg font-mono text-slate-400 bg-slate-100 dark:bg-white/[0.04] border border-slate-200/60 dark:border-white/[0.06]">
+              <span className="text-[9px] px-2 py-1 rounded-lg font-mono text-slate-400 bg-black/[0.04] dark:bg-white/[0.04] border border-black/[0.06] dark:border-white/[0.06]">
                 +{project.tech.length - 4}
               </span>
             )}
@@ -399,8 +418,8 @@ export default function ProjectsSection() {
         />
         <motion.div
           className="mb-10 -mt-4"
-          initial={{ opacity: 0, y: 20, filter: 'blur(6px)' }}
-          whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-40px' }}
           transition={{ duration: 0.65, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
         >
@@ -413,8 +432,8 @@ export default function ProjectsSection() {
         {/* Filters */}
         <motion.div
           className="flex flex-wrap gap-2 mb-10"
-          initial={{ opacity: 0, y: 14, filter: 'blur(4px)' }}
-          whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-40px' }}
           transition={{ duration: 0.55, delay: 0.22, ease: [0.16, 1, 0.3, 1] }}
         >
@@ -448,8 +467,8 @@ export default function ProjectsSection() {
         {/* Stats bar */}
         <motion.div
           className="mt-12 grid grid-cols-3 gap-4"
-          initial={{ opacity: 0, y: 20, filter: 'blur(6px)' }}
-          whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-40px' }}
           transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
         >

@@ -50,7 +50,7 @@ function InputField({
     ? 'border-indigo-400/70 shadow-[0_0_20px_rgba(99,102,241,0.12)]'
     : 'border-black/10 dark:border-white/8 hover:border-black/20 dark:hover:border-white/18';
 
-  const shared = `w-full bg-slate-100/70 dark:bg-white/[0.025] backdrop-blur-xl rounded-2xl px-4 py-4 text-slate-900 dark:text-white text-sm outline-none transition-all duration-300 border ${borderClass}`;
+  const shared = `w-full bg-slate-100/70 dark:bg-white/[0.06] rounded-2xl px-4 py-4 text-slate-900 dark:text-white text-sm outline-none transition-all duration-300 border ${borderClass}`;
 
   return (
     <div className="relative group">
@@ -208,13 +208,13 @@ export default function ContactSection() {
 
           {/* Form */}
           <motion.div
-            initial={{ opacity: 0, x: -30, filter: 'blur(8px)' }}
-            whileInView={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
-            viewport={{ once: false, margin: '-100px' }}
-            transition={{ duration: 0.75, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: '-100px' }}
+            transition={{ duration: 0.65, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
             className="lg:col-span-3"
           >
-            <div className="relative rounded-[2.5rem] p-6 sm:p-10 overflow-hidden bg-white/80 dark:bg-white/[0.012] border border-black/10 dark:border-white/10 backdrop-blur-[40px] shadow-[0_8px_32px_rgba(0,0,0,0.08)] dark:shadow-[0_30px_80px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.06)]">
+            <div className="about-card-glass relative rounded-[2.5rem] p-6 sm:p-10 overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.05)] dark:shadow-[0_30px_80px_rgba(0,0,0,0.4)]">
               {/* Glass sheen */}
               <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-50" />
 
@@ -315,14 +315,14 @@ export default function ContactSection() {
 
           {/* Sidebar */}
           <motion.div
-            initial={{ opacity: 0, x: 30, filter: 'blur(8px)' }}
-            whileInView={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
-            viewport={{ once: false, margin: '-100px' }}
-            transition={{ duration: 0.75, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: '-100px' }}
+            transition={{ duration: 0.65, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
             className="lg:col-span-2 flex flex-col gap-4 sm:gap-5"
           >
             {/* Available card */}
-            <div className="rounded-[2rem] p-7 bg-slate-100/80 dark:bg-white/[0.012] border border-black/10 dark:border-white/8 backdrop-blur-2xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] dark:shadow-[0_20px_40px_rgba(0,0,0,0.25)]">
+            <div className="about-card-glass rounded-[2rem] p-7 shadow-[0_4px_20px_rgba(0,0,0,0.04)] dark:shadow-[0_20px_40px_rgba(0,0,0,0.25)]">
               <h3 className="text-slate-900 dark:text-white text-base font-semibold mb-3 flex items-center gap-2.5">
                 <span className="relative flex w-2.5 h-2.5">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60" />
@@ -351,7 +351,7 @@ export default function ContactSection() {
                   y: -4,
                   transition: { type: 'spring', stiffness: 400, damping: 22 },
                 }}
-                className="group relative flex items-center gap-4 p-5 rounded-[2rem] bg-slate-100/80 dark:bg-white/[0.012] border border-black/10 dark:border-white/5 backdrop-blur-md overflow-hidden transition-colors duration-300 hover:border-black/20 dark:hover:border-white/15"
+                className="about-card-glass group relative flex items-center gap-4 p-5 rounded-[2rem] overflow-hidden transition-colors duration-300 hover:border-black/20 dark:hover:border-white/15"
               >
                 <div className={`absolute inset-0 bg-gradient-to-r ${link.color} opacity-0 group-hover:opacity-[0.06] transition-opacity duration-400`} />
                 <div className="relative w-10 h-10 flex-shrink-0 flex items-center justify-center group-hover:scale-110 transition-transform duration-400 rounded-xl overflow-hidden shadow-[0_4px_12px_rgba(0,0,0,0.35)]">

@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRightIcon } from '@heroicons/react/24/outline';
 import { useMousePosition } from '@/hooks/useMousePosition';
@@ -28,9 +28,18 @@ export default function HeroSection() {
   const { x, y } = useMousePosition();
   const heroRef = useRef<HTMLDivElement>(null);
 
+  const [windowSize, setWindowSize] = useState({ w: 1200, h: 800 });
+
+  useEffect(() => {
+    setWindowSize({ w: window.innerWidth, h: window.innerHeight });
+    const handleResize = () => setWindowSize({ w: window.innerWidth, h: window.innerHeight });
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   // Subtle magnetic cursor effect calculation
-  const px = (x / (typeof window !== 'undefined' ? window.innerWidth : 1) - 0.5) * 50;
-  const py = (y / (typeof window !== 'undefined' ? window.innerHeight : 1) - 0.5) * 50;
+  const px = (x / windowSize.w - 0.5) * 50;
+  const py = (y / windowSize.h - 0.5) * 50;
 
   const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
 
@@ -66,8 +75,8 @@ export default function HeroSection() {
           <motion.div variants={item}>
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 backdrop-blur-md">
               <span className="relative flex h-1.5 w-1.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-40" />
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-white opacity-70" />
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
               </span>
               <span className="text-[11px] font-medium text-slate-900 dark:text-white/70 tracking-wide uppercase">
                 Available for full-time roles
@@ -123,8 +132,6 @@ export default function HeroSection() {
           transition={{ duration: 1.2, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
         >
           <div className="relative w-full lg:h-full flex items-center justify-center lg:justify-end lg:pr-10">
-            {/* Extremely subtle backdrop glow for the profile */}
-            <div className="absolute inset-0 bg-indigo-500/10 blur-[100px] rounded-full" />
             <div className="relative z-10 w-full flex items-center justify-center">
                <ProfilePhoto />
             </div>

@@ -4,6 +4,9 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AcademicCapIcon, MapPinIcon, CalendarIcon, BuildingLibraryIcon } from '@heroicons/react/24/outline';
 import { SectionHeading } from '../ui/SectionHeading';
+import Image from 'next/image';
+
+const MotionImage = motion.create(Image);
 
 const education = [
   {
@@ -73,26 +76,28 @@ function EducationCard({ edu, index }: { edu: any; index: number }) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 40, filter: 'blur(8px)', scale: 0.98 }}
-      whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)', scale: 1 }}
+      initial={{ opacity: 0, y: 24, scale: 0.98 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true, margin: '-60px' }}
-      transition={{ duration: 0.8, delay: index * 0.12, ease: [0.16, 1, 0.3, 1] }}
-      style={{ willChange: 'transform, opacity, filter' }}
+      transition={{ duration: 0.7, delay: index * 0.08, ease: [0.16, 1, 0.3, 1] }}
+      style={{ willChange: 'transform, opacity' }}
       className="group relative w-full h-[280px] sm:h-[320px] md:h-[350px] rounded-[2rem] overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-transform duration-700 hover:-translate-y-2 border border-black/10 dark:border-white/10 hover:border-black/20 dark:border-white/20"
     >
       {/* Background Image Carousel */}
       {edu.images && edu.images.length > 0 ? (
-        <div className="absolute inset-0 z-0 overflow-hidden">
+        <div className="absolute inset-0 z-0 overflow-hidden bg-slate-950">
           <AnimatePresence mode="wait">
-            <motion.img
+            <MotionImage
               key={currentImageIndex}
               src={edu.images[currentImageIndex]}
               alt={`${edu.institution} image`}
-              initial={{ opacity: 0, scale: 1.05 }}
+              initial={{ opacity: 0, scale: 1.03 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 1.5, ease: 'easeInOut' }}
-              className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-[1500ms] group-hover:scale-110"
+              transition={{ duration: 0.6, ease: 'easeInOut' }}
+              fill
+              unoptimized
+              className="absolute inset-0 object-cover object-center transition-transform duration-500 group-hover:scale-105 opacity-70"
             />
           </AnimatePresence>
         </div>
@@ -101,10 +106,10 @@ function EducationCard({ edu, index }: { edu: any; index: number }) {
       )}
 
       {/* Persistent Bottom Gradient */}
-      <div className="absolute inset-x-0 bottom-0 h-1/2 z-10 bg-gradient-to-t from-black/90 via-black/40 to-transparent transition-opacity duration-1000 group-hover:opacity-0" />
+      <div className="absolute inset-x-0 bottom-0 h-1/2 z-10 bg-gradient-to-t from-black/90 via-black/40 to-transparent transition-opacity duration-300 group-hover:opacity-0" />
 
       {/* Default State — visible when not hovering */}
-      <div className="absolute inset-x-0 bottom-0 z-20 p-5 sm:p-6 flex items-end gap-4 transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-8 group-hover:opacity-0">
+      <div className="absolute inset-x-0 bottom-0 z-20 p-5 sm:p-6 flex items-end gap-4 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-8 group-hover:opacity-0">
         {/* Logo Badge */}
         <div
           className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl flex-shrink-0 overflow-hidden shadow-xl border-2 border-white/30 backdrop-blur-md"
@@ -128,13 +133,13 @@ function EducationCard({ edu, index }: { edu: any; index: number }) {
 
       {/* Hover Overlay */}
       <div
-        className="absolute inset-0 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-[1200ms] ease-in-out flex flex-col justify-end p-5 sm:p-8 backdrop-blur-2xl"
+        className="absolute inset-0 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out flex flex-col justify-end p-5 sm:p-8 backdrop-blur-md"
         style={{
           background: 'linear-gradient(to top, rgba(10,10,10,0.95) 0%, rgba(10,10,10,0.85) 60%, rgba(10,10,10,0.6) 100%)',
           borderTop: '1px solid rgba(255,255,255,0.1)'
         }}
       >
-        <div className="translate-y-4 group-hover:translate-y-0 transition-transform duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] flex flex-col h-full justify-center">
+        <div className="translate-y-4 group-hover:translate-y-0 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] flex flex-col h-full justify-center">
 
           {/* Logo + badges row */}
           <div className="flex items-center gap-3 mb-4">
@@ -202,7 +207,7 @@ function EducationCard({ edu, index }: { edu: any; index: number }) {
 
       {/* Carousel Indicators */}
       {edu.images && edu.images.length > 1 && (
-        <div className="absolute top-5 right-5 flex gap-1.5 z-40 bg-black/40 px-2.5 py-1.5 rounded-full backdrop-blur-md border border-white/10 opacity-70 hover:opacity-100 transition-opacity duration-700">
+        <div className="absolute top-5 right-5 flex gap-1.5 z-40 bg-black/40 px-2.5 py-1.5 rounded-full backdrop-blur-md border border-white/10 opacity-70 hover:opacity-100 transition-opacity duration-300">
           {edu.images.map((_: any, idx: number) => (
             <button
               key={idx}
@@ -210,7 +215,7 @@ function EducationCard({ edu, index }: { edu: any; index: number }) {
                 e.stopPropagation();
                 setCurrentImageIndex(idx);
               }}
-              className={`h-1 rounded-full transition-all duration-700 ${
+              className={`h-1 rounded-full transition-all duration-300 ${
                 idx === currentImageIndex
                   ? 'bg-white w-4 shadow-[0_0_8px_rgba(255,255,255,0.8)]'
                   : 'bg-white/40 w-1.5 hover:bg-white/80'
@@ -243,10 +248,10 @@ export default function EducationSection() {
         />
         <motion.div
            className="mb-20 text-center -mt-6"
-           initial={{ opacity: 0, y: 20, filter: 'blur(6px)' }}
-           whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+           initial={{ opacity: 0, y: 12 }}
+           whileInView={{ opacity: 1, y: 0 }}
            viewport={{ once: true, margin: '-40px' }}
-           transition={{ duration: 0.65, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+           transition={{ duration: 0.55, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
         >
           <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto text-lg md:text-xl font-light leading-relaxed">
             Building the foundations of technology, engineering, and problem-solving through continuous learning.

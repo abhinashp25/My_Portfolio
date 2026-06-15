@@ -31,7 +31,7 @@ export default function Home() {
       <LoadingScreen />
       <Navigation />
 
-      <div className={`transition-opacity duration-1000 ${loaded ? 'opacity-100' : 'opacity-0'}`}>
+      <div className={`relative transition-opacity duration-1000 ${loaded ? 'opacity-100' : 'opacity-0'}`}>
         <HeroSection />
         <AboutSection />
         <ExperienceSection />

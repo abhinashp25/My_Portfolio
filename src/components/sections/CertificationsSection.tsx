@@ -238,33 +238,33 @@ function CertCard({
 }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 50, scale: 0.92, filter: 'blur(8px)' }}
-      whileInView={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
-      viewport={{ once: false, amount: 0.15 }}
+      initial={{ opacity: 0, y: 24, scale: 0.96 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      viewport={{ once: true, margin: '-50px' }}
       transition={{
         type: 'spring',
-        stiffness: 90,
-        damping: 18,
+        stiffness: 100,
+        damping: 20,
         mass: 0.8,
-        delay: (index % 3) * 0.08,
-        filter: { duration: 0.5, ease: 'easeOut' },
+        delay: (index % 3) * 0.06,
       }}
       whileHover={{
-        y: -8,
-        scale: 1.02,
+        y: -6,
+        scale: 1.015,
         transition: { type: 'spring', stiffness: 350, damping: 22 },
       }}
       onClick={onClick}
       className="group relative rounded-3xl overflow-hidden cursor-pointer h-full"
-      style={{ willChange: 'transform, opacity, filter' }}
+      style={{ willChange: 'transform, opacity' }}
     >
       <div
-        className="relative h-full flex flex-col bg-white/[0.02] dark:bg-white/[0.025] border border-white/10 dark:border-white/10 backdrop-blur-2xl overflow-hidden"
-        style={{
-          borderRadius: '1.5rem',
-          boxShadow: `0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06)`,
-        }}
+        className="cert-card-glass relative h-full flex flex-col overflow-hidden"
+        style={{ borderRadius: '1.5rem' }}
       >
+        {/* Top shimmer sheen — Apple specular highlight */}
+        <div className="absolute top-0 left-[8%] right-[8%] h-px bg-gradient-to-r from-transparent via-white/80 to-transparent z-20 pointer-events-none" />
+
+
         {/* Hover glow */}
         <motion.div
           className="absolute inset-0 opacity-0 group-hover:opacity-100 pointer-events-none"
@@ -571,10 +571,10 @@ export default function CertificationsSection() {
 
         <motion.div
           className="mb-12 -mt-4"
-          initial={{ opacity: 0, y: 20, filter: 'blur(6px)' }}
-          whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-          viewport={{ once: false }}
-          transition={{ duration: 0.7, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-30px' }}
+          transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
         >
           <p className="text-slate-600 dark:text-slate-400 mt-2 max-w-xl text-lg">
             NPTEL certifications from IIT Kharagpur and professional internship credentials.

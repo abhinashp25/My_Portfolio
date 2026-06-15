@@ -54,40 +54,186 @@ body {
   background: #818cf8;
 }
 
-/* Glass morphism utility */
+/* ─── Apple-Quality Liquid Glass Utility ─────────────────────────────────────
+   Works in both light AND dark modes with proper contrast and depth.
+   Inspired by iOS/visionOS material system.
+─────────────────────────────────────────────────────────────────────────── */
 .glass {
-  background: rgba(255, 255, 255, 0.5);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+  /* Light mode: crisp frosted glass with visible border */
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.9) inset,
+    0 -1px 0 0 rgba(0, 0, 0, 0.06) inset,
+    0 8px 32px rgba(0, 0, 0, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 @media (prefers-color-scheme: dark) {
   .glass {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: none;
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(24px) saturate(160%);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    box-shadow:
+      0 1px 0 0 rgba(255, 255, 255, 0.08) inset,
+      0 32px 64px rgba(0, 0, 0, 0.4),
+      0 4px 16px rgba(0, 0, 0, 0.2);
   }
 }
 
 .glass-strong {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(40px) saturate(200%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%);
+  border: 1px solid rgba(0, 0, 0, 0.10);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 1) inset,
+    0 -1px 0 0 rgba(0, 0, 0, 0.06) inset,
+    0 12px 40px rgba(0, 0, 0, 0.10),
+    0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 @media (prefers-color-scheme: dark) {
   .glass-strong {
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    box-shadow: none;
+    background: rgba(255, 255, 255, 0.07);
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow:
+      0 1px 0 0 rgba(255, 255, 255, 0.12) inset,
+      0 40px 80px rgba(0, 0, 0, 0.5);
   }
 }
 
-/* Glow text utilities */
+/* Apple visionOS-style liquid glass card — primary usage */
+.liquid-glass {
+  background: rgba(255, 255, 255, 0.68);
+  backdrop-filter: blur(32px) saturate(180%) brightness(1.02);
+  -webkit-backdrop-filter: blur(32px) saturate(180%) brightness(1.02);
+  border: 1px solid rgba(0, 0, 0, 0.09);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.95) inset,
+    0 -1px 0 0 rgba(0, 0, 0, 0.05) inset,
+    1px 0 0 0 rgba(255, 255, 255, 0.6) inset,
+    -1px 0 0 0 rgba(0, 0, 0, 0.04) inset,
+    0 12px 40px rgba(0, 0, 0, 0.09),
+    0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+@media (prefers-color-scheme: dark) {
+  .liquid-glass {
+    background: rgba(255, 255, 255, 0.035);
+    backdrop-filter: blur(32px) saturate(160%);
+    -webkit-backdrop-filter: blur(32px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    box-shadow:
+      0 1px 0 0 rgba(255, 255, 255, 0.09) inset,
+      0 40px 80px rgba(0, 0, 0, 0.45),
+      0 4px 16px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* Project card — handles dark mode since inline styles ignore dark: */
+.project-card-glass {
+  background: rgba(255, 255, 255, 0.68);
+  backdrop-filter: blur(32px) saturate(180%);
+  -webkit-backdrop-filter: blur(32px) saturate(180%);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.95) inset,
+    0 -1px 0 rgba(0, 0, 0, 0.05) inset,
+    0 8px 32px rgba(0, 0, 0, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+@media (prefers-color-scheme: dark) {
+  .project-card-glass {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.07) inset,
+      0 24px 48px rgba(0, 0, 0, 0.4),
+      0 4px 16px rgba(0, 0, 0, 0.25);
+  }
+}
+
+/* Cert card — same pattern */
+.cert-card-glass {
+  background: rgba(255, 255, 255, 0.70);
+  backdrop-filter: blur(32px) saturate(180%);
+  -webkit-backdrop-filter: blur(32px) saturate(180%);
+  border: 1px solid rgba(0, 0, 0, 0.09);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.95) inset,
+    0 8px 32px rgba(0, 0, 0, 0.08),
+    0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+@media (prefers-color-scheme: dark) {
+  .cert-card-glass {
+    background: rgba(255, 255, 255, 0.032);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.07) inset,
+      0 32px 64px rgba(0, 0, 0, 0.45);
+  }
+}
+
+/* About bento card */
+.about-card-glass {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid rgba(0, 0, 0, 0.09);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.95) inset,
+    0 8px 24px rgba(0, 0, 0, 0.08),
+    0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+@media (prefers-color-scheme: dark) {
+  .about-card-glass {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.06) inset,
+      0 20px 40px rgba(0, 0, 0, 0.4);
+  }
+}
+
+
+.neon-border {
+  /* Light: subtle dark border with inner white highlight */
+  border: 1px solid rgba(0, 0, 0, 0.10);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.85) inset,
+    0 2px 12px rgba(0, 0, 0, 0.07);
+}
+
+@media (prefers-color-scheme: dark) {
+  .neon-border {
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    box-shadow:
+      0 0 10px rgba(255, 255, 255, 0.02),
+      inset 0 0 10px rgba(255, 255, 255, 0.01);
+  }
+}
+
+.neon-border-cyan {
+  border: 1px solid rgba(0, 0, 0, 0.10);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.9) inset, 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+@media (prefers-color-scheme: dark) {
+  .neon-border-cyan {
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.05), inset 0 0 10px rgba(255, 255, 255, 0.02);
+  }
+}
+
 .text-glow {
   text-shadow: 0 0 20px rgba(255, 255, 255, 0.2), 0 0 40px rgba(255, 255, 255, 0.1);
 }

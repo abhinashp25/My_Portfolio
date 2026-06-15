@@ -30,8 +30,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`scroll-smooth ${jakarta.variable} ${jetbrains.variable}`}>
-      <body className="bg-slate-50 dark:bg-dark-900 text-slate-900 dark:text-slate-200 font-sans antialiased overflow-x-hidden">
+    <html lang="en" className={`relative scroll-smooth ${jakarta.variable} ${jetbrains.variable}`}>
+      <body className="relative bg-slate-50 dark:bg-dark-900 text-slate-900 dark:text-slate-200 font-sans antialiased overflow-x-hidden">
         <ClientConsole />
         {children}
         <Toaster
