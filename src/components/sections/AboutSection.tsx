@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { CodeBracketIcon, CpuChipIcon, ChartBarIcon, AcademicCapIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import { SectionHeading } from '../ui/SectionHeading';
 
@@ -81,125 +81,187 @@ export default function AboutSection() {
     <section id="about" className="relative py-24 px-6">
       <div className="max-w-6xl mx-auto">
 
-        {/* Header */}
-        <SectionHeading
-          title="Developer"
-          highlight="Journey"
-          badge="About Me"
-        />
+        <SectionHeading title="Developer" highlight="Journey" badge="About Me" />
 
-        {/* Bio */}
+        {/* ── Bio card — Apple liquid glass ── */}
         <motion.div
-          className="mb-12 p-6 rounded-2xl glass neon-border"
-          initial="hidden"
-          whileInView="visible"
+          className="about-card-glass mb-10 p-6 rounded-3xl relative overflow-hidden"
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-50px' }}
-          variants={{ hidden: { opacity: 0, x: -30, filter: 'blur(8px)' }, visible: { opacity: 1, x: 0, filter: 'blur(0px)', transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } } }}
-          style={{ willChange: 'transform, opacity, filter' }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          style={{ willChange: 'transform, opacity' }}
         >
-          <div className="flex items-center gap-2 mb-4">
-            <SparklesIcon className="w-5 h-5 text-brand-400" />
-            <span className="text-brand-400 font-mono text-xs tracking-widest uppercase">Who I Am</span>
+          {/* Top specular edge */}
+          <div className="absolute top-0 left-[5%] right-[5%] h-px bg-gradient-to-r from-transparent via-white/85 to-transparent pointer-events-none" />
+
+          <div className="flex items-center gap-2 mb-5">
+            <div className="w-7 h-7 rounded-full flex items-center justify-center" style={{ background: 'rgba(99,102,241,0.12)', border: '1px solid rgba(99,102,241,0.25)' }}>
+              <SparklesIcon className="w-3.5 h-3.5 text-indigo-500" />
+            </div>
+            <span className="text-indigo-500 font-mono text-xs tracking-widest uppercase">Who I Am</span>
           </div>
-          <div className="space-y-4 text-slate-700 dark:text-slate-300 leading-relaxed">
+
+          <div className="space-y-4 text-slate-600 dark:text-slate-300 leading-relaxed text-sm sm:text-base">
             <p>
-              I am a <span className="text-slate-900 dark:text-white font-medium">full stack engineer</span> focused on building
+              I am a <span className="text-slate-900 dark:text-white font-semibold">full stack engineer</span> focused on building
               reliable products from idea to deployment, with hands-on ownership across frontend, backend, and data workflows.
             </p>
             <p>
-              My core strength is combining <span className="text-slate-900 dark:text-white font-medium">application engineering</span>{' '}
-              with <span className="text-slate-900 dark:text-white font-medium">applied machine learning</span> to solve practical
+              My core strength is combining <span className="text-slate-900 dark:text-white font-semibold">application engineering</span>{' '}
+              with <span className="text-slate-900 dark:text-white font-semibold">applied machine learning</span> to solve practical
               business problems with measurable outcomes.
             </p>
             <p>
-              I currently work with <span className="text-slate-900 dark:text-white font-medium">React/Next.js</span>,{' '}
-              <span className="text-slate-900 dark:text-white font-medium">Node.js</span>, and Python ML tooling, and I prioritize
+              I currently work with <span className="text-slate-900 dark:text-white font-semibold">React/Next.js</span>,{' '}
+              <span className="text-slate-900 dark:text-white font-semibold">Node.js</span>, and Python ML tooling, and I prioritize
               clean architecture, maintainable code, and fast iteration.
             </p>
           </div>
+
+          {/* Ambient corner glow */}
+          <div className="absolute bottom-0 right-0 w-48 h-48 pointer-events-none opacity-30"
+            style={{ background: 'radial-gradient(circle at 100% 100%, rgba(99,102,241,0.18) 0%, transparent 65%)' }} />
         </motion.div>
 
-        {/* Bento grid */}
-        <div className="grid grid-cols-3 gap-4 auto-rows-[200px]">
+        {/* ── Bento grid ── */}
+        <div className="grid grid-cols-3 gap-4 auto-rows-[210px]">
           {journey.map((item, i) => {
             const Icon = item.icon;
             const isExpanded = expanded === i;
             return (
               <motion.div
                 key={i}
-                className={`${item.size} relative rounded-2xl glass neon-border overflow-hidden cursor-pointer group`}
-                initial={{ opacity: 0, y: 36, filter: 'blur(8px)', scale: 0.97 }}
-                whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)', scale: 1 }}
+                className={`${item.size} about-card-glass relative rounded-3xl overflow-hidden cursor-pointer group`}
+                initial={{ opacity: 0, y: 20, scale: 0.98 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
                 viewport={{ once: true, margin: '-50px' }}
-                transition={{ duration: 0.7, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
-                whileHover={{ y: -5, transition: { duration: 0.22, ease: 'easeOut' } }}
-                style={{ borderColor: `${item.color}30`, willChange: 'transform, opacity, filter' }}
+                transition={{ duration: 0.65, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+                whileHover={{ y: -6, scale: 1.01, transition: { type: 'spring', stiffness: 280, damping: 24 } }}
                 onClick={() => setExpanded(isExpanded ? null : i)}
+                style={{ willChange: 'transform' }}
               >
+                {/* Top specular */}
+                <div className="absolute top-0 left-[8%] right-[8%] h-px bg-gradient-to-r from-transparent via-white/80 to-transparent pointer-events-none z-20" />
+
+                {/* Color hover glow */}
                 <div
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                  style={{ background: `radial-gradient(circle at 50% 50%, ${item.color}12 0%, transparent 70%)` }}
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-0"
+                  style={{ background: `radial-gradient(circle at 50% 50%, ${item.color}12 0%, transparent 68%)` }}
                 />
-                <div className="relative z-10 p-6 h-full flex flex-col justify-between">
+
+                {/* Content */}
+                <div className="relative z-10 p-5 h-full flex flex-col justify-between">
                   <div className="flex items-start justify-between">
                     <div
-                      className="w-10 h-10 rounded-xl flex items-center justify-center"
-                      style={{ background: `${item.color}20`, border: `1px solid ${item.color}40` }}
+                      className="w-10 h-10 rounded-2xl flex items-center justify-center shadow-sm"
+                      style={{
+                        background: `${item.color}15`,
+                        border: `1px solid ${item.color}35`,
+                        boxShadow: `0 2px 8px ${item.color}18`,
+                      }}
                     >
                       <Icon className="w-5 h-5" style={{ color: item.color }} />
                     </div>
                     <span
-                      className="text-xs font-mono px-2 py-1 rounded-full"
-                      style={{ background: `${item.color}15`, color: item.color, border: `1px solid ${item.color}30` }}
+                      className="text-[10px] font-mono px-2.5 py-1 rounded-full"
+                      style={{
+                        background: `${item.color}12`,
+                        color: item.color,
+                        border: `1px solid ${item.color}28`,
+                      }}
                     >
                       {item.year}
                     </span>
                   </div>
-                  <div>
-                    <p className="text-xs font-mono uppercase tracking-widest mb-1" style={{ color: item.color }}>
+
+                  <div className="flex-1 flex flex-col justify-end mt-3">
+                    <p className="text-[10px] font-mono uppercase tracking-widest mb-1 font-semibold" style={{ color: item.color }}>
                       {item.subtitle}
                     </p>
-                    <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">{item.title}</h3>
-                    <div className={`overflow-hidden transition-all duration-500 ${isExpanded ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'}`}>
-                      <p className="text-slate-600 dark:text-slate-400 text-sm mb-3">{item.description}</p>
-                      <div className="flex flex-wrap gap-1">
-                        {item.tags.map((tag) => (
-                          <span key={tag} className="text-xs px-2 py-0.5 rounded-full font-mono"
-                            style={{ background: `${item.color}15`, color: item.color, border: `1px solid ${item.color}20` }}>
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                    {!isExpanded && <p className="text-slate-500 text-xs mt-1">Click to expand →</p>}
+                    <h3 className="text-base font-bold text-slate-900 dark:text-white mb-2 leading-snug">{item.title}</h3>
+
+                    <AnimatePresence>
+                      {isExpanded && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ type: 'spring', stiffness: 240, damping: 28 }}
+                          className="overflow-hidden"
+                        >
+                          <p className="text-slate-600 dark:text-slate-400 text-xs leading-relaxed mb-3">{item.description}</p>
+                          <div className="flex flex-wrap gap-1">
+                            {item.tags.map((tag) => (
+                              <span
+                                key={tag}
+                                className="text-[9px] px-2 py-0.5 rounded-full font-mono"
+                                style={{ background: `${item.color}12`, color: item.color, border: `1px solid ${item.color}22` }}
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
+                    {!isExpanded && (
+                      <motion.p
+                        className="text-slate-400 dark:text-slate-500 text-xs"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                      >
+                        Tap to expand →
+                      </motion.p>
+                    )}
                   </div>
                 </div>
-                <div className="absolute bottom-0 right-0 w-16 h-16 opacity-20"
-                  style={{ background: `radial-gradient(circle at 100% 100%, ${item.color} 0%, transparent 70%)` }} />
+
+                {/* Accent corner gradient */}
+                <div
+                  className="absolute bottom-0 right-0 w-20 h-20 opacity-15 pointer-events-none"
+                  style={{ background: `radial-gradient(circle at 100% 100%, ${item.color}, transparent 70%)` }}
+                />
               </motion.div>
             );
           })}
 
           {/* Stats card */}
           <motion.div
-            className="col-span-1 row-span-1 rounded-2xl glass neon-border p-6 flex flex-col justify-between"
-            initial={{ opacity: 0, y: 36, filter: 'blur(6px)' }}
-            whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            className="col-span-1 row-span-1 about-card-glass rounded-3xl p-6 flex flex-col justify-between relative overflow-hidden"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-50px' }}
             transition={{ duration: 0.65, delay: 0.32, ease: [0.16, 1, 0.3, 1] }}
-            style={{ willChange: 'transform, opacity, filter' }}
+            style={{ willChange: 'transform' }}
           >
-            <p className="text-slate-500 text-xs font-mono uppercase tracking-widest">Stats</p>
-            <div className="space-y-3">
-              {stats.map((stat) => (
-                <div key={stat.label} className="flex items-center justify-between">
+            {/* Top specular */}
+            <div className="absolute top-0 left-[8%] right-[8%] h-px bg-gradient-to-r from-transparent via-white/80 to-transparent pointer-events-none z-10" />
+
+            <p className="text-slate-400 dark:text-slate-500 text-[10px] font-mono uppercase tracking-widest">At a Glance</p>
+            <div className="space-y-4">
+              {stats.map((stat, idx) => (
+                <motion.div
+                  key={stat.label}
+                  className="flex items-center justify-between"
+                  initial={{ opacity: 0, x: -12 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.4 + idx * 0.08, ease: [0.16, 1, 0.3, 1] }}
+                >
                   <span className="text-slate-600 dark:text-slate-400 text-sm">{stat.label}</span>
-                  <span className="font-bold text-lg" style={{ color: stat.color }}>
+                  <span className="font-bold text-xl tabular-nums" style={{ color: stat.color }}>
                     <CountUp to={stat.value} suffix={stat.suffix} />
                   </span>
-                </div>
+                </motion.div>
               ))}
             </div>
+
+            {/* Background accent */}
+            <div className="absolute bottom-0 right-0 w-24 h-24 opacity-10 pointer-events-none"
+              style={{ background: 'radial-gradient(circle at 100% 100%, #6366f1, transparent 70%)' }} />
           </motion.div>
         </div>
       </div>
