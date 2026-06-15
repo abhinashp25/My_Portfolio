@@ -1,0 +1,133 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Apple iOS-Quality Global Animation System
+   Butter-smooth, spring-physics interactions throughout the app
+───────────────────────────────────────────────────────────────────────────── */
+
+/* 1. Global interactive element transitions */
+button, a, [role="button"] {
+  transition:
+    transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 2. iOS-style press — sinks slightly on tap/click */
+button:active, a:active, [role="button"]:active {
+  transform: scale(0.965);
+}
+
+/* 3. GPU-accelerate all glass cards for silky 60fps transforms */
+.project-card-glass,
+.cert-card-glass,
+.about-card-glass,
+.liquid-glass,
+.glass {
+  transform: translateZ(0);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 4. Shimmer sweep on hover — Apple-style specular light sweep */
+@keyframes ios-shimmer-sweep {
+  0%   { transform: translateX(-100%) skewX(-15deg); opacity: 0; }
+  20%  { opacity: 0.55; }
+  80%  { opacity: 0.55; }
+  100% { transform: translateX(220%) skewX(-15deg); opacity: 0; }
+}
+
+.glass-shimmer-hover {
+  position: relative;
+  overflow: hidden;
+}
+.glass-shimmer-hover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.18) 50%,
+    transparent 70%
+  );
+  transform: translateX(-100%) skewX(-15deg);
+  opacity: 0;
+  pointer-events: none;
+}
+.glass-shimmer-hover:hover::after {
+  animation: ios-shimmer-sweep 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* 5. Scroll reveal — iOS-style blur+fade+slide */
+@keyframes ios-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+.ios-fade-up {
+  animation: ios-fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* 6. Stagger helpers — wrap children with .stagger-children */
+.stagger-children > *:nth-child(1) { animation-delay: 0ms; }
+.stagger-children > *:nth-child(2) { animation-delay: 55ms; }
+.stagger-children > *:nth-child(3) { animation-delay: 110ms; }
+.stagger-children > *:nth-child(4) { animation-delay: 165ms; }
+.stagger-children > *:nth-child(5) { animation-delay: 220ms; }
+.stagger-children > *:nth-child(6) { animation-delay: 275ms; }
+
+/* 7. Spring scale-in — iOS modal/card pop */
+@keyframes ios-spring-in {
+  0%   { opacity: 0; transform: scale(0.88); }
+  60%  { opacity: 1; transform: scale(1.03); }
+  80%  { transform: scale(0.98); }
+  100% { opacity: 1; transform: scale(1); }
+}
+.ios-spring-in {
+  animation: ios-spring-in 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* 8. Apple-thin scrollbar */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.35);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.6);
+}
+
+/* 9. iOS-style focus rings */
+*:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.4);
+  border-radius: inherit;
+  transition: box-shadow 0.15s ease;
+}
+
+/* 10. Apple purple selection */
+::selection {
+  background: rgba(99, 102, 241, 0.22);
+  color: inherit;
+}
+
+/* 11. Momentum scrolling in overflow containers */
+.ios-scroll {
+  -webkit-overflow-scrolling: touch;
+  overflow-y: auto;
+}
+
+/* 12. Respect prefers-reduced-motion accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
