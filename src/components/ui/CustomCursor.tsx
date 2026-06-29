@@ -71,7 +71,7 @@ export default function CustomCursor() {
           boxShadow: isHovering ? '0 0 20px rgba(248, 250, 252, 0.4)' : 'none',
         }}
       />
-      
+
       {/* Larger trailing ring */}
       <motion.div
         className="fixed top-0 left-0 w-8 h-8 rounded-full border border-slate-500/50 pointer-events-none z-[9998]"

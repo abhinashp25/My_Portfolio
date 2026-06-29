@@ -95,7 +95,7 @@ const projects: Project[] = [
     github: 'https://github.com/abhinashp25/Career_Ai_App',
     category: 'Full Stack',
     featured: true,
-    video: '/project_videos/Career AI Platform.mp4',
+    video: '/project_videos/career-ai-platform.mp4',
   },
   {
     title: 'Aakash Weather',
@@ -108,7 +108,7 @@ const projects: Project[] = [
     demo: 'https://weather-app-ten-rho-qjyqf83mdu.vercel.app',
     category: 'Frontend',
     featured: true,
-    video: '/project_videos/Aakash Weather.mp4',
+    video: '/project_videos/aakash-weather.mp4',
   },
   {
     title: 'Event Management System',
@@ -119,7 +119,7 @@ const projects: Project[] = [
     color: '#f59e0b',
     github: 'https://github.com/abhinashp25/Event-Management-System-App',
     category: 'Full Stack',
-    video: '/project_videos/Event Management System.mp4',
+    video: '/project_videos/event-management-system.mp4',
   },
   {
     title: 'Vigil System Dashboard',
@@ -132,7 +132,7 @@ const projects: Project[] = [
     demo: 'https://vigil-web-three.vercel.app',
     category: 'Full Stack',
     featured: true,
-    video: '/project_videos/Vigil System Dashboard.mp4',
+    video: '/project_videos/vigil-system-dashboard.mp4',
   },
   {
     title: 'TASKOPS Dashboard',
@@ -144,7 +144,7 @@ const projects: Project[] = [
     github: 'https://github.com/abhinashp25/Todo-dashboard',
     demo: 'https://todo-dashboard-kohl.vercel.app',
     category: 'Full Stack',
-    video: '/project_videos/TASKOPS Dashboard.mp4',
+    video: '/project_videos/taskops-dashboard.mp4',
   },
   {
     title: 'Real-time Chat App',

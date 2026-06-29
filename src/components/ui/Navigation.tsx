@@ -95,14 +95,13 @@ export default function Navigation() {
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-6 px-4 pointer-events-none">
-      
+
       {/* Desktop Nav */}
       <motion.div
-        className={`pointer-events-auto hidden md:flex items-center justify-between gap-8 px-6 rounded-full border backdrop-blur-2xl transition-all duration-500 ${
-          scrolled
+        className={`pointer-events-auto hidden md:flex items-center justify-between gap-8 px-6 rounded-full border backdrop-blur-2xl transition-all duration-500 ${scrolled
             ? 'py-2 bg-white/80 dark:bg-black/60 border-black/10 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.1)]'
             : 'py-3 bg-black/5 dark:bg-white/5 border-white/5'
-        }`}
+          }`}
         initial={{ y: -80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
@@ -149,11 +148,10 @@ export default function Navigation() {
                   itemRefs.current[index] = el;
                 }}
                 onClick={() => handleNavClick(link.href)}
-                className={`relative z-10 px-4 py-1.5 text-[13px] font-medium transition-all duration-300 ${
-                  isActive
+                className={`relative z-10 px-4 py-1.5 text-[13px] font-medium transition-all duration-300 ${isActive
                     ? 'text-slate-900 dark:text-white'
                     : 'text-slate-600 hover:text-slate-900 dark:text-white/60 dark:hover:text-white'
-                }`}
+                  }`}
               >
                 {link.label}
               </button>
@@ -174,11 +172,10 @@ export default function Navigation() {
 
       {/* Mobile Nav */}
       <div
-        className={`pointer-events-auto md:hidden w-full flex items-center justify-between px-6 py-4 rounded-2xl transition-all duration-300 ${
-          scrolled
+        className={`pointer-events-auto md:hidden w-full flex items-center justify-between px-6 py-4 rounded-2xl transition-all duration-300 ${scrolled
             ? 'bg-white/80 dark:bg-black/60 backdrop-blur-xl border border-black/10 dark:border-white/10'
             : 'bg-transparent'
-        }`}
+          }`}
       >
         <span className="text-slate-900 dark:text-white font-semibold text-lg">ABHINASH.</span>
 
